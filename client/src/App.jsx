@@ -1,94 +1,13 @@
 import { act, useState } from 'react';
-
-
-class Activity{
-  name;
-  description;
-  temperature;    //celsius
-  wind_speed;     //km/h
-  rain;           //mm
-  uv;             //index
-
-  editing_mode = 0;
-
-  constructor(name, description, temperature, wind_speed, rain, uv){
-      if(!name){this.name = "New Activity";}
-      else{this.name = name;}
-
-      if(!description){this.description = "Activity description";}
-      else{this.description = description;}
-
-      this.temperature = temperature ?? 20;
-
-      if(!wind_speed){this.wind_speed = 14.4;}
-      else{this.wind_speed = wind_speed;}
-
-      if(!rain){this.rain = 0;}
-      else{this.rain = rain;}
-      
-      if(!uv){this.uv = 2;}
-      else{this.uv = uv;}
-  }
-
-  get RainInInches(){
-      return (this.rain/25);
-  }
-  get RainInMM(){
-      return this.rain;
-  }
-  get TemperatureInC(){
-      return temp;
-  }
-  get TemperatureInK(){
-      return (this.temperature + 273.15);
-  }
-  get TemperatureInF(){
-      return ((this.temperature * 9 /5) + 32);
-  }
-  get UVIndex(){
-      return this.uv;
-  }
-  get WindSpeedInKm(){
-      return this.wind_speed;
-  }
-  get WindSpeedInMph(){
-      return this.wind_speed/1.609;
-  }
-
-  set RainInInches(rain){
-      this.rain (this.rain*25);
-  }
-  set RainInMM(rain){
-      this.rain = rain;
-  }    
-  set TemperatureInC(temp){
-      this.temperature = temp;
-  }
-  set TemperatureInK(temp){
-      this.temperature = temp - 273.15;
-  }
-  set TemperatureInF(temp){
-      this.temperature = (temp -32) * 5 / 9;
-  }
-  set UVIndex(index){
-      this.uv = index;
-  }
-  set WindSpeedInKm(ws){
-      this.wind_speed = ws;
-  }
-  set WindSpeedInMph(ws){
-      this.wind_speed = ws*1.609;
-  }
-
-}
-
+import { defaultActivities } from './defaultActivities.js';
+import Activity from './Activity.js';
 
 function App() {
 
   const [activities, setActivities] = useState([]);
+  const [recommended_activities, setRecommendedActivities] = useState(defaultActivities);
 
   const CreateActivity = () => {
-    console.log("creando actividad");
     const n = document.getElementById("name").value;
     const d = document.getElementById("description").value;
     const t = document.getElementById("temperature").value;
@@ -135,13 +54,38 @@ function App() {
     setActivities(updated);
   };
 
+  const ShowRecommendations = () => {
+    return(
+      <div>
+        {recommended_activities.map((item, index) => (
+            <div key={index}>
+              <p>{item.name}</p>
+              <button onClick={() => AddRecommendedActivity(index)}>Agregar a Actividades personalizadas</button>
+            </div>
+          )
+        )}
+      </div>
+    )
+  }
+
+  const AddRecommendedActivity = (index) => {
+    const n = recommended_activities[index].name;
+    const d = recommended_activities[index].description;
+    const t = recommended_activities[index].temperature;
+    const w = recommended_activities[index].wind_speed;
+    const r = recommended_activities[index].rain;
+    const u = recommended_activities[index].uv;
+    const new_activity = new Activity(n, d, t, w, r, u);
+    setActivities([...activities, new_activity]);
+  }
+
   const ShowActivities = () => {
     return (
       <div>
         {activities.map((item, index) => (
           !item.editing_mode ? (
             <div key={index}>
-              <h1>{item.name}</h1>
+              <h2>{item.name}</h2>
               <p>{item.description}</p>
               <p>Temperatura ideal: {item.temperature}</p>
               <p>Viento ideal: {item.wind_speed}</p>
@@ -178,6 +122,10 @@ function App() {
       <h1>Lista de Actividades</h1>
       <ShowActivities />
       <p>Existen {activities.length} actividades ahora mismo</p>
+      
+      <h1>Algunas actividades que podrían interesarte</h1>
+      <ShowRecommendations />
+
       <h1>Crear Actividades</h1>
       <div>
 
