@@ -1,0 +1,12 @@
+/* Para asegurar que cubra toda la pantalla */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Acá le cambiás el fondo global */
+body {
+  background-color: #e6f7ff; /* Fondo celeste suave */
+}
+
