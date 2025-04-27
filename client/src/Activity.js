@@ -5,10 +5,16 @@ class Activity{
     wind_speed;     //km/h
     rain;           //mm
     uv;             //index
+
+    //Gustos del usuario
+    outdoor_req;
+    indoor_req;
+    intellectual_req;
+    sports_req;
   
     editing_mode = 0;
   
-    constructor(name, description, temperature, wind_speed, rain, uv){
+    constructor(name, description, temperature, wind_speed, rain, uv, out_req, in_req, int_req, sp_req){
         if(!name){this.name = "New Activity";}
         else{this.name = name;}
   
@@ -25,6 +31,18 @@ class Activity{
         
         if(!uv){this.uv = 2;}
         else{this.uv = uv;}
+
+        if(!out_req){this.outdoor_req = 1}
+        else{this.outdoor_req = out_req;}
+
+        if(!in_req){this.indoor_req = 1}
+        else{this.indoor_req = in_req;}
+
+        if(!int_req){this.intellectual_req = 1}
+        else{this.intellectual_req = int_req;}
+
+        if(!sp_req){this.sports_req = 1}
+        else{this.sports_req = sp_req;}
     }
   
     get RainInInches(){

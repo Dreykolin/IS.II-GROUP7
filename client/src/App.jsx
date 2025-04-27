@@ -2,10 +2,43 @@ import { act, useState } from 'react';
 import { defaultActivities } from './defaultActivities.js';
 import Activity from './Activity.js';
 
+class UserPreferences{
+  outdoor_activities;
+  indoor_activities;
+  sports;
+  intellectual_activities;
+
+  constructor(){
+    this.outdoor_activities = 5;
+    this.indoor_activities = 5;
+    this.sports = 5;
+    this.intellectual_activities = 5;
+  }
+}
+
 function App() {
 
   const [activities, setActivities] = useState([]);
   const [recommended_activities, setRecommendedActivities] = useState(defaultActivities);
+
+  const usp = new UserPreferences();
+
+  const [user_preferences, setPreferences] = useState(usp);
+  /*
+  range 0-10
+  0 - essential activities
+  1 = outdoor activities preference
+  2 - indoor activities preference
+  3 - intellectual activities
+  4 - sports
+  */
+
+  /*
+  const outdoor_value = document.getElementById("outdoor").value;
+  const indoor_value = document.getElementById("indoor").value;
+  const intellectual_value = document.getElementById("intellectual").value;
+  const sports_value = document.getElementById("sports").value;
+  */
 
   const CreateActivity = () => {
     const n = document.getElementById("name").value;
@@ -54,19 +87,67 @@ function App() {
     setActivities(updated);
   };
 
-  const ShowRecommendations = () => {
+  const AskPreferences = () => {
+
+    //esta función cambia user_preferences con el evento lanzado por react al cambiar los sliders
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setPreferences(prev => ({
+        ...prev,
+        [name]: Number(value)
+      }));
+    };
+
     return(
       <div>
-        {recommended_activities.map((item, index) => (
-            <div key={index}>
-              <p>{item.name}</p>
-              <button onClick={() => AddRecommendedActivity(index)}>Agregar a Actividades personalizadas</button>
-            </div>
-          )
-        )}
+        <p>Actividades al aire libre</p>
+        <input type="range" min="1" max="10" defaultValue={user_preferences.outdoor_activities} name="outdoor_activities" className="slider" onChange={handleChange}></input>
+        <p>Value: {user_preferences.outdoor_activities}</p>
+
+        <p>Actividades dentro de casa</p>
+        <input type="range" min="1" max="10" defaultValue={user_preferences.indoor_activities}  name="indoor_activities" className="slider" onChange={handleChange}></input>
+        <p>Value: {user_preferences.indoor_activities}</p>
+
+        <p>Actividades intelectuales</p>
+        <input type="range" min="1" max="10" defaultValue={user_preferences.intellectual_activities} name="intellectual_activities" className="slider" onChange={handleChange}></input>
+        <p>Value: {user_preferences.intellectual_activities}</p>
+
+        <p>Deportes</p>
+        <input type="range" min="1" max="10" defaultValue={user_preferences.sports} name="sports" className="slider" id="sports" onChange={handleChange}></input>
+        <p>Value: {user_preferences.sports}</p>
+
+
       </div>
     )
   }
+
+  const ShowRecommendations = () => {
+    const filteredActivities = recommended_activities.filter(activity => {
+      // Comparamos requisitos con las preferencias del usuario
+      return (
+        activity.outdoor_req <= user_preferences.outdoor_activities &&
+        activity.indoor_req <= user_preferences.indoor_activities &&
+        activity.intellectual_req <= user_preferences.intellectual_activities &&
+        activity.sports_req <= user_preferences.sports
+      );
+    });
+  
+    return (
+      <div>
+        {filteredActivities.length > 0 ? (
+          filteredActivities.map((item, index) => (
+            <div key={index}>
+              <p>{item.name}</p>
+              <p>{item.description}</p>
+              <button onClick={() => AddRecommendedActivity(index)}>Agregar a Actividades personalizadas</button>
+            </div>
+          ))
+        ) : (
+          <p>No hay actividades que coincidan con tus preferencias</p>
+        )}
+      </div>
+    );
+  };
 
   const AddRecommendedActivity = (index) => {
     const n = recommended_activities[index].name;
@@ -119,11 +200,17 @@ function App() {
 
     return (
     <div>
+
+      
+      <h1>Define tus gustos</h1>
+      <p>Del 1 al 10, califica las siguientes categorias según cuánto te gustan.</p>
+      <AskPreferences />
+
       <h1>Lista de Actividades</h1>
       <ShowActivities />
-      <p>Existen {activities.length} actividades ahora mismo</p>
+      <p>Existen {activities.length} actividades ahora mismo.</p>
       
-      <h1>Algunas actividades que podrían interesarte</h1>
+      <h1>Algunas actividades que podrían interesarte.</h1>
       <ShowRecommendations />
 
       <h1>Crear Actividades</h1>
