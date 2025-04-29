@@ -9,10 +9,10 @@ class UserPreferences{
   intellectual_activities;
 
   constructor(){
-    this.outdoor_activities = 5;
-    this.indoor_activities = 5;
-    this.sports = 5;
-    this.intellectual_activities = 5;
+    this.outdoor_activities = 3;
+    this.indoor_activities = 3;
+    this.sports = 3;
+    this.intellectual_activities = 3;
   }
 }
 
@@ -101,19 +101,19 @@ function App() {
     return(
       <div>
         <p>Actividades al aire libre</p>
-        <input type="range" min="1" max="10" defaultValue={user_preferences.outdoor_activities} name="outdoor_activities" className="slider" onChange={handleChange}></input>
+        <input type="range" min="1" max="5" defaultValue={user_preferences.outdoor_activities} name="outdoor_activities" className="slider" onChange={handleChange}></input>
         <p>Value: {user_preferences.outdoor_activities}</p>
 
         <p>Actividades dentro de casa</p>
-        <input type="range" min="1" max="10" defaultValue={user_preferences.indoor_activities}  name="indoor_activities" className="slider" onChange={handleChange}></input>
+        <input type="range" min="1" max="5" defaultValue={user_preferences.indoor_activities}  name="indoor_activities" className="slider" onChange={handleChange}></input>
         <p>Value: {user_preferences.indoor_activities}</p>
 
         <p>Actividades intelectuales</p>
-        <input type="range" min="1" max="10" defaultValue={user_preferences.intellectual_activities} name="intellectual_activities" className="slider" onChange={handleChange}></input>
+        <input type="range" min="1" max="5" defaultValue={user_preferences.intellectual_activities} name="intellectual_activities" className="slider" onChange={handleChange}></input>
         <p>Value: {user_preferences.intellectual_activities}</p>
 
         <p>Deportes</p>
-        <input type="range" min="1" max="10" defaultValue={user_preferences.sports} name="sports" className="slider" id="sports" onChange={handleChange}></input>
+        <input type="range" min="1" max="5" defaultValue={user_preferences.sports} name="sports" className="slider" id="sports" onChange={handleChange}></input>
         <p>Value: {user_preferences.sports}</p>
 
 
@@ -203,7 +203,7 @@ function App() {
 
       
       <h1>Define tus gustos</h1>
-      <p>Del 1 al 10, califica las siguientes categorias según cuánto te gustan.</p>
+      <p>Del 1 al 5, califica las siguientes categorias según cuánto te gustan.</p>
       <AskPreferences />
 
       <h1>Lista de Actividades</h1>
