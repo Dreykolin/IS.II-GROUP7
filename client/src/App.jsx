@@ -18,6 +18,8 @@ class UserPreferences{
 
 function App() {
 
+  const [ubicacion, setUbicacion] = useState('');
+  const [clima, setClima] = useState([]);
   const [activities, setActivities] = useState([]);
   const [recommended_activities, setRecommendedActivities] = useState(defaultActivities);
 
@@ -40,6 +42,45 @@ function App() {
   const sports_value = document.getElementById("sports").value;
   */
 
+
+  const obtenerUbicacion = () => {
+    if (!navigator.geolocation) {
+      setUbicacion("La geolocalización no es compatible.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const latitud = position.coords.latitude;
+      const longitud = position.coords.longitude;
+      setUbicacion(`Latitud: ${latitud}, Longitud: ${longitud}`);
+
+      try {
+        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitud}&lon=${longitud}&format=json`);
+        const geoData = await geoRes.json();
+        const ciudad = geoData.address?.city || "Ciudad no encontrada";
+
+        await fetch('http://localhost:3000/guardar_ubicacion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ latitud, longitud, ciudad })
+        });
+
+        const climaRes = await fetch('http://localhost:3000/clima', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat: latitud, lon: longitud })
+        });
+
+        const datosClima = await climaRes.json();
+        setClima([datosClima.temperatura]);
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  };
+
+  obtenerUbicacion();
+  
   const CreateActivity = () => {
     const n = document.getElementById("name").value;
     const d = document.getElementById("description").value;
@@ -128,7 +169,8 @@ function App() {
         activity.outdoor_req <= user_preferences.outdoor_activities &&
         activity.indoor_req <= user_preferences.indoor_activities &&
         activity.intellectual_req <= user_preferences.intellectual_activities &&
-        activity.sports_req <= user_preferences.sports
+        activity.sports_req <= user_preferences.sports &&
+        clima[0] <= activity.temperature
       );
     });
   
@@ -201,7 +243,11 @@ function App() {
     return (
     <div>
 
-      
+      <p>el clima es {clima[0]} </p>
+      <button className="btn btn-primary rounded shadow px-4 py-2" onClick={obtenerUbicacion}>
+            Buscar
+      </button>
+
       <h1>Define tus gustos</h1>
       <p>Del 1 al 5, califica las siguientes categorias según cuánto te gustan.</p>
       <AskPreferences />
