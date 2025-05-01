@@ -1,4 +1,5 @@
 import { act, useState } from 'react';
+import { useEffect } from 'react';
 import { defaultActivities } from '../defaultActivities.js';
 import Activity from '../Activity.js';
 
@@ -15,6 +16,7 @@ class UserPreferences{
     this.intellectual_activities = 3;
   }
 }
+
 
 function Activities() {
 
@@ -61,7 +63,6 @@ function Activities() {
       setUbicacion(`Latitud: ${latitud}, Longitud: ${longitud}`);
 
       try {
-
         /*
         const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitud}&lon=${longitud}&format=json`);
         const geoData = await geoRes.json();
@@ -73,7 +74,7 @@ function Activities() {
           body: JSON.stringify({ latitud, longitud, ciudad })
         });
         */
-        
+
         const climaRes = await fetch('http://localhost:3000/clima', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -88,7 +89,10 @@ function Activities() {
     });
   };
 
-  obtenerUbicacion();
+  useEffect(() => {
+    obtenerUbicacion();
+  }, []);
+  //obtenerUbicacion();
   
   const CreateActivity = () => {
     const n = document.getElementById("name").value;
@@ -311,3 +315,4 @@ function Activities() {
 }
 
 export default Activities;
+
