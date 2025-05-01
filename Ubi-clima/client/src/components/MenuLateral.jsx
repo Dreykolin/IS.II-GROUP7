@@ -8,6 +8,9 @@ function MenuLateral() {
       <button className="btn btn-outline-primary" onClick={() => navigate('/')}>
         🌍 Inicio
       </button>
+      <button className="btn btn-outline-success" onClick={() => navigate('/activities')}>
+        📍 Actividades
+      </button>
       <button className="btn btn-outline-success" onClick={() => navigate('/historial')}>
         📍 Historial
       </button>
