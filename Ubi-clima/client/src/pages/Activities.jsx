@@ -61,6 +61,8 @@ function Activities() {
       setUbicacion(`Latitud: ${latitud}, Longitud: ${longitud}`);
 
       try {
+
+        /*
         const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitud}&lon=${longitud}&format=json`);
         const geoData = await geoRes.json();
         const ciudad = geoData.address?.city || "Ciudad no encontrada";
@@ -70,7 +72,8 @@ function Activities() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ latitud, longitud, ciudad })
         });
-
+        */
+        
         const climaRes = await fetch('http://localhost:3000/clima', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
