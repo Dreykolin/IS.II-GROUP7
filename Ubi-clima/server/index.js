@@ -45,6 +45,7 @@ app.post('/clima', async (req, res) => {
   }
 });
 
+
 app.post('/clima_por_ciudad', async (req, res) => {
   const { ciudad } = req.body;
   const apiKey = '602ffc6533393af7fca7c9855fbbd712';
