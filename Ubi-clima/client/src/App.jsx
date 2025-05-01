@@ -53,7 +53,7 @@ function AppContent() {
       <div className="container mt-5">
         <Routes>
           <Route path="/" element={<Home />} />
-	  <Route path="/Activities" element={<Activities />} />
+	        <Route path="/Activities" element={<Activities />} />
           <Route path="/historial" element={<Historial />} />
           <Route path="/clima" element={<Clima />} />
           <Route path="/ajustes" element={<Ajustes />} />
