@@ -1,6 +1,6 @@
 import { act, useState } from 'react';
-import { defaultActivities } from './defaultActivities.js';
-import Activity from './Activity.js';
+import { defaultActivities } from '../defaultActivities.js';
+import Activity from '../Activity.js';
 
 class UserPreferences{
   outdoor_activities;
