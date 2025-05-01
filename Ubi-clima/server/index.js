@@ -57,4 +57,15 @@ app.post('/clima_por_ciudad', async (req, res) => {
     res.status(500).json({ error: 'Error al obtener el clima para esa ciudad' });
   }
 });
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+  // Validación simple (luego puedes conectar esto con la base de datos)
+  if (email === 'admin@admin.com' && password === '123456') {
+    res.json({ success: true });
+  } else {
+    res.json({ success: false });
+  }
+});
 app.listen(3000, () => console.log('Servidor corriendo en http://localhost:3000'));

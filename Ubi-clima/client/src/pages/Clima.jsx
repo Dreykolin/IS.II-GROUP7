@@ -1,21 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TarjetaCiudad from "../components/TarjetaCiudad";
 
-
 function Clima() {
-  const [ubicacion, setUbicacion] = useState('');
-  const [clima, setClima] = useState('');
+  const [ubicacionAutomatica, setUbicacionAutomatica] = useState('');
+  const [climaAutomatico, setClimaAutomatico] = useState('');
+  const [ciudadManual, setCiudadManual] = useState('');
+  const [climaManual, setClimaManual] = useState('');
 
-  const obtenerUbicacion = () => {
+  const obtenerUbicacionAutomatica = () => {
     if (!navigator.geolocation) {
-      setUbicacion("La geolocalización no es compatible.");
+      setUbicacionAutomatica("La geolocalización no es compatible.");
       return;
     }
 
     navigator.geolocation.getCurrentPosition(async (position) => {
       const latitud = position.coords.latitude;
       const longitud = position.coords.longitude;
-      setUbicacion(`Latitud: ${latitud}, Longitud: ${longitud}`);
+      setUbicacionAutomatica(`Latitud: ${latitud}, Longitud: ${longitud}`);
 
       try {
         const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitud}&lon=${longitud}&format=json`);
@@ -35,41 +36,42 @@ function Clima() {
         });
 
         const datosClima = await climaRes.json();
-        setClima(`Clima: ${datosClima.descripcion}, ${datosClima.temperatura}°C en ${datosClima.ciudad}`);
+        setClimaAutomatico(`Clima: ${datosClima.descripcion}, ${datosClima.temperatura}°C en ${datosClima.ciudad}`);
       } catch (err) {
         console.error(err);
-        setClima("Error al obtener ciudad o clima.");
+        setClimaAutomatico("Error al obtener ciudad o clima.");
       }
     });
   };
 
+  useEffect(() => {
+    obtenerUbicacionAutomatica();
+  }, []);
+
   return (
-  <div className="container mt-4">
-    <div className="row">
-      {/* Contenedor izquierdo */}
-      <div className="col-md-8 mb-4">
-        <div style={{ backgroundColor: '#f0f8ff' }} className="p-4 rounded shadow">
-          <h1 className="mb-4">Detectar mi Ubicación</h1>
-          <button className="btn btn-primary rounded shadow px-4 py-2" onClick={obtenerUbicacion}>
-            Buscar
-          </button>
-          <div className="mt-4 p-3 bg-white rounded shadow-sm">
-            <p><strong>Coordenadas:</strong> {ubicacion}</p>
-            <p><strong>Ciudad y Clima:</strong> {clima}</p>
+    <div className="container mt-4">
+      <div className="row">
+        {/* Contenedor izquierdo con TarjetaCiudad automática */}
+        <div className="col-md-6 mb-4">
+          <div style={{ backgroundColor: '#f0f8ff' }} className="p-4 rounded shadow">
+            <h1 className="mb-4" style={{ fontSize: '2rem' }}>Mi Ubicación Actual</h1>
+            {/* Renderizamos TarjetaCiudad y le pasamos props para que se comporte automáticamente */}
+            <TarjetaCiudad automatico={true} clima={climaAutomatico} ubicacion={ubicacionAutomatica} />
+	    <p style={{ fontSize: '1rem' }}><strong></strong>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+          </div>
+        </div>
+
+        {/* Contenedor derecho con TarjetaCiudad manual */}
+        <div className="col-md-6 mb-4">
+          <div style={{ backgroundColor: '#f0f8ff' }} className="p-4 rounded shadow">
+            <h1 className="mb-4" style={{ fontSize: '2rem' }}>Buscar otra Ciudad</h1>
+            {/* Renderizamos otra instancia de TarjetaCiudad para la búsqueda manual */}
+            <TarjetaCiudad />
           </div>
         </div>
       </div>
-
-       {/* Contenedor derecho con 3 tarjetas individuales del mismo color */}
-      <div className="col-md-4">
-        {[1, 2, 3].map((num) => (
-	  <TarjetaCiudad key={num} />
-	))}
-      </div>
     </div>
-  </div>
-);
+  );
 }
 
-export default Clima;
-
+export default Clima;	

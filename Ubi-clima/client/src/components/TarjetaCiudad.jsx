@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-function TarjetaCiudad() {
+function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp }) {
   const [editando, setEditando] = useState(false);
   const [ciudad, setCiudad] = useState('');
   const [inputCiudad, setInputCiudad] = useState('');
-  const [clima, setClima] = useState('');
+  const [clima, setClima] = useState(climaProp || '');
+
+  useEffect(() => {
+    if (automatico && climaProp) {
+      setClima(climaProp);
+    }
+  }, [automatico, climaProp]);
 
   const manejarGuardar = async () => {
     try {
@@ -29,13 +35,14 @@ function TarjetaCiudad() {
   return (
     <div
       className="p-3 mb-3 rounded shadow-sm"
-      style={{ backgroundColor: '#f0f8ff', cursor: 'pointer' }}
+      style={{ backgroundColor: '#f0f8ff', cursor: automatico ? 'default' : 'pointer' }}
     >
       {!editando ? (
-        <div onClick={() => setEditando(true)}>
-          <h5>Aquí puedes ingresar tu ciudad de interés</h5>
-          <p>{ciudad || 'Sin ciudad asignada'}</p>
+        <div>
+          <h5>{automatico ? 'Tu ubicación detectada es:' : 'Aquí puedes ingresar tu ciudad de interés'}</h5>
+          <p>{automatico && ubicacionProp ? ubicacionProp : (ciudad || 'Sin ciudad asignada')}</p>
           {clima && <p>{clima}</p>}
+          {!automatico && <button className="btn btn-sm btn-info mt-2" onClick={() => setEditando(true)}>Editar Ciudad</button>}
         </div>
       ) : (
         <div>
@@ -59,4 +66,3 @@ function TarjetaCiudad() {
 }
 
 export default TarjetaCiudad;
-
