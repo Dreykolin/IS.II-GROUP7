@@ -5,6 +5,7 @@ import MenuLateral from './components/MenuLateral';
 import WidgetClima from './components/WidgetClima'; // No se muestra en todas las páginas
 import NavbarSuperior from './components/NavbarSuperior'; // El Navbar con pestañas
 import Home from './pages/Home';
+import Activities from './pages/Activities';
 import Historial from './pages/Historial';
 import Clima from './pages/Clima';
 import Ajustes from './pages/Ajustes';
@@ -52,6 +53,7 @@ function AppContent() {
       <div className="container mt-5">
         <Routes>
           <Route path="/" element={<Home />} />
+	  <Route path="/Activities" element={<Activities />} />
           <Route path="/historial" element={<Historial />} />
           <Route path="/clima" element={<Clima />} />
           <Route path="/ajustes" element={<Ajustes />} />
