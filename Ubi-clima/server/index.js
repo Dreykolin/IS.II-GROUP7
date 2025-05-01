@@ -24,7 +24,7 @@ app.post('/guardar_ubicacion', (req, res) => {
 
 app.post('/clima', async (req, res) => {
   const { lat, lon } = req.body;
-  const apiKey = '602ffc6533393af7fca7c9855fbbd712';
+  const apiKey = '3c780b370db3868a80f217cda22a105e';
   const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=es`;
 
   try {
@@ -48,7 +48,7 @@ app.post('/clima', async (req, res) => {
 
 app.post('/clima_por_ciudad', async (req, res) => {
   const { ciudad } = req.body;
-  const apiKey = '602ffc6533393af7fca7c9855fbbd712';
+  const apiKey = '3c780b370db3868a80f217cda22a105e';
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(ciudad)}&appid=${apiKey}&units=metric&lang=es`;
 
   try {

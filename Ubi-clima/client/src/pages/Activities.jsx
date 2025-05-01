@@ -16,7 +16,7 @@ class UserPreferences{
   }
 }
 
-function App() {
+function Activities() {
 
   const [ubicacion, setUbicacion] = useState('');
 
@@ -27,7 +27,6 @@ function App() {
    */
   const [clima, setClima] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [recommended_activities, setRecommendedActivities] = useState(defaultActivities);
 
   const usp = new UserPreferences();
@@ -223,12 +222,8 @@ function App() {
               <p>Viento ideal: {item.wind_speed}</p>
               <p>Lluvia: {item.rain}</p>
               <p>Índice UV: {item.uv}</p>
-              {isAdmin && (
-              <>
-                <button onClick={() => DeleteActivity(index)}>Borrar actividad</button>
-                <button onClick={() => toggleEditMode(index)}>Editar</button>
-              </>
-            )}
+              <button onClick={() => DeleteActivity(index)}>Borrar actividad</button>
+              <button onClick={() => toggleEditMode(index)}>Editar</button>
             </div>
           ) : (
             <div key={index}>
@@ -267,10 +262,6 @@ function App() {
       <p>Del 1 al 5, califica las siguientes categorias según cuánto te gustan.</p>
       
       <AskPreferences />
-
-      <button onClick={() => setIsAdmin(!isAdmin)} style={{ marginBottom: "20px" }}>
-      {isAdmin ? "Salir del modo Administrador" : "Entrar como Administrador"}
-      </button>
 
       <h1>Lista de Actividades</h1>
       <ShowActivities />
@@ -316,4 +307,4 @@ function App() {
   );
 }
 
-export default App;
+export default Activities;
