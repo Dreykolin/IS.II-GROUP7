@@ -2,10 +2,33 @@ const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const axios = require('axios');
+const webpush = require('web-push');
+const bodyParser = require('body-parser');
 
 const app = express();
+
+const publicVapidKey = "BPaW76e491m4ebBJFa2s5aswfKU6jhSoVFDsAV_z0cbFFe5uGinqGn9PC15ZG7iQ6kopIZ3u4rnUCRqrkcXm3wc";
+const privateVapidKey = "-HOhVaQD_VkcLgdT3GHGd6luMPP0RdBfbLZ6aCMl80s"
+
+webpush.setVapidDetails(
+  'mailto:lcao2018@udec.cl',
+  publicVapidKey,
+  privateVapidKey,
+)
+
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
+
+let subscriptions = [];
+
+app.post('/subscribe', (req, res) => {
+  const subscription = req.body;
+  subscriptions.push(subscription);
+  res.status(201).json({ message: 'Subscribed!' });
+
+  console.log('recibi suscripcion')
+});
 
 const db = new sqlite3.Database('./ubicaciones.db');
 
@@ -76,4 +99,28 @@ app.post('/login', (req, res) => {
     res.json({ success: false });
   }
 });
+
+setInterval(() => {
+  const message = {
+    title: '⏰ Reminder',
+    body: 'This is a scheduled push notification from the server.'
+  };
+  sendToAll(message);
+
+  console.log("Mensaje enviado!!!")
+}, 30000);
+
+// 🔧 Helper function to send to all
+async function sendToAll(message) {
+  const payload = JSON.stringify(message);
+
+  await Promise.allSettled(
+    subscriptions.map(sub =>
+      webpush.sendNotification(sub, payload).catch(err => {
+        console.error('Failed to send push:', err);
+      })
+    )
+  );
+}
+
 app.listen(3000, () => console.log('Servidor corriendo en http://localhost:3000'));

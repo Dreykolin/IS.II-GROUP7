@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import MenuLateral from './components/MenuLateral';
 import WidgetClima from './components/WidgetClima'; // No se muestra en todas las páginas
@@ -11,8 +12,37 @@ import Clima from './pages/Clima';
 import Ajustes from './pages/Ajustes';
 import Login from './pages/Login';
 import './index.css';
+import { urlBase64ToUint8Array } from './utils';
 
+const PUBLIC_VAPID_KEY = "BPaW76e491m4ebBJFa2s5aswfKU6jhSoVFDsAV_z0cbFFe5uGinqGn9PC15ZG7iQ6kopIZ3u4rnUCRqrkcXm3wc";
 function App() {
+  useEffect(() => {
+    if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          navigator.serviceWorker.register('/sw.js').then(async (reg) => {
+            console.log('Service Worker registered');
+  
+            const subscription = await reg.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
+            });
+  
+            await fetch('http://localhost:3000/subscribe', {
+              method: 'POST',
+              body: JSON.stringify(subscription),
+              headers: { 'Content-Type': 'application/json' }
+            });
+  
+            console.log('Subscribed to push notifications');
+          });
+        } else {
+          console.warn('Notification permission denied or dismissed');
+        }
+      });
+    }
+  }, []);
+
   return (
     <Router>
       <AppContent />
