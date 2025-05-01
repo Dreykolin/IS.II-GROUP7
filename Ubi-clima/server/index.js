@@ -30,8 +30,13 @@ app.post('/clima', async (req, res) => {
   try {
     const respuesta = await axios.get(url);
     const datos = respuesta.data;
+
+    //console.log(datos);
+
     res.json({
       temperatura: datos.main.temp,
+      viento: datos.wind.speed,
+      tiempo_id: datos.weather[0].id,
       descripcion: datos.weather[0].description,
       ciudad: datos.name
     });
