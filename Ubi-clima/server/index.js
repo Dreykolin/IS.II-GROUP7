@@ -56,6 +56,8 @@ app.post('/clima_por_ciudad', async (req, res) => {
     const datos = respuesta.data;
     res.json({
       temperatura: datos.main.temp,
+      viento: datos.wind.speed,
+      tiempo_id: datos.weather[0].id,
       descripcion: datos.weather[0].description,
       ciudad: datos.name
     });
