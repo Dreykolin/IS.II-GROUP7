@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import { Link } from 'react-router-dom';  // Importa Link
 import '../assets/estilos.css'; // tu css personalizado
 import 'bootstrap/dist/css/bootstrap.min.css'; // por si acaso
 
@@ -62,14 +62,14 @@ function Login() {
           </div>
 
           <div className="mb-3 text-end">
-            <a href="#" className="forgot-password">¿Olvidaste tu contraseña?</a>
+            <Link to="/Recuperar" className="forgot-password">¿Olvidaste tu contraseña?</Link>
           </div>
 
           <button type="submit" className="btn-airbnb mb-3">Entrar</button>
 
           <div className="text-center">
             <span>¿No tienes una cuenta?</span>
-            <a href="#" className="register-link">Regístrate</a>
+            <Link to="/Registro" className="register-link">Regístrate</Link>
           </div>
         </form>
       </div>
@@ -77,6 +77,6 @@ function Login() {
   );
 }
 
-
 export default Login;
+
 
