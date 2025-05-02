@@ -102,8 +102,8 @@ app.post('/login', (req, res) => {
 
 setInterval(() => {
   const message = {
-    title: '⏰ Reminder',
-    body: 'This is a scheduled push notification from the server.'
+    title: 'Clime de hoy en ubicación',
+    body: 'temperatura: ,actividad recomenddo: salir a caminar.'
   };
   sendToAll(message);
 
