@@ -79,10 +79,21 @@ function Activities() {
   };
 
   useEffect(() => {
-    obtenerUbicacion();
+    const usuario_id = localStorage.getItem('usuario_id');
+    if (!usuario_id) return;
+
+    const fetchActivities = async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/actividades/${usuario_id}`);
+        const data = await res.json();
+        setActivities(data); // <-- solo tus actividades
+      } catch (error) {
+        console.error("Error al obtener actividades:", error);
+      }
+    };
+
+    fetchActivities();
   }, []);
-  //obtenerUbicacion();
-  
   const CreateActivity = async () => {
   const n = document.getElementById("name").value;
   const d = document.getElementById("description").value;
@@ -255,39 +266,18 @@ function Activities() {
     setActivities([...activities, new_activity]);
   }
 
-  const ShowActivities = () => {
+    const ShowActivities = () => {
     return (
       <div>
         {activities.map((item, index) => (
-          !item.editing_mode ? (
-            <div key={index}>
-              <h2>{item.name}</h2>
-              <p>{item.description}</p>
-              <p>Temperatura ideal: {item.temperature}</p>
-              <p>Viento ideal: {item.wind_speed}</p>
-              <p>Lluvia: {item.rain}</p>
-              <p>Índice UV: {item.uv}</p>
-              <button onClick={() => DeleteActivity(index)}>Borrar actividad</button>
-              <button onClick={() => toggleEditMode(index)}>Editar</button>
-            </div>
-          ) : (
-            <div key={index}>
-              <p>Nombre nuevo</p>
-              <input id="edit_name" defaultValue={item.name} />
-              <p>Descripción nueva</p>
-              <input id="edit_description" defaultValue={item.description} />
-              <p>Temperatura ideal (°C)</p>
-              <input id="edit_temperature" defaultValue={item.temperature} />
-              <p>Viento ideal (km/h)</p>
-              <input id="edit_wind_speed" defaultValue={item.wind_speed} />
-              <p>Lluvia (mm)</p>
-              <input id="edit_rain" defaultValue={item.rain} />
-              <p>Índice UV</p>
-              <input id="edit_uv" defaultValue={item.uv} />
-              <button onClick={() => ModifyActivity(index)}>Guardar cambios</button>
-              <button onClick={() => toggleEditMode(index)}>Cancelar</button>
-            </div>
-          )
+          <div key={index}>
+            <h2>{item.nombre}</h2>
+            <p>{item.descripcion}</p>
+            <p>Temperatura ideal: {item.temperatura}</p>
+            <p>Viento ideal: {item.viento}</p>
+            <p>Lluvia: {item.lluvia}</p>
+            <p>Índice UV: {item.uv}</p>
+          </div>
         ))}
       </div>
     );

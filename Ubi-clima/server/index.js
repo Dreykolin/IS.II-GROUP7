@@ -269,6 +269,28 @@ async function sendToAll(message) {
   );
 }
 
+
+
+
+
+
+app.get('/actividades/:usuario_id', (req, res) => {
+  const { usuario_id } = req.params;
+  const query = `SELECT * FROM actividades WHERE usuario_id = ?`;
+
+  db.all(query, [usuario_id], (err, rows) => {
+    if (err) {
+      console.error('Error al obtener actividades:', err.message);
+      return res.status(500).json({ error: 'Error en la base de datos' });
+    }
+
+    res.json(rows); // Devuelve todas las actividades del usuario
+  });
+});
+
+
+
+
 app.listen(3000, () => {
   console.log('🚀 Servidor corriendo en http://localhost:3000');
 });
