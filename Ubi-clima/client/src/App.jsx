@@ -57,6 +57,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
 	  <Route path="/Activities" element={<Activities />} />
+|	  <Route path="/Ajustes" element={<Ajustes />} />
 	  <Route path="/Registro" element={<Registro />} />
 	  <Route path="/Recuperar" element={<Recuperar />} />
           <Route path="/login" element={<div className="login-page"><Login /></div>} />

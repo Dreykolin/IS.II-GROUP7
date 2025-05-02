@@ -21,6 +21,9 @@ export default function NavbarSuperior({ isLogged, handleLoginRedirect, handleLo
           <li className="nav-item">
             <Link className="nav-link" to="/activities">Actividades</Link>
           </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/Ajustes">Ajustes</Link>
+          </li>
         </ul>
 
         {/* Botón login/logout */}
