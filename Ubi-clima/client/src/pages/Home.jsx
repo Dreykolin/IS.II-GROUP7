@@ -1,90 +1,105 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';  // Importamos useNavigate
-import Card from '../components/Card';
-import axios from 'axios'; // Importamos axios para la comunicación con el backend
+import { useState, useEffect } from 'react';
+import TarjetaCiudad from "../components/TarjetaCiudad";
+import '../assets/estilos.css';
 
-export default function Home() {
-  const [isLogged, setIsLogged] = useState(false);
-  const [loading, setLoading] = useState(true);  // Para mostrar un estado de carga
-  const navigate = useNavigate();  // Hook para redirigir
+function Home() {
+  const [ubicacionAutomatica, setUbicacionAutomatica] = useState('');
+  const [climaAutomatico, setClimaAutomatico] = useState('');
+  const [usuarioAutenticado, setUsuarioAutenticado] = useState(false); // Estado para verificar si está autenticado
 
-  // Array de las tarjetas
-  const cards = [
-    { id: 1, title: "Salir a Trotar", description: "", price: "" },
-    { id: 2, title: "a", description: "", price: "" },
-    { id: 3, title: "b", description: "", price: "" },
-    { id: 4, title: "c", description: "", price: "" },
-    { id: 5, title: "d", description: "", price: "" },
-    { id: 6, title: "e", description: "", price: "" },
-    { id: 7, title: "f", description: "", price: "" },
-    { id: 8, title: "g", description: "", price: "" },
-  ];
-
+  // Comprobar si el usuario tiene un token en localStorage
   useEffect(() => {
-    const checkSession = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          // Hacemos una solicitud al backend para verificar el token
-          const response = await axios.post('http://localhost:3000/verify-token', { token });
-          
-          if (response.data.success) {
-            setIsLogged(true); // Si el token es válido, el usuario está logueado
-          } else {
-            setIsLogged(false);
-          }
-        } catch (err) {
-          console.error('Error al verificar el token:', err);
-          setIsLogged(false);
-        }
-      } else {
-        setIsLogged(false); // Si no hay token, el usuario no está logueado
-      }
-      setLoading(false);  // Dejamos de mostrar el cargando
-    };
+  const token = localStorage.getItem('token');
+  if (token) {
+    setUsuarioAutenticado(true);
 
-    checkSession();
-  }, []);
+    // Cargar desde localStorage
+    const ubicacionGuardada = localStorage.getItem('ubicacion');
+    const climaGuardado = localStorage.getItem('clima');
 
-  const handleLoginRedirect = () => {
-    navigate('/login');
-  };
+    if (ubicacionGuardada && climaGuardado) {
+      setUbicacionAutomatica(ubicacionGuardada);
+      setClimaAutomatico(climaGuardado);
+    } else {
+      obtenerUbicacionAutomatica();
+    }
 
-  if (loading) {
-    return <div>Loading...</div>; // Mostrar mientras verificamos la sesión
+    // Establecer actualización periódica
+    const intervalo = setInterval(() => {
+      obtenerUbicacionAutomatica();
+    }, 10 * 60 * 1000); // 10 minutos
+
+    // Limpiar el intervalo cuando se desmonta el componente
+    return () => clearInterval(intervalo);
+
+  } else {
+    setUsuarioAutenticado(false);
+  }
+}, []);
+
+  const obtenerUbicacionAutomatica = () => {
+  if (!navigator.geolocation) {
+    setUbicacionAutomatica("La geolocalización no es compatible.");
+    return;
   }
 
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const latitud = position.coords.latitude;
+    const longitud = position.coords.longitude;
+
+    try {
+      const climaRes = await fetch('http://localhost:3000/clima', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat: latitud, lon: longitud })
+      });
+
+      const datosClima = await climaRes.json();
+
+      const climaTexto = `Clima: ${datosClima.descripcion}, ${datosClima.temperatura}°C`;
+      const ubicacionTexto = `Ciudad: ${datosClima.ciudad}`;
+
+      setClimaAutomatico(climaTexto);
+      setUbicacionAutomatica(ubicacionTexto);
+
+      // Guardar en localStorage
+      localStorage.setItem('clima', climaTexto);
+      localStorage.setItem('ubicacion', ubicacionTexto);
+    } catch (err) {
+      console.error(err);
+      setClimaAutomatico("Error al obtener clima.");
+      setUbicacionAutomatica("");
+    }
+  });
+};
+
+
   return (
-    <div className="p-4 rounded shadow" style={{ backgroundColor: '#f0f8ff', minHeight: '1000vh' }}>
-      {isLogged ? (
-        <>
-          <h1>¡Bienvenido de nuevo!</h1>
-          <p>Aquí están las actividades disponibles para ti:</p>
-          <div className="row row-cols-4 row-cols-md-3 row-cols-lg-4 g-5 mt-4">
-            {cards.map(card => (
-              <div key={card.id} className="col">
-                <Card 
-                  title={card.title}
-                  description={card.description}
-                  price={card.price}
-                />
-              </div>
-            ))}
+    <div className="clima-page">
+      <div className="flex-container">
+        {/* Si el usuario no está autenticado, mostramos el mensaje para iniciar sesión */}
+        {!usuarioAutenticado ? (
+          <div className="alert alert-warning">
+            <h2>Para acceder a la aplicación, necesitas iniciar sesión</h2>
           </div>
-        </>
-      ) : (
-        <>
-          <h1>¡Bienvenido a nuestra página!</h1>
-          <p>Para empezar, por favor inicia sesión.</p>
-          <button
-            className="btn btn-primary mt-3"
-            onClick={handleLoginRedirect}  // Llama a la función para redirigir al login
-          >
-            Iniciar sesión
-          </button>
-        </>
-      )}
+        ) : (
+          <>
+            <div className="tarjeta-ciudad-container">
+              <h1>Mi Ubicación Actual</h1>
+              <TarjetaCiudad automatico={true} clima={climaAutomatico} ubicacion={ubicacionAutomatica} />
+            </div>
+
+            <div className="tarjeta-ciudad-container">
+              <h1>Buscar otra Ciudad</h1>
+              <TarjetaCiudad />
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
+
+export default Home;
+
 	

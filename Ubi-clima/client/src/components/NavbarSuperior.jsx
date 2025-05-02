@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import '../assets/NavBar.css';
 
 export default function NavbarSuperior({ isLogged, handleLoginRedirect, handleLogout }) {
   return (
@@ -15,15 +16,6 @@ export default function NavbarSuperior({ isLogged, handleLoginRedirect, handleLo
           </li>
           <li className="nav-item">
             <Link className="nav-link" to="/activities">Actividades</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/historial">Historial</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/clima">Clima</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/ajustes">Ajustes</Link>
           </li>
         </ul>
         

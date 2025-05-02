@@ -55,11 +55,8 @@ function AppContent() {
       {/* Contenedor principal para las páginas */}
       <div className="container mt-5">
         <Routes>
-          <Route path="/" element={<Ajustes />} />
-	        <Route path="/Activities" element={<Activities />} />
-          <Route path="/historial" element={<Historial />} />
-          <Route path="/clima" element={<Clima />} />
-          <Route path="/ajustes" element={<Ajustes />} />
+          <Route path="/" element={<Home />} />
+	  <Route path="/Activities" element={<Activities />} />
 	  <Route path="/Registro" element={<Registro />} />
 	  <Route path="/Recuperar" element={<Recuperar />} />
           <Route path="/login" element={<div className="login-page"><Login /></div>} />
