@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';  // Importamos useNavigate
 import Card from '../components/Card';
+import axios from 'axios'; // Importamos axios para la comunicación con el backend
 
 export default function Home() {
   const [isLogged, setIsLogged] = useState(false);
+  const [loading, setLoading] = useState(true);  // Para mostrar un estado de carga
   const navigate = useNavigate();  // Hook para redirigir
 
   // Array de las tarjetas
@@ -19,13 +21,38 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsLogged(!!token);  // Si hay token, el usuario está logueado
+    const checkSession = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          // Hacemos una solicitud al backend para verificar el token
+          const response = await axios.post('http://localhost:3000/verify-token', { token });
+          
+          if (response.data.success) {
+            setIsLogged(true); // Si el token es válido, el usuario está logueado
+          } else {
+            setIsLogged(false);
+          }
+        } catch (err) {
+          console.error('Error al verificar el token:', err);
+          setIsLogged(false);
+        }
+      } else {
+        setIsLogged(false); // Si no hay token, el usuario no está logueado
+      }
+      setLoading(false);  // Dejamos de mostrar el cargando
+    };
+
+    checkSession();
   }, []);
 
   const handleLoginRedirect = () => {
-    navigate('/login');  // Redirige al usuario a la página de login
+    navigate('/login');
   };
+
+  if (loading) {
+    return <div>Loading...</div>; // Mostrar mientras verificamos la sesión
+  }
 
   return (
     <div className="p-4 rounded shadow" style={{ backgroundColor: '#f0f8ff', minHeight: '1000vh' }}>
@@ -60,4 +87,4 @@ export default function Home() {
     </div>
   );
 }
-
+	

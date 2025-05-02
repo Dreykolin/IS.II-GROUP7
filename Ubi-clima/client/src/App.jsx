@@ -33,7 +33,7 @@ function AppContent() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    window.location.reload();
   };
 
   const isLogged = !!localStorage.getItem('token');
@@ -55,7 +55,7 @@ function AppContent() {
       {/* Contenedor principal para las páginas */}
       <div className="container mt-5">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Ajustes />} />
 	        <Route path="/Activities" element={<Activities />} />
           <Route path="/historial" element={<Historial />} />
           <Route path="/clima" element={<Clima />} />

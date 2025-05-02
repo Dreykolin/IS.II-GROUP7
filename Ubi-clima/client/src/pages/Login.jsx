@@ -1,15 +1,18 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';  // Importa Link
+import { Link, useNavigate } from 'react-router-dom';  // Importa useNavigate
 import '../assets/estilos.css'; // tu css personalizado
 import 'bootstrap/dist/css/bootstrap.min.css'; // por si acaso
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();  // Inicializa useNavigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Llamada al backend para verificar las credenciales
     try {
       const response = await fetch('http://localhost:3000/login', {
         method: 'POST',
@@ -21,12 +24,17 @@ function Login() {
       console.log(data);
 
       if (data.success) {
+        // Si las credenciales son correctas, guarda el token (si lo necesitas)
+        localStorage.setItem('token', data.token);  // Guarda el token en localStorage, si es necesario
         alert('Inicio de sesión exitoso');
+        navigate('/');  // Redirige a /home después del login exitoso
       } else {
-        alert('Correo o contraseña incorrectos');
+        // Si las credenciales son incorrectas, muestra un error
+        setError('Correo o contraseña incorrectos');
       }
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
+      setError('Hubo un error al procesar la solicitud');
     }
   };
 
@@ -61,6 +69,9 @@ function Login() {
             />
           </div>
 
+          {/* Mostrar mensaje de error si es necesario */}
+          {error && <div className="alert alert-danger">{error}</div>}
+
           <div className="mb-3 text-end">
             <Link to="/Recuperar" className="forgot-password">¿Olvidaste tu contraseña?</Link>
           </div>
@@ -78,5 +89,4 @@ function Login() {
 }
 
 export default Login;
-
 

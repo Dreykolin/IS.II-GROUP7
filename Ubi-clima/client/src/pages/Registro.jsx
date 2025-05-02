@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Asegúrate de importar Bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -14,10 +13,28 @@ const Registro = () => {
     setFormData({ ...formData, [id]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Lógica para el registro, por ejemplo, validaciones, enviar datos al servidor, etc.
-    console.log('Formulario enviado:', formData);
+
+    // Validar que las contraseñas coincidan
+    if (formData.password !== formData.confirmPassword) {
+      alert('Las contraseñas no coinciden');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/guardar_usuario', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email, contraseña: formData.password }),
+      });
+
+      const data = await response.text(); // tu endpoint responde con texto plano
+      alert(data); // mostrar respuesta del backend
+    } catch (error) {
+      console.error('Error al registrar usuario:', error);
+      alert('Error al registrar usuario');
+    }
   };
 
   return (
@@ -25,19 +42,7 @@ const Registro = () => {
       <div className="p-4 shadow-sm rounded" style={{ maxWidth: '400px', width: '100%' }}>
         <h2 className="text-center mb-3">Crear Cuenta</h2>
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">Nombre Completo</label>
-            <input
-              type="text"
-              className="form-control"
-              id="name"
-              placeholder="Tu nombre completo"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
+          {/* Campo de email */}
           <div className="mb-3">
             <label htmlFor="email" className="form-label">Correo Electrónico</label>
             <input
@@ -51,6 +56,7 @@ const Registro = () => {
             />
           </div>
 
+          {/* Contraseña */}
           <div className="mb-3">
             <label htmlFor="password" className="form-label">Contraseña</label>
             <input
@@ -64,12 +70,13 @@ const Registro = () => {
             />
           </div>
 
+          {/* Confirmar contraseña */}
           <div className="mb-3">
-            <label htmlFor="confirm-password" className="form-label">Confirmar Contraseña</label>
+            <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña</label>
             <input
               type="password"
               className="form-control"
-              id="confirm-password"
+              id="confirmPassword"
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={handleChange}
@@ -77,13 +84,15 @@ const Registro = () => {
             />
           </div>
 
+          {/* Botón */}
           <button type="submit" className="btn btn-primary w-100 mb-3">
             Registrarse
           </button>
 
+          {/* Link */}
           <div className="text-center">
             <span>¿Ya tienes una cuenta?</span>
-            <a href="/login" className="text-decoration-none">Inicia Sesión</a>
+            <a href="/login" className="text-decoration-none"> Inicia Sesión</a>
           </div>
         </form>
       </div>

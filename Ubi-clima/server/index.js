@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
-const db = new sqlite3.Database('./ubicaciones.db');
+const db = new sqlite3.Database('./base_de_datos.db');  // Acá creamos nuestra base de datos
 
 // Middleware
 app.use(cors());
@@ -20,7 +20,12 @@ webpush.setVapidDetails('mailto:lcao2018@udec.cl', publicVapidKey, privateVapidK
 
 let subscriptions = [];
 
-// Base de datos
+
+
+
+
+
+// TABLAS
 db.run(`CREATE TABLE IF NOT EXISTS ubicaciones (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   latitud REAL,
@@ -28,12 +33,52 @@ db.run(`CREATE TABLE IF NOT EXISTS ubicaciones (
   ciudad TEXT
 );`);
 
+db.run(`CREATE TABLE IF NOT EXISTS actividades (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nombre TEXT,
+  categoria TEXT,
+  exterior BOOLEAN,
+  lluvia BOOLEAN
+);`);
+
+db.run(`CREATE TABLE IF NOT EXISTS usuarios (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT UNIQUE,
+  contraseña TEXT
+);`);
+
+
+
+
+
+
 // Endpoints
 app.post('/subscribe', (req, res) => {
   subscriptions.push(req.body);
   console.log('📬 Nueva suscripción push');
   res.status(201).json({ message: 'Subscribed!' });
 });
+
+
+
+app.post('/guardar_usuario', (req, res) => {
+  const { email, contraseña } = req.body;
+
+  if (!email || !contraseña) {
+    return res.status(400).send('Email y contraseña son obligatorios');
+  }
+
+  const sql = 'INSERT INTO usuarios (email, contraseña) VALUES (?, ?)';
+  db.run(sql, [email, contraseña], function(err) {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error al guardar el usuario');
+    }
+    res.send('Usuario guardado correctamente');
+  });
+});
+
+
 
 app.post('/guardar_ubicacion', (req, res) => {
   const { latitud, longitud, ciudad } = req.body;
@@ -46,6 +91,23 @@ app.post('/guardar_ubicacion', (req, res) => {
     res.send(`Ubicación guardada: ${ciudad}, Lat: ${latitud}, Lon: ${longitud}`);
   });
 });
+
+
+
+app.post('/guardar_actividad', (req, res) => {
+  const { nombre, categoria, exterior, lluvia } = req.body;
+  const sql = 'INSERT INTO actividades (nombre, categoria, exterior, lluvia) VALUES (?, ?, ?, ?)';
+
+  db.run(sql, [nombre, categoria, exterior, lluvia], function(err) {
+    if (err) {
+      return res.status(500).json({ error: 'Error al guardar la actividad' });
+    }
+    res.send(`Actividad guardada: ${nombre}, Categoría: ${categoria}`);
+  });
+});
+
+
+
 
 app.post('/clima', async (req, res) => {
   const { lat, lon } = req.body;
@@ -67,6 +129,9 @@ app.post('/clima', async (req, res) => {
   }
 });
 
+
+
+
 app.post('/clima_por_ciudad', async (req, res) => {
   const { ciudad } = req.body;
   const apiKey = '3c780b370db3868a80f217cda22a105e';
@@ -87,10 +152,33 @@ app.post('/clima_por_ciudad', async (req, res) => {
   }
 });
 
+
+
+
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  res.json({ success: email === 'admin@admin.com' && password === '123456' });
+
+  // Consulta SQL para verificar el usuario y la contraseña
+  const query = 'SELECT * FROM usuarios WHERE email = ? AND contraseña = ?';
+
+  
+  db.get(query, [email, password], (err, row) => {
+    if (err) {
+      console.error('Error al ejecutar la consulta:', err.message);
+      return res.status(500).json({ success: false, message: 'Error en la base de datos' });
+    }
+
+    if (row) {
+      // Si el usuario existe y la contraseña es correcta
+      res.json({ success: true, message: 'Inicio de sesión exitoso' });
+    } else {
+      // Si no se encuentra el usuario o la contraseña es incorrecta
+      res.json({ success: false, message: 'Correo o contraseña incorrectos' });
+    }
+  });
 });
+
+
 
 // 🔍 Nuevo endpoint para obtener actividades recomendadas
 app.post('/recomendar', (req, res) => {
