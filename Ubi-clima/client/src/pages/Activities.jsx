@@ -83,16 +83,48 @@ function Activities() {
   }, []);
   //obtenerUbicacion();
   
-  const CreateActivity = () => {
+  const CreateActivity = async () => {
     const n = document.getElementById("name").value;
     const d = document.getElementById("description").value;
-    const t = document.getElementById("temperature").value;
-    const w = document.getElementById("wind_speed").value;
-    const r = document.getElementById("rain").value;
-    const u = document.getElementById("uv").value;
-    const new_activity = new Activity(n, d, t, w, r, u);
-    setActivities([...activities, new_activity]);
-  }
+    const t = Number(document.getElementById("temperature").value);
+    const w = Number(document.getElementById("wind_speed").value);
+    const r = Number(document.getElementById("rain").value);
+    const u = Number(document.getElementById("uv").value);
+  
+    const body = {
+      nombre: n,
+      descripcion: d,
+      temperatura: t,
+      viento: w,
+      lluvia: r,
+      uv: u,
+      outdoor: user_preferences.outdoor,
+      indoor: user_preferences.indoor,
+      intellectual: user_preferences.intellectual,
+      sports: user_preferences.sports
+    };
+  
+    try {
+      const res = await fetch('http://localhost:3000/guardar_actividad', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+  
+      if (res.ok) {
+        const msg = await res.text();
+        alert("✅ Actividad guardada correctamente: " + msg);
+        setActivities([...activities, body]); // la agregas también al estado local
+      } else {
+        const error = await res.json();
+        alert("❌ Error: " + error.error);
+      }
+    } catch (err) {
+      console.error("❌ Error al guardar:", err);
+      alert("Error de red");
+    }
+  };
+  
 
   const ModifyActivity = (index) => {
     
