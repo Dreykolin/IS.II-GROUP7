@@ -26,8 +26,9 @@ function Login() {
       if (data.success) {
         // Si las credenciales son correctas, guarda el token (si lo necesitas)
         localStorage.setItem('token', data.token);  // Guarda el token en localStorage, si es necesario
-        alert('Inicio de sesión exitoso');
-        navigate('/');  // Redirige a /home después del login exitoso
+        localStorage.setItem('usuario_id', data.usuario_id); // guarda también el ID
+	alert('Inicio de sesión exitoso');	
+	navigate('/'); // redirige después de iniciar sesión
       } else {
         // Si las credenciales son incorrectas, muestra un error
         setError('Correo o contraseña incorrectos');

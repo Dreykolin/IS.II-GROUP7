@@ -44,7 +44,9 @@ db.run(`CREATE TABLE IF NOT EXISTS actividades (
   outdoor REAL,
   indoor REAL,
   intellectual REAL,
-  sports REAL
+  sports REAL,
+  usuario_id INTEGER,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );`);
 
 db.run(`CREATE TABLE IF NOT EXISTS usuarios (
@@ -101,14 +103,15 @@ app.post('/guardar_ubicacion', (req, res) => {
 
 
 app.post('/guardar_actividad', (req, res) => {
-  const { nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports } = req.body;
+  const { nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports, usuario_id } = req.body;
+
   const sql = `
     INSERT INTO actividades 
-    (nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports, usuario_id) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  db.run(sql, [nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports], function(err) {
+  db.run(sql, [nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports, usuario_id], function(err) {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: 'Error al guardar la actividad' });
@@ -172,7 +175,6 @@ app.post('/login', (req, res) => {
   // Consulta SQL para verificar el usuario y la contraseña
   const query = 'SELECT * FROM usuarios WHERE email = ? AND contraseña = ?';
 
-  
   db.get(query, [email, password], (err, row) => {
     if (err) {
       console.error('Error al ejecutar la consulta:', err.message);
@@ -180,14 +182,19 @@ app.post('/login', (req, res) => {
     }
 
     if (row) {
-      // Si el usuario existe y la contraseña es correcta
-      res.json({ success: true, message: 'Inicio de sesión exitoso' });
+      // Si el usuario existe, devolvemos su ID también
+      res.json({ 
+        success: true, 
+        message: 'Inicio de sesión exitoso', 
+        usuario_id: row.id, 
+        nombre: row.nombre // opcional, si lo necesitas
+      });
     } else {
-      // Si no se encuentra el usuario o la contraseña es incorrecta
       res.json({ success: false, message: 'Correo o contraseña incorrectos' });
     }
   });
 });
+
 
 
 
