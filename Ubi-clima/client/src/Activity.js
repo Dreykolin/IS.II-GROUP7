@@ -7,10 +7,10 @@ class Activity{
     uv;             //index
 
     //Gustos del usuario
-    outdoor_req;
-    indoor_req;
-    intellectual_req;
-    sports_req;
+    outdoor;
+    indoor;
+    intellectual;
+    sports;
   
     editing_mode = 0;
   

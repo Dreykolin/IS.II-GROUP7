@@ -36,9 +36,15 @@ db.run(`CREATE TABLE IF NOT EXISTS ubicaciones (
 db.run(`CREATE TABLE IF NOT EXISTS actividades (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   nombre TEXT,
-  categoria TEXT,
-  exterior BOOLEAN,
-  lluvia BOOLEAN
+  descripcion TEXT,
+  temperatura REAL,
+  viento REAL,
+  lluvia REAL,
+  uv REAL,
+  outdoor REAL,
+  indoor REAL,
+  intellectual REAL,
+  sports REAL
 );`);
 
 db.run(`CREATE TABLE IF NOT EXISTS usuarios (
@@ -95,14 +101,19 @@ app.post('/guardar_ubicacion', (req, res) => {
 
 
 app.post('/guardar_actividad', (req, res) => {
-  const { nombre, categoria, exterior, lluvia } = req.body;
-  const sql = 'INSERT INTO actividades (nombre, categoria, exterior, lluvia) VALUES (?, ?, ?, ?)';
+  const { nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports } = req.body;
+  const sql = `
+    INSERT INTO actividades 
+    (nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
 
-  db.run(sql, [nombre, categoria, exterior, lluvia], function(err) {
+  db.run(sql, [nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports], function(err) {
     if (err) {
+      console.error(err);
       return res.status(500).json({ error: 'Error al guardar la actividad' });
     }
-    res.send(`Actividad guardada: ${nombre}, Categoría: ${categoria}`);
+    res.send(`Actividad guardada: ${nombre}`);
   });
 });
 
@@ -185,24 +196,49 @@ app.post('/recomendar', (req, res) => {
   const { temperatura, viento, tiempo_id, preferencias } = req.body;
 
   const actividades = [
+    {nombre: "Ciclismo", descripcion: "Salir en bicicleta al parque", temperatura: 22, viento: 10, lluvia: 0, uv: 1, outdoor: 4, indoor: 1, intellectual: 1, sports: 3},
+    {nombre: "Picnic", descripcion: "Picnic con amigos", temperatura: 25, viento: 8, lluvia: 0, uv: 1, outdoor: 3, indoor: 1, intellectual: 1, sports: 1},
+    {nombre: "Senderismo", descripcion: "Subida en el cerro", temperatura: 18, viento: 12, lluvia: 0, uv: 1, outdoor: 4, indoor: 1, intellectual: 1, sports: 3},
+    {nombre: "Lectura en balcón", descripcion: "Leer en el balcón", temperatura: 20, viento: 5, lluvia: 0, uv: 7, outdoor: 2, indoor: 5, intellectual: 5, sports: 1},
+    {nombre: "Lectura junto al fuego", descripcion: "Leer en la casa", temperatura: 10, viento: 7, lluvia: 0, uv: 7, outdoor: 1, indoor: 4, intellectual: 5, sports: 1},
+    {nombre: "Fútbol", descripcion: "Jugar fútbol con amigos", temperatura: 24, viento: 9, lluvia: 0, uv: 1, outdoor: 3, indoor: 1, intellectual: 1, sports: 4},
+
+    /*
     { nombre: 'Leer un libro', categoria: 'relajación', exterior: false, lluvia: true },
     { nombre: 'Correr en el parque', categoria: 'ejercicio', exterior: true, lluvia: false },
     { nombre: 'Ver una película', categoria: 'ocio', exterior: false, lluvia: true },
     { nombre: 'Andar en bicicleta', categoria: 'ejercicio', exterior: true, lluvia: false },
     { nombre: 'Meditar', categoria: 'relajación', exterior: false, lluvia: true }
+     */
   ];
 
   const llueve = tiempo_id >= 200 && tiempo_id < 700;
   const vientoFuerte = viento > 10;
 
+
+  const filteredActivities = actividades.filter(activity => {
+    return (
+      activity.outdoor <= preferencias.outdoor &&
+      activity.indoor <= preferencias.indoor &&
+      activity.intellectual <= preferencias.intellectual &&
+      activity.sports <= preferencias.sports &&
+      temperatura >= activity.temperatura - 10 &&
+      temperatura <= activity.temperatura + 10 &&
+      viento <= activity.viento + 10
+
+      
+    );
+  });
+
+  /*
   const recomendadas = actividades.filter(a => {
     const coincide = preferencias[a.categoria] > 0;
     const no_lluvia = !a.exterior || !llueve;
     const no_viento = !a.exterior || !vientoFuerte;
     return coincide && no_lluvia && no_viento;
   });
-
-  res.json({ actividades: recomendadas });
+  */
+  res.json({ actividades: filteredActivities });
 });
 
 // ⏰ Envío de notificaciones periódicas
