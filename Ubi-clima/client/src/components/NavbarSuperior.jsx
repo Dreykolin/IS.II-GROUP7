@@ -62,6 +62,7 @@ export default function NavbarSuperior({ isLogged, handleLoginRedirect, handleLo
           ) : (
             <button className="btn btn-primary" onClick={handleLoginRedirect}>Iniciar sesión</button>
           )}
+          <button className="btn btn-primary" onClick={suscribeNotification}>Susribirse a notificaciones</button>
         </div>
       </div>
     </nav>
