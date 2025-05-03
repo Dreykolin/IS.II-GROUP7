@@ -20,11 +20,6 @@ webpush.setVapidDetails('mailto:lcao2018@udec.cl', publicVapidKey, privateVapidK
 
 let subscriptions = [];
 
-
-
-
-
-
 // TABLAS
 db.run(`CREATE TABLE IF NOT EXISTS ubicaciones (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,19 +50,12 @@ db.run(`CREATE TABLE IF NOT EXISTS usuarios (
   contraseña TEXT
 );`);
 
-
-
-
-
-
 // Endpoints
 app.post('/subscribe', (req, res) => {
   subscriptions.push(req.body);
   console.log('📬 Nueva suscripción push');
   res.status(201).json({ message: 'Subscribed!' });
 });
-
-
 
 app.post('/guardar_usuario', (req, res) => {
   const { email, contraseña } = req.body;
@@ -251,13 +239,12 @@ app.post('/recomendar', (req, res) => {
 // ⏰ Envío de notificaciones periódicas
 setInterval(() => {
   const message = {
-    title: '⏰ Recordatorio',
-    body: 'Esta es una notificación push automática del servidor.'
+    title: 'Clima de hoy en ubicación',
+    body: 'temperatura: ,actividad recomenddo: salir a caminar.'
   };
   sendToAll(message);
 }, 30000);
 
-// 🔧 Enviar a todos los subscriptores
 async function sendToAll(message) {
   const payload = JSON.stringify(message);
   await Promise.allSettled(
