@@ -12,6 +12,7 @@ function Activities() {
     tiempo_id: null
   });
   const [activities, setActivities] = useState([]);
+  const [adminActivities, setAdminActivities] = useState([]); // Estado para actividades del admin
   const [recomendaciones, setRecomendaciones] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [user_preferences, setPreferences] = useState({
@@ -25,6 +26,7 @@ function Activities() {
   // Cargar actividades del usuario y obtener clima automáticamente al inicio
   useEffect(() => {
     loadUserActivities();
+    loadAdminActivities(); // Cargar actividades del admin
     obtenerUbicacion(); // Llamada automática a la función de obtención de clima
   }, []);
 
@@ -48,6 +50,20 @@ function Activities() {
       setActivities(data);
     } catch (error) {
       console.error("Error al obtener actividades:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Cargar actividades del admin (donde usuario_id es null)
+  const loadAdminActivities = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`http://localhost:3000/admin`);
+      const data = await res.json();
+      setAdminActivities(data);
+    } catch (error) {
+      console.error("Error al obtener actividades del admin:", error);
     } finally {
       setIsLoading(false);
     }
@@ -218,6 +234,21 @@ function Activities() {
     alert(`"${actividad.nombre}" agregada a tus actividades personalizadas`);
   };
 
+  // Agregar actividad del admin a la lista personal
+  const addAdminActivity = (index) => {
+    const actividad = adminActivities[index];
+    const new_activity = new Activity(
+      actividad.nombre,
+      actividad.descripcion,
+      actividad.temperatura,
+      actividad.viento,
+      actividad.lluvia,
+      actividad.uv
+    );
+    setActivities([...activities, new_activity]);
+    alert(`"${actividad.nombre}" agregada a tus actividades personalizadas`);
+  };
+
   // ===== COMPONENTES DE INTERFAZ =====
   // Componente para gestionar preferencias de usuario
   const PreferenceSelector = () => {
@@ -267,6 +298,32 @@ function Activities() {
         ))
       ) : (
         <p>No hay actividades que coincidan con tus preferencias</p>
+      )}
+    </div>
+  );
+
+  // Componente para mostrar actividades del administrador
+  const AdminActivitiesList = () => (
+    <div>
+      <h1>Actividades Recomendadas por el Administrador</h1>
+      {isLoading ? (
+        <p>Cargando actividades del administrador...</p>
+      ) : adminActivities.length > 0 ? (
+        adminActivities.map((item, index) => (
+          <div key={index}>
+            <h3>{item.nombre}</h3>
+            <p>{item.descripcion}</p>
+            <p>Temperatura ideal: {item.temperatura}°C</p>
+            <p>Viento ideal: {item.viento} m/s</p>
+            <p>Lluvia: {item.lluvia} mm</p>
+            <p>Índice UV: {item.uv}</p>
+            <button onClick={() => addAdminActivity(index)}>
+              Agregar a mis actividades
+            </button>
+          </div>
+        ))
+      ) : (
+        <p>No hay actividades del administrador disponibles</p>
       )}
     </div>
   );
@@ -353,14 +410,10 @@ function Activities() {
         <>
           <p>Temperatura: {clima.temperatura}°C</p>
           <p>Viento: {clima.viento} m/s</p>
-          <p>ID de clima: {clima.tiempo_id}</p>
         </>
       ) : (
         <p>{isLoading ? "Cargando datos del clima..." : "Datos del clima no disponibles"}</p>
       )}
-      <button onClick={obtenerUbicacion} disabled={isLoading}>
-        {isLoading ? "Buscando..." : "Actualizar clima"}
-      </button>
     </div>
   );
 
@@ -370,9 +423,9 @@ function Activities() {
       <WeatherInfo />
       <PreferenceSelector />
       <ActivityList />
+      <AdminActivitiesList />
       <RecommendationsList />
       <ActivityForm />
-      {/* Nota: Ya no es necesario hacer clic en el botón de buscar, el clima se carga automáticamente */}
     </div>
   );
 }

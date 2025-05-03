@@ -10,7 +10,7 @@ import Activities from './pages/Activities';
 import Registro from './pages/Registro';
 import Recuperar from './pages/Recuperar';
 import Historial from './pages/Historial';
-import Clima from './pages/Clima';
+
 import Ajustes from './pages/Ajustes';
 import Login from './pages/Login';
 import './index.css';

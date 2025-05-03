@@ -257,7 +257,16 @@ async function sendToAll(message) {
 }
 
 
-
+app.get('/admin', (req, res) => {
+  const query = `SELECT * FROM actividades WHERE usuario_id IS NULL`;
+  db.all(query, [], (err, rows) => {
+    if (err) {
+      console.error('Error al obtener actividades del admin:', err.message);
+      return res.status(500).json({ error: 'Error en la base de datos' });
+    }
+    res.json(rows);
+  });
+});
 
 
 
