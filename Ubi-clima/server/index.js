@@ -236,39 +236,36 @@ app.post('/recomendar', (req, res) => {
   res.json({ actividades: filteredActivities });
 });
 
-// ⏰ Envío de notificaciones periódicas
-setInterval(() => {
-  const message = {
-    title: 'Clima de hoy en ubicación',
-    body: 'temperatura: ,actividad recomenddo: salir a caminar.'
-  };
-  sendToAll(message);
-}, 30000);
+setInterval(async () => {
+  for (const { subscription, ubi } of subscriptions) {
+    const { lat, lon } = ubi;
+    const apiKey = '3c780b370db3868a80f217cda22a105e';
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=es`;
 
-async function sendToAll(message) {
-  const payload = JSON.stringify(message);
-  await Promise.allSettled(
-    subscriptions.map(sub =>
-      webpush.sendNotification(sub, payload).catch(err => {
-        console.error('Error al enviar push:', err);
-      })
-    )
-  );
-}
+    try {
+      const { data } = await axios.get(url);
 
+      const temp = data.main.temp;
+      const weatherDescription = data.weather[0].description;
 
-app.get('/admin', (req, res) => {
-  const query = `SELECT * FROM actividades WHERE usuario_id IS NULL`;
-  db.all(query, [], (err, rows) => {
-    if (err) {
-      console.error('Error al obtener actividades del admin:', err.message);
-      return res.status(500).json({ error: 'Error en la base de datos' });
+      let actividad = 'revisar el clima antes de salir';
+      if (temp > 20 && weatherDescription.includes('despejado')) {
+        actividad = 'salir a caminar';
+      } else if (weatherDescription.includes('lluvia')) {
+        actividad = 'llevar paraguas o quedarse en casa';
+      }
+
+      const message = {
+        title: `Clima actual en tu ubicación`,
+        body: `Temperatura: ${temp}°C, Cielo: ${weatherDescription}, Actividad recomendada: ${actividad}`
+      };
+
+      await webpush.sendNotification(subscription, JSON.stringify(message));
+    } catch (err) {
+      console.error('Error al obtener el clima o enviar notificación:', err);
     }
-    res.json(rows);
-  });
-});
-
-
+  }
+}, 30000);
 
 app.get('/actividades/:usuario_id', (req, res) => {
   const { usuario_id } = req.params;
