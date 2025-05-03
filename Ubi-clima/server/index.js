@@ -281,8 +281,16 @@ app.get('/actividades/:usuario_id', (req, res) => {
   });
 });
 
-
-
+app.get('/admin', (req, res) => {
+  const query = `SELECT * FROM actividades WHERE usuario_id IS NULL`;
+  db.all(query, [], (err, rows) => {
+    if (err) {
+      console.error('Error al obtener actividades del admin:', err.message);
+      return res.status(500).json({ error: 'Error en la base de datos' });
+    }
+    res.json(rows);
+  });
+});
 
 app.listen(3000, () => {
   console.log('🚀 Servidor corriendo en http://localhost:3000');
