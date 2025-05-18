@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';  // Importa useNavigate
-import '../assets/estilos.css'; // tu css personalizado
+import '../assets/login.css'; // tu css personalizado
 import 'bootstrap/dist/css/bootstrap.min.css'; // por si acaso
 
 function Login() {

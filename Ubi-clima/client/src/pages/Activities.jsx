@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { defaultActivities } from '../defaultActivities.js';
 import Activity from '../Activity.js';
+import '../assets/activities.css';
 
 // Componente principal de Actividades
 function Activities() {

@@ -4,7 +4,6 @@ const axios = require('axios');
 const webpush = require('web-push');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
-
 const app = express();
 const db = new sqlite3.Database('./base_de_datos.db');  // Acá creamos nuestra base de datos
 
@@ -18,7 +17,13 @@ const publicVapidKey = "BPaW76e491m4ebBJFa2s5aswfKU6jhSoVFDsAV_z0cbFFe5uGinqGn9P
 const privateVapidKey = "-HOhVaQD_VkcLgdT3GHGd6luMPP0RdBfbLZ6aCMl80s";
 webpush.setVapidDetails('mailto:lcao2018@udec.cl', publicVapidKey, privateVapidKey);
 
-let subscriptions = [];
+let subscriptions = []; //Curioso digamos
+
+
+
+
+
+
 
 // TABLAS
 db.run(`CREATE TABLE IF NOT EXISTS ubicaciones (
@@ -51,12 +56,17 @@ db.run(`CREATE TABLE IF NOT EXISTS usuarios (
 );`);
 
 // Endpoints
-app.post('/subscribe', (req, res) => {
-  subscriptions.push(req.body);
-  console.log('📬 Nueva suscripción push');
-  res.status(201).json({ message: 'Subscribed!' });
-});
 
+
+
+
+
+
+
+
+
+
+//usado para registrar un usuario en la base de datos
 app.post('/guardar_usuario', (req, res) => {
   const { email, contraseña } = req.body;
 
@@ -75,7 +85,7 @@ app.post('/guardar_usuario', (req, res) => {
 });
 
 
-
+//Actualmente tenemos una tabla de ubicaciones eb la bdd, tocará ver si realmente es útil, pero el tema es que se guardan co esto.
 app.post('/guardar_ubicacion', (req, res) => {
   const { latitud, longitud, ciudad } = req.body;
   const sql = 'INSERT INTO ubicaciones (latitud, longitud, ciudad) VALUES (?, ?, ?)';
@@ -89,7 +99,8 @@ app.post('/guardar_ubicacion', (req, res) => {
 });
 
 
-
+//El más importante. Permite que el usuario guarde sus actividades.
+//también está programado para que si se añade una actividad sin user id, este esté disponible para todos (como modo predeterminado)
 app.post('/guardar_actividad', (req, res) => {
   const { nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports, usuario_id } = req.body;
 
@@ -111,6 +122,16 @@ app.post('/guardar_actividad', (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
+//Esto no guarda en una base de datos, esto solo captura el clima en base a la latencia y longitud, usada para 
+//tener el clima de tu ciudad actual
 app.post('/clima', async (req, res) => {
   const { lat, lon } = req.body;
   const apiKey = '3c780b370db3868a80f217cda22a105e';
@@ -133,7 +154,7 @@ app.post('/clima', async (req, res) => {
 
 
 
-
+//Si quieres añadir una ciudad, se usa este, que hace lo mismo que el anterior, pero en base al nombre de la ciudad
 app.post('/clima_por_ciudad', async (req, res) => {
   const { ciudad } = req.body;
   const apiKey = '3c780b370db3868a80f217cda22a105e';
@@ -157,6 +178,12 @@ app.post('/clima_por_ciudad', async (req, res) => {
 
 
 
+
+
+
+
+
+//Este endopint captura el email y la comtraseña que introduzcamos y lo busca en la base de datos, si todo sale bien, se loguea
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -186,7 +213,16 @@ app.post('/login', (req, res) => {
 
 
 
-// 🔍 Nuevo endpoint para obtener actividades recomendadas
+
+
+
+
+
+
+
+
+
+// No tengo idea de este, peeeero es correcto que el backend maneje las recomendaciones y no el front
 app.post('/recomendar', (req, res) => {
   const { temperatura, viento, tiempo_id, preferencias } = req.body;
 
@@ -236,51 +272,43 @@ app.post('/recomendar', (req, res) => {
   res.json({ actividades: filteredActivities });
 });
 
-setInterval(async () => {
-  for (const { subscription, ubi } of subscriptions) {
-    const { lat, lon } = ubi;
-    const apiKey = '3c780b370db3868a80f217cda22a105e';
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=es`;
 
-    try {
-      const { data } = await axios.get(url);
 
-      const temp = data.main.temp;
-      const weatherDescription = data.weather[0].description;
 
-      let actividad = 'revisar el clima antes de salir';
-      if (temp > 20 && weatherDescription.includes('despejado')) {
-        actividad = 'salir a caminar';
-      } else if (weatherDescription.includes('lluvia')) {
-        actividad = 'llevar paraguas o quedarse en casa';
-      }
 
-      const message = {
-        title: `Clima actual en tu ubicación`,
-        body: `Temperatura: ${temp}°C, Cielo: ${weatherDescription}, Actividad recomendada: ${actividad}`
-      };
 
-      await webpush.sendNotification(subscription, JSON.stringify(message));
-    } catch (err) {
-      console.error('Error al obtener el clima o enviar notificación:', err);
-    }
-  }
-}, 30000);
 
-app.get('/actividades/:usuario_id', (req, res) => {
-  const { usuario_id } = req.params;
-  const query = `SELECT * FROM actividades WHERE usuario_id = ?`;
-
-  db.all(query, [usuario_id], (err, rows) => {
-    if (err) {
-      console.error('Error al obtener actividades:', err.message);
-      return res.status(500).json({ error: 'Error en la base de datos' });
-    }
-
-    res.json(rows); // Devuelve todas las actividades del usuario
-  });
+//Usado por las notificaciones en 2do plano
+app.post('/subscribe', (req, res) => {
+  subscriptions.push(req.body);
+  console.log('📬 Nueva suscripción push');
+  res.status(201).json({ message: 'Subscribed!' });
 });
 
+//Otro que no tengo idea, seguro es de la linna porque es lo que lanzaba la notificación
+// ⏰ Envío de notificaciones periódicas
+setInterval(() => {
+  const message = {
+    title: 'Clima de hoy en ubicación',
+    body: 'temperatura: ,actividad recomenddo: salir a caminar.'
+  };
+  sendToAll(message);
+}, 30000);
+
+async function sendToAll(message) {
+  const payload = JSON.stringify(message);
+  await Promise.allSettled(
+    subscriptions.map(sub =>
+      webpush.sendNotification(sub, payload).catch(err => {
+        console.error('Error al enviar push:', err);
+      })
+    )
+  );
+}
+
+
+
+//El modo Admin, esto NO es posible según yo, usuario id es una clave primaria
 app.get('/admin', (req, res) => {
   const query = `SELECT * FROM actividades WHERE usuario_id IS NULL`;
   db.all(query, [], (err, rows) => {
@@ -292,6 +320,25 @@ app.get('/admin', (req, res) => {
   });
 });
 
+
+//Esto es lo que permite obtener las actividades del usuario que anteriormente fueron registradas en la base de datos,.
+app.get('/actividades/:usuario_id', (req, res) => {
+  const { usuario_id } = req.params;
+  const query = `SELECT * FROM actividades WHERE usuario_id = ?`;
+
+  db.all(query, [usuario_id], (err, rows) => {
+    if (err) {
+      console.error('Error al obtener actividades:', err.message);
+      return res.status(500).json({ error: 'Error en la base de datos' });
+    }
+
+    res.json(rows);
+  });
+});
+
+
+
+//Solo es un flag
 app.listen(3000, () => {
   console.log('🚀 Servidor corriendo en http://localhost:3000');
 });

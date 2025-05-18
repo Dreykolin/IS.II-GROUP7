@@ -53,3 +53,22 @@
   object-fit: contain;
 }
 
+/* NUEVO: Estilo para el botón de notificaciones */
+.btn-notifications {
+  background-color: #0056b3;
+  color: #f0f0f0;
+  border: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.btn-notifications:hover {
+  background-color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.btn-notifications:active {
+  background-color: #0056b3;
+}

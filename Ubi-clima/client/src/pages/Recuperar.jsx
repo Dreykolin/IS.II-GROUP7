@@ -1,6 +1,10 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Asegúrate de importar Bootstrap
 
+
+
+
+
 const Recuperar = () => {
   return (
     <div className="recover-container d-flex justify-content-center align-items-center vh-100">

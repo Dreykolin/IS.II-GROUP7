@@ -11,41 +11,21 @@ export default function NavbarSuperior({ isLogged, handleLoginRedirect, handleLo
     const permission = localStorage.getItem('permission');
     if (permission === 'granted') {
 
-      if (!navigator.geolocation) {
-        console.warn('Geolocalización no disponible.');
-        return;
-      }
+      navigator.serviceWorker.register('/sw.js').then(async (reg) => {
+        console.log('Service Worker registered');
 
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-  
-        try {
-          const reg = await navigator.serviceWorker.register('/sw.js');
-          console.log('Service Worker registered');
-  
-          const subscription = await reg.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
-          });
-  
-          const data = {
-            subscription: subscription,
-            ubi: { lat, lon }
-          };
-  
-          await fetch('http://localhost:3000/subscribe', {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: { 'Content-Type': 'application/json' }
-          });
-  
-          console.log('Subscribed to push notifications with location');
-        } catch (error) {
-          console.error('Error during subscription:', error);
-        }
-      }, (error) => {
-        console.error('Error getting geolocation:', error);
+        const subscription = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
+        });
+
+        await fetch('http://localhost:3000/subscribe', {
+          method: 'POST',
+          body: JSON.stringify(subscription),
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        console.log('Subscribed to push notifications');
       });
     } else {
       console.warn('Notification permission denied or dismissed');
@@ -76,16 +56,20 @@ export default function NavbarSuperior({ isLogged, handleLoginRedirect, handleLo
         </ul>
 
         {/* Botón login/logout */}
-        <div>
-          {isLogged ? (
-            <button className="btn btn-danger" onClick={handleLogout}>Cerrar sesión</button>
-          ) : (
-            <button className="btn btn-primary" onClick={handleLoginRedirect}>Iniciar sesión</button>
-          )}
-          <button className="btn btn-primary" onClick={suscribeNotification}>Susribirse a notificaciones</button>
-        </div>
+       <div className="d-flex align-items-center gap-2">
+       <button className="btn btn-warning" onClick={suscribeNotification}>
+  Notificaciones
+</button>
+  {isLogged ? (
+    <button className="btn btn-danger" onClick={handleLogout}>Cerrar sesión</button>
+  ) : (
+  <button className="btn btn-primary" onClick={handleLoginRedirect}>Iniciar sesión</button>
+  	
+   
+  )}
+   
+</div>
       </div>
     </nav>
   );
 }
-

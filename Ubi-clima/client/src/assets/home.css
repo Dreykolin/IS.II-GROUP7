@@ -1,0 +1,75 @@
+.clima-page {
+  background-color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 2rem;
+}
+
+/* Flexbox para alinear los dos contenedores a la izquierda y derecha */
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 4rem;
+  margin-top: 2rem;
+}
+
+/* Contenedor de cada tarjeta de ciudad */
+.tarjeta-ciudad-container {
+  background-color: #ffffff;
+  border-radius: 2rem;
+  box-shadow: 0 35px 30px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  width: 100%; /* Aseguramos que ambos contenedores tengan el mismo tamaño */
+  height: 300px; /* Alto fijo */
+  overflow: hidden; /* Para que no se desborden los elementos */
+}
+
+h1 {
+  font-size: 2rem;
+  color: #333;
+}
+
+h5 {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+button {
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #174abc;
+  color: white;
+}
+
+/* Estilos de los botones */
+button.btn-info {
+  background-color: #174abc;
+  color: white;
+}
+
+button.btn-info:hover {
+  background-color: #1a54d4;
+}
+
+button.btn-success {
+  background-color: #38a169;
+  color: white;
+}
+
+button.btn-success:hover {
+  background-color: #2f855a;
+}
+
+button.btn-secondary {
+  background-color: #aaa;
+  color: white;
+}
+
+button.btn-secondary:hover {
+  background-color: #aaa;
+}
+
+
+

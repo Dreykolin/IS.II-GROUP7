@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react';
-import '../assets/estilos.css'; // Asegúrate de importar tu archivo CSS
+import '../assets/Widget_clima.css'; // Asegúrate de importar tu archivo CSS
 
 function WidgetClima() {
   const [clima, setClima] = useState('');
+  /*
+  Tiene su propia función de "obtener ubicación". En un futuro se busca unificar esto, para que en vez de que lo haga el widget,
+  lo haga muy seguramente el app.jsx, cosa que el dato se almacene en alguna parte y pueda ser usado tanto por el widget como
+  por los demás componentes sin tener que hacer llamadas innecesarias.
 
+
+useEffect: Es asíncrono, no interrumpe otras tareas.
+Utiiza la función "Obtener ubiación y clima, utilizando la geolocalización del navegador y un llamado al endpoint "clima".
+
+   */
   useEffect(() => {
     const obtenerUbicacionYClima = async () => {
       if (!navigator.geolocation) {
@@ -33,7 +42,7 @@ function WidgetClima() {
 
     obtenerUbicacionYClima();
   }, []);
-
+//Devuelve el widget
   return (
     <div className="widget-clima">
       {clima || 'Cargando clima...'}

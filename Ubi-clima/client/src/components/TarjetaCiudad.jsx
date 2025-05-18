@@ -1,3 +1,15 @@
+/** 
+MUy probablemente este componente será reworkeado, porque el problmea no es que haga dos llamadas al clima
+sino que lo hace a travez de 2 endpoints diferentes.
+
+Por otro lado, el uso de "tarjetas" para que posean el mismo tamaño, es correcto.
+
+
+
+*/
+
+
+
 import { useState, useEffect } from 'react';
 
 function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp }) {

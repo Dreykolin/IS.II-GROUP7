@@ -1,0 +1,72 @@
+.login-page {
+  background-color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+  margin: 0;
+}
+
+.login-page .login-container {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-page h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-page .form-label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.login-page .form-control {
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.login-page .btn-airbnb {
+  background-color: #174abc;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  width: 100%;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.login-page .btn-airbnb:hover {
+  background-color: #1a54d4 ;
+}
+
+.login-page .forgot-password {
+  font-size: 0.9rem;
+  color: #6366f1;
+  text-decoration: none;
+}
+
+.login-page .forgot-password:hover {
+  text-decoration: underline;
+}
+
+.login-page .register-link {
+  font-weight: bold;
+  color: #ff385c;
+  text-decoration: none;
+  margin-left: 5px;
+}
+
+.login-page .register-link:hover {
+  text-decoration: underline;
+}
+
+

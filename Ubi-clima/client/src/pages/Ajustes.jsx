@@ -7,12 +7,16 @@ export default function Ajustes() {
     const token = localStorage.getItem('token');
     setUsuarioAutenticado(!!token);
   }, []);
-
+  /*
+  Por ahora está solo la estructura visual.
+  Para jugar con esto, hay que hacer una base de datos
+  y antes de una base de datos, hay que ahcer un MER  
+  */
   if (!usuarioAutenticado) {
     return (
       <div className="container mt-4">
         <div className="alert alert-warning">
-          <h2>Para acceder a los ajustes, necesitas iniciar sesión</h2>
+          <h2>Para acceder a los ajustes, necesitas iniciar sesión</h2>  
         </div>
       </div>
     );

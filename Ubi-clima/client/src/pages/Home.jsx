@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import TarjetaCiudad from "../components/TarjetaCiudad";
-import '../assets/estilos.css';
+import '../assets/home.css';
 
 function Home() {
   const [ubicacionAutomatica, setUbicacionAutomatica] = useState('');
