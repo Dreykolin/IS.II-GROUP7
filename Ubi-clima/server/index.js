@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const db = new sqlite3.Database('./base_de_datos.db');  // Acá creamos nuestra base de datos
+const Tables = require('./models/tables');
+Tables(db);
 
 // Middleware
 app.use(cors());
@@ -24,36 +26,6 @@ let subscriptions = []; //Curioso digamos
 
 
 
-
-// TABLAS
-db.run(`CREATE TABLE IF NOT EXISTS ubicaciones (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  latitud REAL,
-  longitud REAL,
-  ciudad TEXT
-);`);
-
-db.run(`CREATE TABLE IF NOT EXISTS actividades (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nombre TEXT,
-  descripcion TEXT,
-  temperatura REAL,
-  viento REAL,
-  lluvia REAL,
-  uv REAL,
-  outdoor REAL,
-  indoor REAL,
-  intellectual REAL,
-  sports REAL,
-  usuario_id INTEGER,
-  FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-);`);
-
-db.run(`CREATE TABLE IF NOT EXISTS usuarios (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT UNIQUE,
-  contraseña TEXT
-);`);
 
 // Endpoints
 
