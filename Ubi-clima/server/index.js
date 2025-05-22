@@ -195,6 +195,7 @@ app.post('/login', (req, res) => {
 
 
 // No tengo idea de este, peeeero es correcto que el backend maneje las recomendaciones y no el front
+// RE: estas actividades son las recomendadas por desarrolladores. lo ideal sería entregarselas a la db, pero por ahora están acá.
 app.post('/recomendar', (req, res) => {
   const { temperatura, viento, tiempo_id, preferencias } = req.body;
 
@@ -232,15 +233,6 @@ app.post('/recomendar', (req, res) => {
       
     );
   });
-
-  /*
-  const recomendadas = actividades.filter(a => {
-    const coincide = preferencias[a.categoria] > 0;
-    const no_lluvia = !a.exterior || !llueve;
-    const no_viento = !a.exterior || !vientoFuerte;
-    return coincide && no_lluvia && no_viento;
-  });
-  */
   res.json({ actividades: filteredActivities });
 });
 
