@@ -33,13 +33,13 @@ export default function NavbarSuperior({ isLogged, handleLoginRedirect, handleLo
   }
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar navbar-expand-lg navbar-light">
       <div className="container-fluid d-flex justify-content-between align-items-center">
         
         {/* Logo + nombre de la app */}
-        <div className="d-flex align-items-center">
+        <div className="d-flex align-items-center navbar-contenedor-logo">
           <img src={sun} alt="WeatherAct Logo" className="navbar-logo me-2" />
-          <span className="navbar-brand mb-0 h1">WeatherAct</span>
+          <span className="navbar-titulo">WeatherAct</span>
         </div>
         
         {/* Links de navegación */}
@@ -60,13 +60,13 @@ export default function NavbarSuperior({ isLogged, handleLoginRedirect, handleLo
 
         {/* Botón login/logout */}
        <div className="d-flex align-items-center gap-2">
-       <button className="btn btn-warning" onClick={suscribeNotification}>
+       <button className="btn-notifications" onClick={suscribeNotification}>
   Notificaciones
 </button>
   {isLogged ? (
-    <button className="btn btn-danger" onClick={handleLogout}>Cerrar sesión</button>
+    <button className="btn-notifications" onClick={handleLogout}>Cerrar sesión</button>
   ) : (
-  <button className="btn btn-primary" onClick={handleLoginRedirect}>Iniciar sesión</button>
+  <button className="btn-notifications" onClick={handleLoginRedirect}>Iniciar sesión</button>
   	
    
   )}
