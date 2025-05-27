@@ -106,7 +106,7 @@ app.post('/guardar_actividad', (req, res) => {
 //tener el clima de tu ciudad actual
 app.post('/clima', async (req, res) => {
   const { lat, lon } = req.body;
-  const apiKey = '3c780b370db3868a80f217cda22a105e';
+  const apiKey = 'e3ef98389af3cba40f253168adc30f89';
   const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=es`;
 
   try {
@@ -129,7 +129,7 @@ app.post('/clima', async (req, res) => {
 //Si quieres añadir una ciudad, se usa este, que hace lo mismo que el anterior, pero en base al nombre de la ciudad
 app.post('/clima_por_ciudad', async (req, res) => {
   const { ciudad } = req.body;
-  const apiKey = '3c780b370db3868a80f217cda22a105e';
+  const apiKey = 'e3ef98389af3cba40f253168adc30f89';
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(ciudad)}&appid=${apiKey}&units=metric&lang=es`;
 
   try {
@@ -299,6 +299,54 @@ app.get('/actividades/:usuario_id', (req, res) => {
     res.json(rows);
   });
 });
+
+
+
+app.post('/registrar_actividad', (req, res) => {
+  const { usuario_id, actividad_id } = req.body;
+
+  if (!usuario_id || !actividad_id) {
+    return res.status(400).json({ error: 'Faltan datos: usuario_id y actividad_id son obligatorios' });
+  }
+
+  const sql = `
+    INSERT INTO historial_actividades (usuario_id, actividad_id)
+    VALUES (?, ?)
+  `;
+
+  db.run(sql, [usuario_id, actividad_id], function(err) {
+    if (err) {
+      console.error('Error al guardar en historial:', err.message);
+      return res.status(500).json({ error: 'Error al registrar actividad' });
+    }
+    res.json({ success: true, message: 'Actividad registrada en historial' });
+  });
+});
+
+app.get('/historial/:usuario_id', (req, res) => {
+  const { usuario_id } = req.params;
+
+  const sql = `
+    SELECT 
+      a.nombre, 
+      a.descripcion, 
+      ha.fecha
+    FROM historial_actividades ha
+    JOIN actividades a ON ha.actividad_id = a.id
+    WHERE ha.usuario_id = ?
+    ORDER BY ha.fecha DESC
+  `;
+
+  db.all(sql, [usuario_id], (err, rows) => {
+    if (err) {
+      console.error('Error al obtener historial:', err.message);
+      return res.status(500).json({ error: 'Error al obtener historial' });
+    }
+    res.json(rows); // 👈 Esto devuelve un array de objetos con nombre, descripcion y fecha
+  });
+});
+
+
 
 
 

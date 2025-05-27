@@ -29,4 +29,16 @@ db.run(`CREATE TABLE IF NOT EXISTS usuarios (
   email TEXT UNIQUE,
   contraseña TEXT
 );`);
+
+db.run(`
+  CREATE TABLE IF NOT EXISTS historial_actividades (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id INTEGER,
+    actividad_id INTEGER,
+    fecha TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(usuario_id) REFERENCES usuarios(id),
+    FOREIGN KEY(actividad_id) REFERENCES actividades(id)
+  )
+`);
+
 };

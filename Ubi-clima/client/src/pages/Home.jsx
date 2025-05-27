@@ -71,6 +71,24 @@ const RecommendationsList = () => {
     });
   };
   //Aquí termina el sucio copypaste
+  const handleAgregar = async (actividad_id) => {
+  const usuario_id = localStorage.getItem('usuario_id');
+
+  try {
+    const res = await fetch(`http://localhost:3000/registrar_actividad`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuario_id, actividad_id }),
+    });
+
+    if (!res.ok) throw new Error('Error en la respuesta del servidor');
+    
+    alert('Actividad registrada con éxito');
+  } catch (err) {
+      console.error('Error al registrar actividad:', err);
+      alert('No se pudo registrar la actividad');
+    }
+  };
 
   //De aquí se agarran las actividades
   useEffect(() => {
@@ -125,6 +143,7 @@ const RecommendationsList = () => {
           <div key={index}>
             <h3>{actividad.nombre}</h3>
             <p>{actividad.descripcion}</p>
+            <button onClick={() => handleAgregar(actividad.id)}>Agregar al historial</button>
           </div>
         ))}
       </>
