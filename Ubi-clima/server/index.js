@@ -346,7 +346,59 @@ app.get('/historial/:usuario_id', (req, res) => {
   });
 });
 
+//Este es para guardar los gustos del usuario
+app.post('/api/guardar-preferencia', (req, res) => {
+  const { usuario_id, categoria, valor } = req.body;
 
+  if (!usuario_id || !categoria || typeof valor !== 'number') {
+    return res.status(400).json({ error: 'Datos incompletos' });
+  }
+
+  // Validar que la categoría sea válida (evita inyecciones SQL)
+  const categoriasValidas = ['outdoor', 'indoor', 'intellectual', 'sports'];
+  if (!categoriasValidas.includes(categoria)) {
+    return res.status(400).json({ error: 'Categoría inválida' });
+  }
+
+  // Verificar si ya existen preferencias
+  db.get('SELECT * FROM gustos WHERE usuario_id = ?', [usuario_id], (err, row) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    if (row) {
+      // Actualiza solo esa columna
+      const query = `UPDATE gustos SET ${categoria} = ? WHERE usuario_id = ?`;
+      db.run(query, [valor, usuario_id], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        return res.json({ message: 'Preferencia actualizada' });
+      });
+    } else {
+      // Crea una fila con valores nulos excepto la categoría actual
+      const nuevoRegistro = {
+        usuario_id,
+        outdoor: null,
+        indoor: null,
+        intellectual: null,
+        sports: null,
+        [categoria]: valor,
+      };
+      db.run(
+        `INSERT INTO gustos (usuario_id, outdoor, indoor, intellectual, sports)
+         VALUES (?, ?, ?, ?, ?)`,
+        [
+          nuevoRegistro.usuario_id,
+          nuevoRegistro.outdoor,
+          nuevoRegistro.indoor,
+          nuevoRegistro.intellectual,
+          nuevoRegistro.sports,
+        ],
+        function (err) {
+          if (err) return res.status(500).json({ error: err.message });
+          return res.json({ message: 'Preferencia creada' });
+        }
+      );
+    }
+  });
+});
 
 
 
