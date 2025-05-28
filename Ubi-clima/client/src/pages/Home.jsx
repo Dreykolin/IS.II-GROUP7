@@ -2,6 +2,54 @@ import { useState, useEffect } from 'react';
 import TarjetaCiudad from "../components/TarjetaCiudad";
 import '../assets/home.css';
 
+const ShortHistory = () => {
+  const [history, setHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      const usuario_id = localStorage.getItem('usuario_id');
+      if (!usuario_id) return;
+
+      setIsLoading(true);
+      try {
+        const res = await fetch(`http://localhost:3000/historial/${usuario_id}`);
+        const data = await res.json();
+
+        // ✅ Mostrar solo las 3 actividades más recientes
+        setHistory(data.slice(0, 3));
+      } catch (error) {
+        console.error("Error al obtener historial:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHistory();
+  }, []);
+
+  if (isLoading) return <p>Cargando historial...</p>;
+
+  return (
+    <div>
+      {history.length > 0 ? (
+        <>
+          <h2>Tus últimas actividades</h2>
+          {history.map((item, index) => (
+            <div key={index}>
+              <h3>{item.nombre}</h3>
+              <p>{item.descripcion}</p>
+              <p><small>{new Date(item.fecha).toLocaleString()}</small></p>
+            </div>
+          ))}
+        </>
+      ) : (
+        <p>No has hecho ninguna actividad aún.</p>
+      )}
+    </div>
+  );
+};
+
 const RecommendationsList = () => {
   const [activities, setActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -135,23 +183,23 @@ const RecommendationsList = () => {
   const filtradas = activities.filter(act => actividadesFiltradas(act));
 
   return (
-  <div>
-    {filtradas.length > 0 ? (
-      <>
-        <h2>De tus actividades favoritas, podrías hacer estas ahora.</h2>
-        {filtradas.map((actividad, index) => (
-          <div key={index}>
-            <h3>{actividad.nombre}</h3>
-            <p>{actividad.descripcion}</p>
-            <button onClick={() => handleAgregar(actividad.id)}>Agregar al historial</button>
-          </div>
-        ))}
-      </>
-    ) : (
-      <p>Las condiciones de tus actividades no se cumplen por ahora ☹️</p>
-    )}
-  </div>
-);
+    <div>
+      {filtradas.length > 0 ? (
+        <>
+          <h2>De tus actividades favoritas, podrías hacer estas ahora.</h2>
+          {filtradas.map((actividad, index) => (
+            <div key={index}>
+              <h3>{actividad.nombre}</h3>
+              <p>{actividad.descripcion}</p>
+              <button onClick={() => handleAgregar(actividad.id)}>Agregar al historial</button>
+            </div>
+          ))}
+        </>
+      ) : (
+        <p>Las condiciones de tus actividades no se cumplen por ahora ☹️</p>
+      )}
+    </div>
+  );
 
 };
 
@@ -256,9 +304,23 @@ function Home() {
         ) : (
           <>
             <RecommendationsList />
+
           </>
         )}
       </div>
+
+      <div className="flex-container">
+        {/* Si el usuario no está autenticado, mostramos el mensaje para iniciar sesión */}
+        {!usuarioAutenticado ? (
+          <></>
+        ) : (
+          <>
+            <ShortHistory />
+            
+          </>
+        )}
+      </div>
+
     </div>
   );
 }
