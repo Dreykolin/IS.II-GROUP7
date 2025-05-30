@@ -1,0 +1,82 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fef6e4;
+  color: #5b3e2b;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 1rem;
+  color: #a0522d;
+}
+
+.activity-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background-color: #fff7ec;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(91, 62, 43, 0.1);
+}
+
+.activity-card {
+  border: 1px solid #e0c3a3;
+  background-color: #fff0db;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+
+.activity-card:hover {
+  transform: scale(1.02);
+}
+
+.activity-card h2 {
+  color: #b44d0d;
+  margin-bottom: 0.5rem;
+}
+
+.activity-card p {
+  margin: 0.25rem 0;
+}
+
+button {
+  background-color: #d2691e;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #a0522d;
+}
+
+input,
+textarea {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border: 1px solid #d2b48c;
+  border-radius: 6px;
+  background-color: #fffefb;
+}
+
+textarea {
+  resize: vertical;
+}
+
+p.total {
+  text-align: center;
+  font-style: italic;
+  margin-top: 2rem;
+  color: #804000;
+}
