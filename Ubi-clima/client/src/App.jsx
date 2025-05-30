@@ -101,14 +101,14 @@ function AppContent() {
 
 
       {/* Contenedor principal para las páginas */}
-      <div className="container mt-5">
+      <div>
         <Routes>
           <Route path="/" element={<Home />} />
-	  <Route path="/Activities" element={<Activities />} />
-	  <Route path="/Ajustes" element={<Ajustes />} />
-    <Route path="/Historial" element={<Historial usuarioId={localStorage.getItem('usuario_id')} />} />
-	  <Route path="/Registro" element={<Registro />} />
-	  <Route path="/Recuperar" element={<Recuperar />} />
+          <Route path="/Activities" element={<Activities />} />
+          <Route path="/Ajustes" element={<Ajustes />} />
+          <Route path="/Historial" element={<Historial usuarioId={localStorage.getItem('usuario_id')} />} />
+          <Route path="/Registro" element={<Registro />} />
+          <Route path="/Recuperar" element={<Recuperar />} />
           <Route path="/login" element={<div className="login-page"><Login /></div>} />
         </Routes>
       </div>

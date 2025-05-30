@@ -62,7 +62,7 @@ export default function NavbarSuperior({ isLogged, handleLoginRedirect, handleLo
        <div className="d-flex align-items-center gap-2">
        <button className="btn-notifications" onClick={suscribeNotification}>
   Notificaciones
-</button>
+        </button>
   {isLogged ? (
     <button className="btn-notifications" onClick={handleLogout}>Cerrar sesión</button>
   ) : (

@@ -276,51 +276,74 @@ function Home() {
 
   return (
     <div className="clima-page">
-      <div className="flex-container">
-        {/* Si el usuario no está autenticado, mostramos el mensaje para iniciar sesión */}
-        {!usuarioAutenticado ? (
-          <div className="alert alert-warning">
-            <h2>Para acceder a la aplicación, necesitas iniciar sesión</h2>
+      {/* Si el usuario no está autenticado, mostramos el mensaje para iniciar sesión */}
+      {!usuarioAutenticado ? (
+        <>
+          <div className="flex-container">
+            <div className="alert alert-warning alerta-usuario">
+              <h2>Para acceder a la aplicación, necesitas iniciar sesión</h2>
+            </div>
           </div>
-        ) : (
-          <>
+        </>
+      ) : (
+        <>
+          <div className="flex-container">
             <div className="tarjeta-ciudad-container">
               <h1>Mi Ubicación Actual</h1>
               <TarjetaCiudad automatico={true} clima={climaAutomatico} ubicacion={ubicacionAutomatica} />
             </div>
-
             <div className="tarjeta-ciudad-container">
               <h1>Buscar otra Ciudad</h1>
               <TarjetaCiudad />
             </div>
-          </>
-        )}
-      </div>
-
-      <div className="flex-container">
-        {/* Si el usuario no está autenticado, mostramos el mensaje para iniciar sesión */}
-        {!usuarioAutenticado ? (
-          <></>
-        ) : (
-          <>
+          </div>
+          
+          <div className="flex-container">
             <RecommendationsList />
-
-          </>
-        )}
-      </div>
-
-      <div className="flex-container">
-        {/* Si el usuario no está autenticado, mostramos el mensaje para iniciar sesión */}
-        {!usuarioAutenticado ? (
-          <></>
-        ) : (
-          <>
+          </div>
+          
+          <div className="flex-container">
             <ShortHistory />
-            
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
 
+      <header id="home" class="hero">
+        <div class="hero-content">
+          <h1>¡Descubre qué hacer hoy con el clima a tu favor!</h1>
+          <p>Recomendaciones personalizadas para cada día, cada clima y cada persona.</p>
+          <div class="hero-buttons">
+            <a href="#activities" class="btn primary">Ver recomendaciones</a>
+            <a href="#settings" class="btn secondary">Configura tus preferencias</a>
+          </div>
+        </div>
+      </header>
+
+      <div className='flex-container'>
+        <section id="activities" class="activities">
+          <h2>Actividades recomendadas</h2>
+          <div class="cards">
+            <div class="card">
+              <img src="public\yoga.avif" alt="Yoga"></img>
+              <h3>Yoga en el parque</h3>
+              <p>Perfecto para clima soleado 🌞</p>
+              <a href="#" class="btn small">Más detalles</a>
+            </div>
+            <div class="card">
+              <img src="public\bici.jpg" alt="Bicicleta"></img>
+              <h3>Paseo en bicicleta</h3>
+              <p>Ideal con poco viento 💨</p>
+              <a href="#" class="btn small">Más detalles</a>
+            </div>
+            <div class="card">
+              <img src="public\fotootoño.jpg" alt="Fotografía"></img>
+              <h3>Fotografía de otoño</h3>
+              <p>Cielo nublado, luz suave 🌥</p>
+              <a href="#" class="btn small">Más detalles</a>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
