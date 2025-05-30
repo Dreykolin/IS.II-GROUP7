@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { defaultActivities } from '../defaultActivities.js';
 import Activity from '../Activity.js';
-import '../assets/activities.css';
+import '../assets/activities2.css';
 
 // Componente principal de Actividades
 function Activities() {
@@ -207,9 +207,37 @@ function Activities() {
   };
 
   // Eliminar actividad
-  const deleteActivity = (index) => {
+  const deleteActivity = async (index) => {
+    const usuario_id = localStorage.getItem('usuario_id');
+
+    if (!usuario_id) {
+      alert("No hay usuario autenticado");
+      return;
+    }
+
     if (window.confirm("¿Estás seguro de eliminar esta actividad?")) {
-      setActivities(activities => activities.filter((_, i) => i !== index));
+      try {
+        const res = await fetch(`http://localhost:3000/eliminar_actividad/${activities[index].id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ usuario_id })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          // Eliminar del estado local solo si el backend confirma
+          setActivities(activities => activities.filter((_, i) => i !== index));
+          alert("Actividad eliminada correctamente");
+        } else {
+          alert(data.error || "No se pudo eliminar la actividad.");
+        }
+      } catch (err) {
+        console.error("Error al eliminar actividad:", err);
+        alert("Ocurrió un error al intentar eliminar la actividad.");
+      }
     }
   };
 
@@ -252,6 +280,8 @@ function Activities() {
 
   // ===== COMPONENTES DE INTERFAZ =====
   // Componente para gestionar preferencias de usuario
+  // Sería buena idea mover esto a ajustes
+  /*
   const PreferenceSelector = () => {
     const handleChange = (e) => {
       const { name, value } = e.target;
@@ -279,6 +309,7 @@ function Activities() {
       </div>
     );
   };
+  */
 
   // Componente para mostrar recomendaciones
   const RecommendationsList = () => (
@@ -337,7 +368,7 @@ function Activities() {
         <p>Cargando actividades...</p>
       ) : activities.length > 0 ? (
         activities.map((item, index) => (
-          <div key={index}>
+          <div key={index} className="activity-card">
             {item.editing_mode ? (
               // Modo edición
               <div>
@@ -368,7 +399,7 @@ function Activities() {
       ) : (
         <p>No tienes actividades guardadas</p>
       )}
-      <p>Total: {activities.length} actividades</p>
+      <p className="total">Total: {activities.length} actividades</p>
     </div>
   );
 
@@ -403,6 +434,8 @@ function Activities() {
   );
 
   // Componente para mostrar información del clima
+  // Esto no debería ir aquí
+  /*
   const WeatherInfo = () => (
     <div>
       <h1>Información del clima</h1>
@@ -417,18 +450,17 @@ function Activities() {
       )}
     </div>
   );
+  */
 
   // ===== RENDERIZADO PRINCIPAL =====
   return (
-    <div>
-      <WeatherInfo />
-      <PreferenceSelector />
-      <ActivityList />
-      <AdminActivitiesList />
-      <RecommendationsList />
-      <ActivityForm />
-    </div>
-  );
+  <div className="activities-page">
+    <ActivityList />
+    <AdminActivitiesList />
+    <RecommendationsList />
+    <ActivityForm />
+  </div>
+);
 }
 
 export default Activities;
