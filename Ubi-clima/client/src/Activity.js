@@ -1,4 +1,5 @@
 class Activity{
+    id;
     name;
     description;
     temperature;    //celsius
@@ -15,6 +16,7 @@ class Activity{
     editing_mode = 0;
   
     constructor(name, description, temperature, wind_speed, rain, uv, out_req, in_req, int_req, sp_req){
+
         if(!name){this.name = "New Activity";}
         else{this.name = name;}
   
