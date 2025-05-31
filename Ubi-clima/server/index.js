@@ -7,7 +7,7 @@ const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const db = new sqlite3.Database('./base_de_datos.db');  // Acá creamos nuestra base de datos
 const Tables = require('./models/tables');
-const apiKey_Weather = '8c602967b810f8b7f537a67aaeaef81d';
+const apiKey_Weather = 'pedir dreyko';
 
 Tables(db);
 
