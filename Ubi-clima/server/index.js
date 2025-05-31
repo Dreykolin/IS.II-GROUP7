@@ -7,7 +7,10 @@ const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const db = new sqlite3.Database('./base_de_datos.db');  // Acá creamos nuestra base de datos
 const Tables = require('./models/tables');
+const apiKey_Weather = '8c602967b810f8b7f537a67aaeaef81d';
+
 Tables(db);
+
 
 // Middleware
 app.use(cors());
@@ -106,8 +109,7 @@ app.post('/guardar_actividad', (req, res) => {
 //tener el clima de tu ciudad actual
 app.post('/clima', async (req, res) => {
   const { lat, lon } = req.body;
-  const apiKey = 'e3ef98389af3cba40f253168adc30f89';
-  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=es`;
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey_Weather}&units=metric&lang=es`;
 
   try {
     const { data } = await axios.get(url);
@@ -129,8 +131,7 @@ app.post('/clima', async (req, res) => {
 //Si quieres añadir una ciudad, se usa este, que hace lo mismo que el anterior, pero en base al nombre de la ciudad
 app.post('/clima_por_ciudad', async (req, res) => {
   const { ciudad } = req.body;
-  const apiKey = 'e3ef98389af3cba40f253168adc30f89';
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(ciudad)}&appid=${apiKey}&units=metric&lang=es`;
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(ciudad)}&appid=${apiKey_Weather}&units=metric&lang=es`;
 
   try {
     const { data } = await axios.get(url);
@@ -148,6 +149,41 @@ app.post('/clima_por_ciudad', async (req, res) => {
 });
 
 
+
+app.post('/pronostico', async (req, res) => {
+    const { lat, lon } = req.body;
+    const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${apiKey_Weather}&units=metric&lang=es`;
+
+    try {
+        const { data } = await axios.get(url);
+
+        const resumenDiario = data.daily.slice(0, 4).map(day => {
+    
+            const fecha = new Date(day.dt * 1000).toLocaleDateString('es-ES');
+            const maxTemp = day.temp.max;
+            const minTemp = day.temp.min;
+            const descripcion = day.weather[0].description;
+            const icono = day.weather[0].icon;
+
+            return {
+                fecha,
+                temp_max: maxTemp.toFixed(1),
+                temp_min: minTemp.toFixed(1),
+                descripcion,
+                icono,
+            };
+        });
+
+        res.json({
+            ciudad: data.timezone,
+            resumenDiario 
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al obtener el pronóstico' });
+    }
+});
 
 
 
