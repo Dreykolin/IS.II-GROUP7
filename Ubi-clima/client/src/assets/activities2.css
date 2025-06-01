@@ -16,10 +16,22 @@ h1 {
   max-width: 800px;
   margin: 2rem auto;
   background-color: #fff7ec;
+  justify-content: center;
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(91, 62, 43, 0.1);
 }
+
+.activity-container h1 {
+  color: #b44d0d;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes contenedores-de-actividad{
+  from{ width:0%; height:0%;}
+  to{ width:100%; height:100%;}
+}
+
 
 .activity-card {
   border: 1px solid #e0c3a3;
@@ -27,22 +39,63 @@ h1 {
   margin-bottom: 1.5rem;
   padding: 1rem;
   border-radius: 10px;
+  position: relative;
   transition: transform 0.2s ease;
+
+  animation-timing-function: ease-in-out;
+  animation-name: contenedores-de-actividad;
+  animation-duration: 200ms;  
+  animation-fill-mode: forwards;
 }
 
 .activity-card:hover {
   transform: scale(1.02);
 }
 
+@keyframes texto-actividad{
+  0%{ font-size:0%}
+  75%{ font-size:125%}
+  100%{ font-size:100%}
+}
+
 .activity-card h2 {
   color: #b44d0d;
   margin-bottom: 0.5rem;
+
+  animation-name: texto-actividad;
+  animation-duration: 200ms;  
 }
 
 .activity-card p {
   margin: 0.25rem 0;
+  animation-name: texto-actividad;
+  animation-duration: 200ms;  
 }
 
+.form-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background-color: #fff7ec;
+  justify-content: center;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(91, 62, 43, 0.1);
+}
+
+.form-container h1 {
+  color: #b44d0d;
+  margin-bottom: 0.5rem;
+}
+
+.form-container p {
+  margin: 0.25rem 0;
+}
+
+@keyframes botones-de-actividad{
+  0%{ font-size:0%}
+  75%{ font-size:125%}
+  100%{ font-size:100%}
+}
 button {
   background-color: #d2691e;
   color: white;
@@ -52,6 +105,10 @@ button {
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+
+  animation-name: botones-de-actividad;
+  animation-duration: 200ms;  
+  animation-fill-mode: forwards;
 }
 
 button:hover {
@@ -67,7 +124,7 @@ textarea {
   padding: 0.5rem;
   border: 1px solid #d2b48c;
   border-radius: 6px;
-  background-color: #fffefb;
+  background-color: #faf5ed;
 }
 
 textarea {
