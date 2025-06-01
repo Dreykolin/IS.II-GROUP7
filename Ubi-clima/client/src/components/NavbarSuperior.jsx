@@ -48,7 +48,7 @@ export default function NavbarSuperior({ isLogged, handleLoginRedirect, handleLo
             <Link className="nav-link" to="/">Inicio</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/activities">Actividades</Link>
+            <Link className="nav-link" to="/activities">Mis Actividades</Link>
           </li>
           <li className="nav-item">
             <Link className="nav-link" to="/Ajustes">Ajustes</Link>
