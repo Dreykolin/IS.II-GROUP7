@@ -312,6 +312,8 @@ function Activities() {
   */
 
   // Componente para mostrar recomendaciones
+  // Movimos esto a Home
+  /*
   const RecommendationsList = () => (
     <div>
       <h1>Algunas actividades que podrían interesarte</h1>
@@ -333,8 +335,11 @@ function Activities() {
       )}
     </div>
   );
+  */
 
   // Componente para mostrar actividades del administrador
+  // Por ahora vamos a quitar esto de aquí
+  /*
   const AdminActivitiesList = () => (
     <div>
       <h1>Actividades Recomendadas por el Administrador</h1>
@@ -359,11 +364,12 @@ function Activities() {
       )}
     </div>
   );
+  */
 
   // Componente para mostrar lista de actividades personales
   const ActivityList = () => (
-    <div>
-      <h1>Lista de Actividades</h1>
+    <div className="activity-container">
+      <h1>Tus actividades</h1>
       {isLoading ? (
         <p>Cargando actividades...</p>
       ) : activities.length > 0 ? (
@@ -405,14 +411,14 @@ function Activities() {
 
   // Componente para crear nuevas actividades
   const ActivityForm = () => (
-    <div>
+    <div className='form-container'>
       <h1>Crear Actividad</h1>
       <div>
         <p>Nombre*</p>
         <input id="name" placeholder="Nombre de la actividad" />
 
         <p>Descripción</p>
-        <textarea id="description" placeholder="Describe la actividad..." />
+        <input id="description" placeholder="Descripción de la actividad" />
 
         <p>Temperatura ideal (°C)</p>
         <input id="temperature" type="number" placeholder="25" />
@@ -426,6 +432,7 @@ function Activities() {
         <p>Índice UV</p>
         <input id="uv" type="number" placeholder="5" />
 
+        <br></br>
         <button onClick={createActivity} disabled={isLoading}>
           {isLoading ? "Guardando..." : "Crear actividad"}
         </button>
@@ -456,8 +463,6 @@ function Activities() {
   return (
   <div className="activities-page">
     <ActivityList />
-    <AdminActivitiesList />
-    <RecommendationsList />
     <ActivityForm />
   </div>
 );
