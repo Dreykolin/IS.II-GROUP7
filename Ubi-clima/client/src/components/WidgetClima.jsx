@@ -3,99 +3,39 @@ import { useClima } from '../context/ClimaContext';
 import '../assets/Widget_clima.css';
 
 function WidgetClima() {
-  const { datosClima, actualizarClima } = useClima();
-  const [clima, setClima] = useState('');
+  const { datosClima, obtenerUbicacionYClima, puedeActualizar } = useClima();
   const [cargando, setCargando] = useState(false);
-  const [puedeActualizar, setPuedeActualizar] = useState(true);
-
-  const tiempoLimite = 20 * 1000; // ⏱️ 20 segundos
-  const [ultimaActualizacion, setUltimaActualizacion] = useState(() => {
-    const t = localStorage.getItem('clima_timestamp');
-    return t ? parseInt(t) : 0;
-  });
+  const [climaTexto, setClimaTexto] = useState('');
 
   useEffect(() => {
-    if (datosClima && datosClima.descripcion && datosClima.temperatura && datosClima.ciudad) {
-      setClima(`${datosClima.descripcion}, ${datosClima.temperatura}°C en ${datosClima.ciudad}`);
+    if (datosClima) {
+      setClimaTexto(`${datosClima.descripcion}, ${datosClima.temperatura}°C en ${datosClima.ciudad}`);
+      setCargando(false);
+    } else {
+      setClimaTexto('Cargando clima...');
+      setCargando(true);
     }
   }, [datosClima]);
 
-  useEffect(() => {
-    const intervalo = setInterval(() => {
-      const ahora = Date.now();
-      const tiempoPasado = ahora - ultimaActualizacion;
-      setPuedeActualizar(tiempoPasado >= tiempoLimite);
-    }, 1000);
-
-    return () => clearInterval(intervalo);
-  }, [ultimaActualizacion]);
-
-  const obtenerUbicacionYClima = () => {
-    if (!navigator.geolocation) {
-      setClima("Geolocalización no disponible.");
-      return;
-    }
-
+  const handleActualizar = () => {
+    if (!puedeActualizar || cargando) return;
     setCargando(true);
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const res = await fetch('http://localhost:3000/clima', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              lat: position.coords.latitude,
-              lon: position.coords.longitude
-            })
-          });
-
-          if (!res.ok) throw new Error('Fallo al obtener clima');
-
-          const data = await res.json();
-
-          const nuevoClima = {
-            descripcion: data.descripcion,
-            temperatura: data.temperatura,
-            ciudad: data.ciudad,
-            viento: data.viento,
-            tiempo_id: data.tiempo_id
-          };
-
-          actualizarClima({ clima: nuevoClima, pronostico: data.pronostico });
-
-          setClima(`${nuevoClima.descripcion}, ${nuevoClima.temperatura}°C en ${nuevoClima.ciudad}`);
-
-          const ahora = Date.now();
-          localStorage.setItem('clima_timestamp', ahora.toString());
-          setUltimaActualizacion(ahora);
-        } catch (error) {
-          console.error(error);
-          setClima("❌ Error al obtener clima.");
-        } finally {
-          setCargando(false);
-        }
-      },
-      (error) => {
-        setClima(`❌ Error de geolocalización: ${error.message}`);
-        setCargando(false);
-      }
-    );
+    obtenerUbicacionYClima();
   };
 
   return (
     <div className="widget-clima">
-      <p>{cargando ? 'Actualizando clima...' : (clima || 'Cargando clima...')}</p>
+      <p>{cargando ? 'Actualizando clima...' : climaTexto}</p>
       <button
-        onClick={obtenerUbicacionYClima}
-        disabled={!puedeActualizar || cargando}
+        onClick={handleActualizar}
+        disabled={cargando || !puedeActualizar}
         style={{
-          opacity: !puedeActualizar || cargando ? 0.5 : 1,
-          cursor: !puedeActualizar || cargando ? 'not-allowed' : 'pointer',
-          transition: 'opacity 0.3s'
+          opacity: cargando || !puedeActualizar ? 0.5 : 1,
+          cursor: cargando || !puedeActualizar ? 'not-allowed' : 'pointer',
+          transition: 'opacity 0.3s',
         }}
       >
-        {cargando ? 'Actualizando...' : 'Actualizar clima'}
+        {cargando ? 'Actualizando...' : (!puedeActualizar ? 'Espera para actualizar' : 'Actualizar clima')}
       </button>
     </div>
   );
