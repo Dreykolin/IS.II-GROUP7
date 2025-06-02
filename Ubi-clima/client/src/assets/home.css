@@ -1,3 +1,14 @@
+@keyframes texto-home{
+  0%{ font-size:0%}
+  75%{ font-size:125%}
+  100%{ font-size:100%}
+}
+
+#root{
+  background-color: #e6c395;
+
+}
+
 .clima-page {
   display: flex;
   flex-direction: column;
@@ -18,34 +29,102 @@
   justify-content: space-between;
   gap: 4rem;
   padding: 50px;
-  background-color: rgb(236, 249, 255);
+  background-color: #faeddc;
   border-radius: 8px;
 }
 
 /* Contenedor de cada tarjeta de ciudad */
 .tarjeta-ciudad-container {
-  background-color: #ffffff;
+  background-color: #fff0db;
   border-radius: 2rem;
   box-shadow: 0 35px 30px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   width: 100%; /* Aseguramos que ambos contenedores tengan el mismo tamaño */
   height: 300px; /* Alto fijo */
   overflow: hidden; /* Para que no se desborden los elementos */
+  transition: transform 0.2s ease;
 }
 
+.tarjeta-ciudad-container:hover {
+  transform: scale(1.02);
+}
+
+
+@keyframes h1-home-anim{
+  0%{ font-size:0%}
+  75%{ font-size:2.5rem}
+  100%{ font-size:2rem}
+}
 h1 {
   font-size: 2rem;
   color: #333;
+
+  animation-name: h1-home-anim;
+  animation-duration: 200ms;  
+  animation-fill-mode: forwards;
 }
 
-h5 {
-  font-size: 1.2rem;
+@keyframes h2-home-anim{
+  0%{ font-size:0%}
+  75%{ font-size:2.3rem}
+  100%{ font-size:2rem}
+}
+h2 {
+  font-size: 2rem;
   color: #333;
+
+  animation-name: h2-home-anim;
+  animation-duration: 200ms;  
+  animation-fill-mode: forwards;
+}
+
+@keyframes h3-home-anim{
+  0%{ font-size:0%}
+  75%{ font-size:2rem}
+  100%{ font-size:1.8rem}
+}
+h3 {
+  font-size: 2rem;
+  color: #333;
+
+  animation-name: h3-home-anim;
+  animation-duration: 200ms;  
+  animation-fill-mode: forwards;
+}
+
+@keyframes h5-home-anim{
+  0%{ font-size:0%}
+  75%{ font-size:1.9rem}
+  100%{ font-size:1.6rem}
+}
+h5 {
+  font-size: 1.6rem;
+  color: #333;
+
+  animation-name: h5-home-anim;
+  animation-duration: 200ms;  
+  animation-fill-mode: forwards;
+}
+
+@keyframes p-home-anim{
+  0%{ font-size:0%}
+  75%{ font-size:1.5rem}
+  100%{ font-size:1.2rem}
+}
+p{
+  
+  animation-name: p-home-anim;
+  animation-duration: 200ms;
+  animation-fill-mode: forwards;
 }
 
 button {
   font-weight: bold;
   transition: background-color 0.3s;
+
+  animation-name: texto-home;
+  animation-duration: 200ms;  
+  animation-fill-mode: forwards;
 }
 
 button:hover {
@@ -118,19 +197,25 @@ button.btn-secondary:hover {
   font-weight:600;
   transition:all 0.3s ease;
 }
+
 .btn.primary{
   background:#ffd700;
   color:#000;
+  transition: transform 0.2s ease;
 }
-.btn.primary:hover{
+.btn.primary:hover {
   background:#e5c200;
+  transform: scale(1.06);
 }
+
 .btn.secondary{
   background:transparent;
   border:2px solid #ffd700;
   color:#ffd700;
+  transition: transform 0.2s ease;
 }
 .btn.secondary:hover{
+  transform: scale(1.06);
   background:#ffd700;
   color:#000;
 }
@@ -150,6 +235,10 @@ button.btn-secondary:hover {
 .activities h2{
   font-size:2rem;
   margin-bottom:2rem;
+
+  animation-name: texto-home;
+  animation-duration: 200ms;  
+  animation-fill-mode: forwards;
 }
 .cards{
   display:flex;
@@ -170,11 +259,20 @@ button.btn-secondary:hover {
 }
 .card h3{
   margin:1rem;
+
+  animation-name: texto-home;
+  animation-duration: 200ms;  
+  animation-fill-mode: forwards;
 }
 .card p{
   margin:0 1rem 1rem;
   color:#555;
+
+  animation-name: texto-home;
+  animation-duration: 200ms;  
+  animation-fill-mode: forwards;
 }
 .card .btn{
   margin:0 1rem 1.5rem;
 }
+
