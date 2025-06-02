@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import TarjetaCiudad from "../components/TarjetaCiudad";
 import RecommendationsList from "../components/RecommendationsList";
-
 import ShortHistory from "../components/ShortHistory";
 
 import '../assets/home.css';

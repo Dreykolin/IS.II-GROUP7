@@ -1,109 +1,94 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import '../assets/Widget_clima.css';
 
-const LIMITE_TIEMPO_MS = 10 * 60 * 1000; // 10 minutos
-
 function WidgetClima() {
-    const [clima, setClima] = useState(() => localStorage.getItem('clima') || '');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const intervaloRef = useRef(null);
+  const [clima, setClima] = useState('');
+  const [cargando, setCargando] = useState(false);
+  const [puedeActualizar, setPuedeActualizar] = useState(false);
+  const tiempoLimite = 20 * 1000; // 20 segundos
 
-    // Función que comprueba si el dato en localStorage está viejo
-    const datoViejo = () => {
-        const timestampUTC = parseInt(localStorage.getItem('timestamp_utc'), 10);
-        const horaLocalRecibida = parseInt(localStorage.getItem('hora_local_recibida'), 10);
-        if (!timestampUTC || !horaLocalRecibida) {
-            console.log('[datoViejo] No hay timestamps guardados, dato considerado viejo');
-            return true;
-        }
+  const obtenerUbicacionYClima = async () => {
+    setCargando(true);
+    setPuedeActualizar(false);
 
-        const ahoraLocal = Date.now();
-        const desfase = timestampUTC - horaLocalRecibida;
-        const ahoraEstimadoUTC = ahoraLocal + desfase;
+    if (!navigator.geolocation) {
+      setClima("Geolocalización no disponible.");
+      setCargando(false);
+      return;
+    }
 
-        const diff = ahoraEstimadoUTC - timestampUTC;
-        console.log(`[datoViejo] Tiempo desde última actualización: ${diff} ms`);
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
 
-        return diff > LIMITE_TIEMPO_MS;
-    };
-
-    // Actualiza el clima, guarda datos y maneja estados
-    const actualizarClima = async () => {
-        if (!navigator.geolocation) {
-            setError('Geolocalización no disponible.');
-            setLoading(false);
-            return;
-        }
-
-        setLoading(true);
-        setError('');
-        navigator.geolocation.getCurrentPosition(async (position) => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-
-            try {
-                console.log('[actualizarClima] Solicitando clima para:', lat, lon);
-                const res = await fetch('http://localhost:3000/clima', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ lat, lon }),
-                });
-
-                if (!res.ok) throw new Error('Respuesta no OK');
-
-                const datos = await res.json();
-                console.log('[actualizarClima] Datos recibidos:', datos);
-
-                const textoClima = `${datos.descripcion}, ${datos.temperatura}°C en ${datos.ciudad}`;
-
-                setClima(textoClima);
-                localStorage.setItem('clima', textoClima);
-                localStorage.setItem('timestamp_utc', datos.timestamp_utc.toString());
-                localStorage.setItem('hora_local_recibida', Date.now().toString());
-                setError('');
-            } catch (err) {
-                console.error('[actualizarClima] Error:', err);
-                setError('No se pudo actualizar el clima, mostrando datos guardados.');
-            } finally {
-                setLoading(false);
-            }
-        }, (err) => {
-            console.error('[actualizarClima] Error geolocalización:', err);
-            setError('No se pudo obtener la ubicación.');
-            setLoading(false);
+      try {
+        const res = await fetch('http://localhost:3000/clima', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat, lon })
         });
+
+        const datos = await res.json();
+        const textoClima = `${datos.descripcion}, ${datos.temperatura}°C en ${datos.ciudad}`;
+        setClima(textoClima);
+
+        const ahora = Date.now();
+        localStorage.setItem('clima', JSON.stringify(textoClima));
+        localStorage.setItem('clima_timestamp', ahora.toString());
+      } catch (err) {
+        console.error('Error al obtener clima:', err);
+        setClima("Error al obtener clima.");
+      } finally {
+        setCargando(false);
+      }
+    });
+  };
+
+  useEffect(() => {
+    // Cargar clima inicial desde cache si existe
+    const cargarDesdeCache = () => {
+      try {
+        const cache = localStorage.getItem('clima');
+        if (cache) setClima(JSON.parse(cache));
+      } catch (err) {
+        console.error('Error al cargar clima desde cache:', err);
+      }
     };
 
-    useEffect(() => {
-        // Mostramos clima guardado solo si no está viejo
-        if (!datoViejo()) {
-            console.log('[useEffect] Dato vigente, mostrando dato guardado.');
-            // El estado clima ya carga dato guardado al inicio
-            setError('');
-            setLoading(false);
-        } else {
-            console.log('[useEffect] Dato viejo, actualizando clima al montar...');
-            actualizarClima();
-        }
+    cargarDesdeCache();
+    obtenerUbicacionYClima();
 
-        // Siempre actualizar cada 5 minutos
-        intervaloRef.current = setInterval(() => {
-            console.log('[setInterval] Actualizando clima...');
-            actualizarClima();
-        }, 5 * 60 * 1000);
+    // Chequear si ya se puede volver a actualizar
+    const intervalo = setInterval(() => {
+      const timestamp = localStorage.getItem('clima_timestamp');
+      if (!timestamp) {
+        setPuedeActualizar(true);
+        return;
+      }
 
-        return () => clearInterval(intervaloRef.current);
-    }, []);
+      const diff = Date.now() - Number(timestamp);
+      setPuedeActualizar(diff >= tiempoLimite);
+    }, 1000);
 
-    return (
-        <div className="widget-clima">
-            {loading && <div>Cargando clima...</div>}
-            {!loading && clima && <div>{clima}</div>}
-            {!loading && !clima && <div>No hay datos recientes del clima.</div>}
-            {error && <div className="error">{error}</div>}
-        </div>
-    );
+    return () => clearInterval(intervalo);
+  }, []);
+
+  return (
+    <div className="widget-clima">
+      <p>{cargando ? 'Actualizando clima...' : (clima || 'Cargando clima...')}</p>
+      <button
+        onClick={obtenerUbicacionYClima}
+        disabled={!puedeActualizar || cargando}
+        style={{
+          opacity: !puedeActualizar || cargando ? 0.5 : 1,
+          cursor: !puedeActualizar || cargando ? 'not-allowed' : 'pointer',
+          transition: 'opacity 0.3s'
+        }}
+      >
+        {cargando ? 'Actualizando...' : 'Actualizar clima'}
+      </button>
+    </div>
+  );
 }
 
 export default WidgetClima;
