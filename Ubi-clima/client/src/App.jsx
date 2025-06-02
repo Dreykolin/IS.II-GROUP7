@@ -47,6 +47,7 @@ Sin este envoltorio, los componentes no sabrían manejar rutas ni navegación.
 function App() {
   return (
     <Router>
+      
       <AppContent />
     </Router>	
   );

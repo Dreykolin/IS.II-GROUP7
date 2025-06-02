@@ -6,7 +6,6 @@ import '../assets/activities2.css';
 // Componente principal de Actividades
 function Activities() {
   // ===== ESTADOS =====
-  const [ubicacion, setUbicacion] = useState('');
   const [clima, setClima] = useState({
     temperatura: null,
     viento: null,
@@ -28,7 +27,19 @@ function Activities() {
   useEffect(() => {
     loadUserActivities();
     loadAdminActivities(); // Cargar actividades del admin
-    obtenerUbicacion(); // Llamada automática a la función de obtención de clima
+    const datos = localStorage.getItem('datosClima');
+    if (datos) {
+      try {
+        const parsed = JSON.parse(datos);
+        setClima({
+          temperatura: parsed.temperatura ?? null,
+          viento: parsed.viento ?? null,
+          tiempo_id: parsed.tiempo_id ?? null
+        });
+      } catch (err) {
+        console.error("Error al leer datosClima:", err);
+      }
+    }
   }, []);
 
   // Actualizar recomendaciones cuando cambia el clima o preferencias
@@ -70,48 +81,8 @@ function Activities() {
     }
   };
 
-  // Obtener ubicación y clima
-  const obtenerUbicacion = () => {
-    if (!navigator.geolocation) {
-      setUbicacion("La geolocalización no es compatible.");
-      return;
-    }
 
-    setIsLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => getWeatherData(position),
-      (error) => {
-        setUbicacion(`Error: ${error.message}`);
-        setIsLoading(false);
-      }
-    );
-  };
 
-  // Obtener datos del clima
-  const getWeatherData = async (position) => {
-    const latitud = position.coords.latitude;
-    const longitud = position.coords.longitude;
-    setUbicacion(`Latitud: ${latitud}, Longitud: ${longitud}`);
-
-    try {
-      const climaRes = await fetch('http://localhost:3000/clima', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lat: latitud, lon: longitud })
-      });
-
-      const datosClima = await climaRes.json();
-      setClima({
-        temperatura: datosClima.temperatura,
-        viento: datosClima.viento,
-        tiempo_id: datosClima.tiempo_id
-      });
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Obtener recomendaciones basadas en clima y preferencias
   const fetchRecomendaciones = async () => {
@@ -437,6 +408,7 @@ function Activities() {
           {isLoading ? "Guardando..." : "Crear actividad"}
         </button>
       </div>
+
     </div>
   );
 

@@ -22,6 +22,7 @@ function WidgetClima() {
       const lon = position.coords.longitude;
 
       try {
+        // Obtener clima actual
         const res = await fetch('http://localhost:3000/clima', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -35,8 +36,25 @@ function WidgetClima() {
         const ahora = Date.now();
         localStorage.setItem('clima', JSON.stringify(textoClima));
         localStorage.setItem('clima_timestamp', ahora.toString());
+        localStorage.setItem('datosClima', JSON.stringify({
+          descripcion: datos.descripcion,
+          temperatura: datos.temperatura,
+          ciudad: datos.ciudad,
+          viento: datos.viento,
+          tiempo_id: datos.tiempo_id ?? null
+        }));
+
+        // Obtener pronóstico también
+        const pronRes = await fetch('http://localhost:3000/pronostico', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat, lon })
+        });
+
+        const pronData = await pronRes.json();
+        localStorage.setItem('pronostico', JSON.stringify(pronData));
       } catch (err) {
-        console.error('Error al obtener clima:', err);
+        console.error('Error al obtener clima o pronóstico:', err);
         setClima("Error al obtener clima.");
       } finally {
         setCargando(false);
@@ -45,7 +63,7 @@ function WidgetClima() {
   };
 
   useEffect(() => {
-    // Cargar clima inicial desde cache si existe
+    // Cargar desde cache
     const cargarDesdeCache = () => {
       try {
         const cache = localStorage.getItem('clima');
@@ -58,7 +76,6 @@ function WidgetClima() {
     cargarDesdeCache();
     obtenerUbicacionYClima();
 
-    // Chequear si ya se puede volver a actualizar
     const intervalo = setInterval(() => {
       const timestamp = localStorage.getItem('clima_timestamp');
       if (!timestamp) {
