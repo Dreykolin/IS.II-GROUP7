@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { defaultActivities } from '../defaultActivities.js';
 import Activity from '../Activity.js';
 import '../assets/activities2.css';
+import { useClima } from '../context/ClimaContext';
 
 // Componente principal de Actividades
 function Activities() {
   // ===== ESTADOS =====
+  const { datosClima } = useClima();
   const [clima, setClima] = useState({
     temperatura: null,
     viento: null,
@@ -25,22 +27,20 @@ function Activities() {
   // ===== EFECTOS =====
   // Cargar actividades del usuario y obtener clima automáticamente al inicio
   useEffect(() => {
-    loadUserActivities();
-    loadAdminActivities(); // Cargar actividades del admin
-    const datos = localStorage.getItem('datosClima');
-    if (datos) {
-      try {
-        const parsed = JSON.parse(datos);
-        setClima({
-          temperatura: parsed.temperatura ?? null,
-          viento: parsed.viento ?? null,
-          tiempo_id: parsed.tiempo_id ?? null
-        });
-      } catch (err) {
-        console.error("Error al leer datosClima:", err);
-      }
-    }
-  }, []);
+  loadUserActivities();
+  loadAdminActivities();
+}, []);
+
+useEffect(() => {
+  if (datosClima) {
+    setClima({
+      temperatura: datosClima.temperatura ?? null,
+      viento: datosClima.viento ?? null,
+      tiempo_id: datosClima.tiempo_id ?? null
+    });
+  }
+}, [datosClima]);
+
 
   // Actualizar recomendaciones cuando cambia el clima o preferencias
   useEffect(() => {
@@ -408,7 +408,20 @@ function Activities() {
           {isLoading ? "Guardando..." : "Crear actividad"}
         </button>
       </div>
-
+      <div style={{ background: '#f4f4f4', padding: '1rem', marginBottom: '1rem', border: '1px solid #ccc' }}>
+  <h2>🧪 Datos del Clima (debug)</h2>
+  {datosClima ? (
+    <>
+      <p><strong>🌡 Temperatura:</strong> {datosClima.temperatura}°C</p>
+      <p><strong>💨 Viento:</strong> {datosClima.viento} m/s</p>
+      <p><strong>🌤 ID de Clima:</strong> {datosClima.tiempo_id}</p>
+      <p><strong>📍 Ciudad:</strong> {datosClima.ciudad}</p>
+      <p><strong>📘 Descripción:</strong> {datosClima.descripcion}</p>
+    </>
+  ) : (
+    <p style={{ color: 'red' }}>❌ No hay datos del clima disponibles</p>
+  )}
+</div>
     </div>
   );
 

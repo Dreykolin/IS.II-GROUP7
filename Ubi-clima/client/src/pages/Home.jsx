@@ -1,52 +1,47 @@
-import { useState, useEffect } from 'react';
-import TarjetaCiudad from "../components/TarjetaCiudad";
-import RecommendationsList from "../components/RecommendationsList";
-import ShortHistory from "../components/ShortHistory";
+import { useState, useEffect, useRef } from 'react';
+import { useClima } from '../context/ClimaContext';
+import TarjetaCiudad from "../components/home/TarjetaCiudad";
+import RecommendationsList from "../components/home/RecommendationsList";
+import ShortHistory from "../components/home/ShortHistory";
 import '../assets/home.css';
-import { useRef } from 'react';
-
 
 function Home() {
-  const [climaAutomatico, setClimaAutomatico] = useState('');
-  const [ciudad, setCiudad] = useState('');
-  const [pronostico, setPronostico] = useState(null);
+  const { datosClima, pronostico } = useClima();
+
   const [usuarioAutenticado, setUsuarioAutenticado] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState(null);
+  const climaRef = useRef(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      setUsuarioAutenticado(true);
-
-
-    const datosCrudos = localStorage.getItem('datosClima');
-    if (datosCrudos) {
-        try {
-            const datos = JSON.parse(datosCrudos);
-            if (datos.descripcion && datos.temperatura) {
-            setClimaAutomatico(`${datos.descripcion}, ${datos.temperatura}°C`);
-            }
-            if (datos.ciudad) {
-            setCiudad(datos.ciudad);
-            }
-        } catch (err) {
-            console.error("Error al leer datosClima:", err);
-        }
-    }
-
-      const pronosticoGuardado = localStorage.getItem('pronostico');
-      if (pronosticoGuardado) {
-        try {
-          setPronostico(JSON.parse(pronosticoGuardado));
-        } catch (e) {
-          console.error("Error al leer pronóstico:", e);
-        }
-      }
-    } else {
-      setUsuarioAutenticado(false);
-    }
+    setUsuarioAutenticado(!!token);
   }, []);
+
+  // Observar visibilidad del bloque de clima
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const visible = entry.isIntersecting;
+        localStorage.setItem('bloqueClimaVisible', visible ? '1' : '0');
+      },
+      { threshold: 0.1 }
+    );
+
+    if (climaRef.current) {
+      observer.observe(climaRef.current);
+    }
+
+    return () => {
+      if (climaRef.current) observer.unobserve(climaRef.current);
+    };
+  }, []);
+
+  const climaAutomatico = datosClima
+    ? `${datosClima.descripcion}, ${datosClima.temperatura}°C`
+    : '';
+
+  const ciudad = datosClima?.ciudad || '';
 
   return (
     <div className="clima-page">
@@ -59,7 +54,7 @@ function Home() {
       ) : (
         <>
           <div className="flex-container">
-            <div className="tarjeta-ciudad-container">
+            <div className="tarjeta-ciudad-container" ref={climaRef}>
               <h1>Mi Ubicación Actual</h1>
               <TarjetaCiudad automatico={true} clima={climaAutomatico} ubicacion={ciudad} />
             </div>

@@ -1,4 +1,4 @@
-
+import { ClimaProvider } from './context/ClimaContext';
 //Estos 2 imports vienen a ser los que se encargan de las "páginas". 
 
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
@@ -47,12 +47,12 @@ Sin este envoltorio, los componentes no sabrían manejar rutas ni navegación.
 function App() {
   return (
     <Router>
-      
-      <AppContent />
+      <ClimaProvider> {/* ⬅️ Aquí envuelves todo con el contexto */}
+        <AppContent />
+      </ClimaProvider>
     </Router>	
   );
 }
-
 
 
 function AppContent() {

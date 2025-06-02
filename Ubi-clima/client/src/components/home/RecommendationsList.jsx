@@ -1,40 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useClima } from '../../context/ClimaContext';
 
 const RecommendationsList = () => {
   const [activities, setActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [datosClima, setDatosClima] = useState(null);
   const [usuarioAutenticado, setUsuarioAutenticado] = useState(false);
 
-  // Cargar clima desde localStorage una sola vez
+  const { datosClima } = useClima();
+
+  // Verificar si el usuario está autenticado
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      setUsuarioAutenticado(true);
-
-      const cache = localStorage.getItem('datosClima');
-      if (cache) {
-        try {
-          const datos = JSON.parse(cache);
-          setDatosClima({
-            descripcion: datos.descripcion ?? '',
-            temperatura: datos.temperatura ?? null,
-            ciudad: datos.ciudad ?? '',
-            viento: datos.viento ?? null,
-            tiempo_id: datos.tiempo_id ?? null
-          });
-        } catch (err) {
-          console.error("❌ Error al leer datosClima:", err);
-        }
-      } else {
-        console.warn("⚠️ No se encontró 'datosClima' en localStorage");
-      }
-    } else {
-      setUsuarioAutenticado(false);
-    }
+    setUsuarioAutenticado(!!token);
   }, []);
 
-  // Obtener actividades del usuario
+  // Cargar actividades del usuario
   useEffect(() => {
     const fetchActivities = async () => {
       const usuario_id = localStorage.getItem('usuario_id');
@@ -75,28 +55,23 @@ const RecommendationsList = () => {
     }
   };
 
-  // Mostrar "cargando" si faltan datos
   if (isLoading || !datosClima) return <p>Cargando recomendaciones...</p>;
 
-  // Filtrado basado en temperatura (podés expandirlo después con viento, lluvia, etc.)
-  const actividadesFiltradas = (actividad) => {
-    if (!actividad) return false;
-
-    const tempIdeal = Number(actividad.temperatura);
+  // Filtro simple basado en temperatura
+  const actividadesFiltradas = activities.filter((act) => {
+    const tempIdeal = Number(act.temperatura);
     return (
       datosClima.temperatura >= tempIdeal - 3 &&
       datosClima.temperatura <= tempIdeal + 3
     );
-  };
-
-  const filtradas = activities.filter(act => actividadesFiltradas(act));
+  });
 
   return (
     <div>
-      {filtradas.length > 0 ? (
+      {actividadesFiltradas.length > 0 ? (
         <>
           <h2>De tus actividades favoritas, podrías hacer estas ahora.</h2>
-          {filtradas.map((actividad, index) => (
+          {actividadesFiltradas.map((actividad, index) => (
             <div key={index}>
               <h3>{actividad.nombre}</h3>
               <p>{actividad.descripcion}</p>
