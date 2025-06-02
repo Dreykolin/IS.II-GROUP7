@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+
+
 const PreferenceSelector = () => {
   const [user_preferences, setPreferences] = useState({
     outdoor: 3,

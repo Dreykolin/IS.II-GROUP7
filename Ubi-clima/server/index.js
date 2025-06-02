@@ -92,7 +92,42 @@ app.post('/guardar_actividad', (req, res) => {
     }
     res.send(`Actividad guardada: ${nombre}`);
   });
+});app.post('/guardar_recomendacion', (req, res) => {
+  const { nombre, descripcion, temperatura, viento, lluvia, uv } = req.body;
+
+  if (!nombre || !descripcion) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+
+  const valores = [
+    nombre,
+    descripcion,
+    temperatura ?? null,
+    viento ?? null,
+    lluvia ?? null,
+    uv ?? null,
+    0, 0, 0, 0,
+    null
+  ];
+
+  console.log('Valores a insertar:', valores);
+
+  const sql = `
+    INSERT INTO actividades 
+    (nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports, usuario_id) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.run(sql, valores, function(err) {
+    if (err) {
+      console.error('Error al guardar la recomendación:', err);  // muestra el error completo
+      return res.status(500).json({ error: 'Error al guardar la recomendación' });
+    }
+    res.send(`Recomendación guardada: ${nombre}`);
+  });
 });
+
+
 
 
 

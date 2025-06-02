@@ -56,6 +56,9 @@ export default function NavbarSuperior({ isLogged, handleLoginRedirect, handleLo
           <li className="nav-item">
             <Link className="nav-link" to="/Historial">Historial</Link>
           </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/Administrador">Administrador</Link>
+          </li>
         </ul>
 
         {/* Botón login/logout */}

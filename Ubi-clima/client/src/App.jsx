@@ -22,6 +22,8 @@ import Recuperar from './pages/Recuperar';
 import Ajustes from './pages/Ajustes';
 import Login from './pages/Login';
 import Historial from './pages/Historial';
+import Administrador from './pages/Administrador'; // Importa el componente de administrador (si lo necesitas)
+
 
 //Este import es para el uso de un css personalizado.
 import './index.css';
@@ -56,53 +58,40 @@ function App() {
 
 
 function AppContent() {
-
-  /*
-  useNavigate() es un hook de react-router-dom.
-  Te permite navegar programáticamente a otra ruta (sin necesidad de usar <Link>).
-  useLocation() te da el objeto de ubicación actual
-  */
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLoginRedirect = () => {
-    navigate('/login'); //Al llamarla, redirige al usuario a la página /login.
+    navigate('/login');
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); //Elimina el token de sesión. Por si cerramos la sesión
+    localStorage.removeItem('token');
     window.location.reload();
   };
 
-  const isLogged = !!localStorage.getItem('token'); //generamos un token si el usuario está logueado
+  const isLogged = !!localStorage.getItem('token');
 
+  // Detectar si estamos en la ruta del panel de administración o en login
+  const isAdminPage = location.pathname.toLowerCase().startsWith('/administrador');
+  const isLoginPage = location.pathname === '/login';
 
-
-  /*
-  La primera parte del return se hace la pregunta "estamos fuera de la página login?". Si es así, 
-  procede a mostrar el navBar superior y el widget clima
-
-  La segunda parte define las rutas de la aplicación usando React Router. 
-  El div container mt-5 funciona como contenedor principal, mientras que routes es un componente 
-  de react-router-dom que actúa como contenedor para las rutas de tu aplicación. Dentro de él,
-   defines las rutas y los componentes que deben renderizarse para cada ruta.
-  */
   return (
     <>
-      {location.pathname !== '/login' && (     
-	  <>
-	    <NavbarSuperior 
-	      isLogged={isLogged} 
-	      handleLoginRedirect={handleLoginRedirect} 
-	      handleLogout={handleLogout}
-	    />
-	    <WidgetClima />
-	  </> 
-	)}
-
+      {/* Mostrar NavbarSuperior y WidgetClima solo si NO estamos en login ni en admin */}
+      {!isLoginPage && !isAdminPage && (
+        <>
+          <NavbarSuperior 
+            isLogged={isLogged} 
+            handleLoginRedirect={handleLoginRedirect} 
+            handleLogout={handleLogout}
+          />
+          <WidgetClima />
+        </>
+      )}
 
       {/* Contenedor principal para las páginas */}
-      <div>
+      <div className={isAdminPage ? '' : 'container mt-5'}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/Activities" element={<Activities />} />
@@ -110,6 +99,7 @@ function AppContent() {
           <Route path="/Historial" element={<Historial usuarioId={localStorage.getItem('usuario_id')} />} />
           <Route path="/Registro" element={<Registro />} />
           <Route path="/Recuperar" element={<Recuperar />} />
+          <Route path="/Administrador" element={<Administrador />} />
           <Route path="/login" element={<div className="login-page"><Login /></div>} />
         </Routes>
       </div>
@@ -117,6 +107,4 @@ function AppContent() {
   );
 }
 
-export default App;
-
-
+export default AppContent;
