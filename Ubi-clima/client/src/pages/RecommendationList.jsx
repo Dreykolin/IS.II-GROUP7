@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../assets/RecommendationsList.css';
 
-function RecommendationsList({ recomendaciones, setRecomendaciones }) {
+function RecommendationList({ recomendaciones, setRecomendaciones }) {
   const [nuevaActividad, setNuevaActividad] = useState({
     nombre: '',
     descripcion: '',
@@ -59,7 +59,7 @@ function RecommendationsList({ recomendaciones, setRecomendaciones }) {
   };
 
   return (
-    <div className="recommendations-container">
+    <div className="recommendation-container">
       <h3>Recomendaciones Manuales</h3>
       <form onSubmit={handleAddManual} className="recommendation-form">
         <input type="text" name="nombre" placeholder="Nombre" value={nuevaActividad.nombre} onChange={handleChange} required />
@@ -82,4 +82,4 @@ function RecommendationsList({ recomendaciones, setRecomendaciones }) {
   );
 }
 
-export default RecommendationsList;
+export default RecommendationList;

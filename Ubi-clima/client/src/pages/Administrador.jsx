@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import AdminAjustes from './AdminAjustes';
 import PreferenceSelector from './PreferenceSelector';
-import RecommendationsList from './RecommendationsList';
+import RecommendationList from './RecommendationList';
 // import AdminUsuarios from './AdminUsuarios'; // Para cuando lo uses
 import '../assets/Administrador.css';
 
@@ -38,7 +38,7 @@ export default function Administrador() {
 
         {seccion === 'ajustes' && <AdminAjustes volverHome={() => setSeccion('home')} />}
         {seccion === 'gustos' && <PreferenceSelector />}
-        {seccion === 'recomendaciones' && <RecommendationsList />}
+        {seccion === 'recomendaciones' && <RecommendationList />}
         {seccion === 'usuarios' && <AdminUsuarios />}
       </main>
     </div>
