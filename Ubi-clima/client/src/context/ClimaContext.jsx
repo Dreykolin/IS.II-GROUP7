@@ -27,14 +27,45 @@ export const ClimaProvider = ({ children }) => {
     }
   }, []);
 
-  const actualizarClima = useCallback(({ clima, pronostico }) => {
+  // Función para obtener pronóstico (solo llamada al inicio)
+  const cargarPronostico = useCallback(() => {
+    if (!navigator.geolocation) {
+      console.error("Geolocalización no disponible");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const res = await fetch("http://localhost:3000/pronostico", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              lat: position.coords.latitude,
+              lon: position.coords.longitude,
+            }),
+          });
+
+          if (!res.ok) throw new Error("Error al obtener pronóstico");
+
+          const data = await res.json();
+          setPronostico(data.resumenDiario);
+          localStorage.setItem("pronostico", JSON.stringify(data.resumenDiario));
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      (error) => {
+        console.error("Error en geolocalización:", error);
+      }
+    );
+  }, []);
+
+  // Función para actualizar clima actual (con cooldown)
+  const actualizarClima = useCallback(({ clima }) => {
     if (clima) {
       localStorage.setItem("datosClima", JSON.stringify(clima));
       setDatosClima(clima);
-    }
-    if (pronostico) {
-      localStorage.setItem("pronostico", JSON.stringify(pronostico));
-      setPronostico(pronostico);
     }
     ultimaActualizacionRef.current = Date.now();
     setPuedeActualizar(false);
@@ -56,6 +87,7 @@ export const ClimaProvider = ({ children }) => {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         try {
+          console.log("Intentando actualizar clima desde backend...");
           const res = await fetch("http://localhost:3000/clima", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -77,7 +109,7 @@ export const ClimaProvider = ({ children }) => {
             tiempo_id: data.tiempo_id,
           };
 
-          actualizarClima({ clima: nuevoClima, pronostico: data.pronostico });
+          actualizarClima({ clima: nuevoClima });
         } catch (error) {
           console.error(error);
         }
@@ -88,7 +120,12 @@ export const ClimaProvider = ({ children }) => {
     );
   }, [actualizarClima]);
 
-  // Ejecutar solo una vez al montar
+  // Cargar pronóstico solo una vez al montar
+  useEffect(() => {
+    cargarPronostico();
+  }, [cargarPronostico]);
+
+  // Cargar clima actual solo una vez al montar (puedes quitar si quieres)
   useEffect(() => {
     obtenerUbicacionYClima();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,7 +133,13 @@ export const ClimaProvider = ({ children }) => {
 
   return (
     <ClimaContext.Provider
-      value={{ datosClima, pronostico, actualizarClima, obtenerUbicacionYClima, puedeActualizar }}
+      value={{
+        datosClima,
+        pronostico,
+        actualizarClima,
+        obtenerUbicacionYClima,
+        puedeActualizar,
+      }}
     >
       {children}
     </ClimaContext.Provider>
