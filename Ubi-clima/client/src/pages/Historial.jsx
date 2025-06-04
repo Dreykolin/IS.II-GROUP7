@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import '../assets/Historial.css';
 
 const API_BASE = 'http://localhost:3000';
 
@@ -30,10 +31,11 @@ function Historial({ usuarioId }) {
         <p>No hay actividades registradas.</p>
       ) : (
         historial.map((item, index) => (
-          <div key={index} className="border-b py-2">
+          <div key={index} className="historial-actividad">
             <div className="flex justify-between items-center">
               <strong>{item.nombre}</strong>
-              <span className="text-sm text-gray-500">
+              <br></br>
+              <span className="span-historial">
                 {new Date(item.fecha).toLocaleString()}
               </span>
             </div>

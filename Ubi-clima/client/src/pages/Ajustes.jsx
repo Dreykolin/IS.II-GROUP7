@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import '../assets/AjustesUsuario.css';
 
 
 const PreferenceSelector = () => {
@@ -39,13 +39,14 @@ const PreferenceSelector = () => {
   };
 
   return (
-    <div>
+    <div className='gustos-div'>
       <h1>Define tus gustos</h1>
       <p>Del 1 al 5, califica las siguientes categorías según cuánto te gustan.</p>
       {Object.entries(user_preferences).map(([key, value]) => (
         <div key={key}>
           <p>{key}</p>
           <input
+            className='slider-ajuste'
             type="range"
             min="1"
             max="5"
@@ -83,11 +84,11 @@ export default function Ajustes() {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container-ajustes">
       <PreferenceSelector />
       <h2 className="mb-4">Ajustes</h2>
 
-      <div className="card mb-3">
+      <div className="card-grande">
         <div className="card-body">
           <h5 className="card-title">Cuenta</h5>
           <p className="card-text">Cambiar correo electrónico, contraseña u otros datos personales.</p>
@@ -95,7 +96,9 @@ export default function Ajustes() {
         </div>
       </div>
 
-      <div className="card mb-3">
+      <br></br>
+
+      <div className="card-grande">
         <div className="card-body">	
           <h5 className="card-title">Notificaciones</h5>
           <p className="card-text">Configura cómo y cuándo deseas recibir notificaciones.</p>
@@ -103,7 +106,9 @@ export default function Ajustes() {
         </div>
       </div>
 
-      <div className="card">
+      <br></br>
+      
+      <div className="card-grande">
         <div className="card-body">
           <h5 className="card-title">Privacidad</h5>
           <p className="card-text">Revisa y ajusta tus opciones de privacidad.</p>

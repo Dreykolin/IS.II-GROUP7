@@ -1,0 +1,23 @@
+.historial-actividad{
+    background-color: #fff7ec;
+}
+
+@keyframes strong{
+  0%{ font-size:0%}
+  75%{ font-size:2rem}
+  100%{ font-size:1.7rem}
+}
+strong{
+    animation-name: strong;
+    animation-duration: 200ms;
+}
+
+@keyframes span{
+  0%{ font-size:0%}
+  75%{ font-size:1.5rem}
+  100%{ font-size:1.2rem}
+}
+span{
+    animation-name: span;
+    animation-duration: 200ms;
+}

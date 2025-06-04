@@ -310,10 +310,21 @@ button.btn-secondary:hover {
   box-shadow:0 4px 8px rgba(0,0,0,0.1);
   border: 1px solid rgb(219, 219, 219);
 }
+
+@keyframes weather-icon-home-anim{
+  0%{ font-size:0%}
+  75%{ font-size:2.5rem}
+  100%{ font-size:2rem}
+}
+
 .weather-card .icon{
   font-size:2rem;
   display:block;
   margin-bottom:0.5rem;
+
+  animation-name: weather-icon-home-anim;
+  animation-duration: 200ms;
+  animation-fill-mode: forwards;
 }
 
 @media(max-width:768px){
