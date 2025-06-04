@@ -396,24 +396,29 @@ app.post('/registrar_actividad', (req, res) => {
 
 app.get('/historial/:usuario_id', (req, res) => {
   const { usuario_id } = req.params;
+  const { mes, año } = req.query;
 
-  const sql = `
-    SELECT 
-      a.nombre, 
-      a.descripcion, 
-      ha.fecha
+  let sql = `
+    SELECT ha.fecha, a.nombre, a.descripcion
     FROM historial_actividades ha
     JOIN actividades a ON ha.actividad_id = a.id
     WHERE ha.usuario_id = ?
-    ORDER BY ha.fecha DESC
   `;
+  const params = [usuario_id];
 
-  db.all(sql, [usuario_id], (err, rows) => {
+  if (mes && año) {
+    sql += ` AND strftime('%m', ha.fecha) = ? AND strftime('%Y', ha.fecha) = ?`;
+    params.push(mes.padStart(2, '0'), año);
+  }
+
+  sql += ` ORDER BY ha.fecha DESC`;
+
+  db.all(sql, params, (err, rows) => {
     if (err) {
       console.error('Error al obtener historial:', err.message);
       return res.status(500).json({ error: 'Error al obtener historial' });
     }
-    res.json(rows); // 👈 Esto devuelve un array de objetos con nombre, descripcion y fecha
+    res.json(rows);
   });
 });
 

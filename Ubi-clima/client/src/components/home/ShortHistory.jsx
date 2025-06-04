@@ -35,7 +35,6 @@ const ShortHistory = () => {
                     {history.map((item, index) => (
                         <div key={index}>
                             <h3>{item.nombre}</h3>
-                            <p>{item.descripcion}</p>
                             <p><small>{new Date(item.fecha).toLocaleString()}</small></p>
                         </div>
                     ))}

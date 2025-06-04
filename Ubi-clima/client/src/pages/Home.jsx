@@ -54,6 +54,13 @@ return (
       </div>
     ) : (
       <>
+        <div className="flex-container">
+          <RecommendationsList />
+        </div>
+
+        <div className="flex-container">
+          <ShortHistory />
+        </div>
         <div className="flex-container-2">
           <h2>Resumen del clima de hoy</h2>
           <TarjetaCiudad />
@@ -62,13 +69,6 @@ return (
         {/* Aquí insertamos el componente Pronostico */}
         <Pronostico />
 
-        <div className="flex-container">
-          <RecommendationsList />
-        </div>
-
-        <div className="flex-container">
-          <ShortHistory />
-        </div>
       </>
     )}
 

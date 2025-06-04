@@ -5,6 +5,7 @@ const RecommendationsList = () => {
   const [activities, setActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [usuarioAutenticado, setUsuarioAutenticado] = useState(false);
+  const [ocultasHoy, setOcultasHoy] = useState([]);
 
   const { datosClima } = useClima();
 
@@ -49,11 +50,25 @@ const RecommendationsList = () => {
       if (!res.ok) throw new Error('Error en la respuesta del servidor');
 
       alert('Actividad registrada con éxito');
+        // Guardar en localStorage para ocultarla por hoy
+    const hoy = new Date().toISOString().slice(0, 10);
+    const ocultasKey = `ocultas_${usuario_id}_${hoy}`;
+    const nuevasOcultas = [...ocultasHoy, actividad_id];
+    localStorage.setItem(ocultasKey, JSON.stringify(nuevasOcultas));
+    setOcultasHoy(nuevasOcultas);
     } catch (err) {
-      console.error('Error al registrar actividad:', err);
-      alert('No se pudo registrar la actividad');
+    console.error('Error al registrar actividad:', err);
+    alert('No se pudo registrar la actividad');
     }
   };
+
+  useEffect(() => {
+  const usuario_id = localStorage.getItem('usuario_id');
+  const hoy = new Date().toISOString().slice(0, 10);
+  const ocultasKey = `ocultas_${usuario_id}_${hoy}`;
+  const ocultas = JSON.parse(localStorage.getItem(ocultasKey)) || [];
+  setOcultasHoy(ocultas);
+  }, []);
 
   if (isLoading || !datosClima) return <p>Cargando recomendaciones...</p>;
 
@@ -62,7 +77,8 @@ const RecommendationsList = () => {
     const tempIdeal = Number(act.temperatura);
     return (
       datosClima.temperatura >= tempIdeal - 3 &&
-      datosClima.temperatura <= tempIdeal + 3
+      datosClima.temperatura <= tempIdeal + 3 &&
+      !ocultasHoy.includes(act.id)
     );
   });
 
