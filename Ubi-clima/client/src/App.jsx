@@ -80,7 +80,7 @@ function AppContent() {
       {/* Contenedor principal para las páginas. Si estamos en admin, quitamos margen y clase container */}
       <div className={isAdminPage ? '' : 'container mt-5'}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home handleLoginRedirect={handleLoginRedirect} />} />
           <Route path="/Activities" element={<Activities />} />
           <Route path="/Ajustes" element={<Ajustes />} />
           <Route path="/Historial" element={<Historial usuarioId={localStorage.getItem('usuario_id')} />} />
@@ -90,6 +90,16 @@ function AppContent() {
           <Route path="/login" element={<div className="login-page"><Login /></div>} />
         </Routes>
       </div>
+      <footer class="footer">
+        <div class="container">
+          <p>© 2025 WeatherAct</p>
+          <ul class="footer-links">
+            <li><a href="#">Política de privacidad</a></li>
+            <li><a href="#">Contacto</a></li>
+            <li><a href="#">Redes sociales</a></li>
+          </ul>
+        </div>
+      </footer>
     </>
   );
 }

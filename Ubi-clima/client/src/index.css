@@ -4,3 +4,25 @@ html, body {
   margin: 0;
   padding: 0;
 }
+
+.footer{
+  background:#b46409cc;
+  color:#ccc;
+  padding:1.5rem 0;
+  text-align:center;
+}
+.footer-links{
+  list-style:none;
+  display:flex;
+  gap:1rem;
+  justify-content:center;
+  margin-top:0.5rem;
+}
+.footer-links a{
+  color:#ccc;
+  text-decoration:none;
+  transition:color 0.3s;
+}
+.footer-links a:hover{
+  color:#fff;
+}

@@ -5,7 +5,7 @@ import RecommendationsList from "../components/home/RecommendationsList";
 import ShortHistory from "../components/home/ShortHistory";
 import '../assets/home.css';
 
-function Home() {
+function Home({handleLoginRedirect}) {
   const { datosClima, pronostico } = useClima();
 
   const [usuarioAutenticado, setUsuarioAutenticado] = useState(false);
@@ -53,15 +53,9 @@ function Home() {
         </div>
       ) : (
         <>
-          <div className="flex-container">
-            <div className="tarjeta-ciudad-container" ref={climaRef}>
-              <h1>Mi Ubicación Actual</h1>
-              <TarjetaCiudad automatico={true} clima={climaAutomatico} ubicacion={ciudad} />
-            </div>
-            <div className="tarjeta-ciudad-container">
-              <h1>Buscar otra Ciudad</h1>
-              <TarjetaCiudad />
-            </div>
+          <div className="flex-container-2">
+            <h2>Resumen del clima de hoy</h2>
+            <TarjetaCiudad />
           </div>
 
           {cargando ? (
@@ -107,7 +101,7 @@ function Home() {
           <p>Recomendaciones personalizadas para cada día, cada clima y cada persona.</p>
           <div className="hero-buttons">
             <a href="#activities" className="btn primary">Ver recomendaciones</a>
-            <a href="#settings" className="btn secondary">Configura tus preferencias</a>
+            {!usuarioAutenticado ? (<a href="#settings" className="btn secondary" onClick={handleLoginRedirect}>Iniciar Sesión</a>):( <></> )}
           </div>
         </div>
       </header>

@@ -17,6 +17,7 @@ function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp 
   const [ciudad, setCiudad] = useState('');
   const [inputCiudad, setInputCiudad] = useState('');
   const [clima, setClima] = useState(climaProp || '');
+  const [temp, setTemp] = useState(climaProp || '');
 
   useEffect(() => {
     if (automatico && climaProp) {
@@ -36,7 +37,8 @@ function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp 
 
       const datos = await res.json();
       setCiudad(datos.ciudad);
-      setClima(`Clima: ${datos.descripcion}, ${datos.temperatura}°C`);
+      setClima(`${datos.descripcion}`);
+      setTemp(`${datos.temperatura}°C`)
       setEditando(false);
     } catch (err) {
       console.error(err);
@@ -46,18 +48,17 @@ function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp 
 
   return (
     <div
-      className="p-3 mb-3 rounded shadow-sm"
-      style={{ backgroundColor: '#f0f8ff', cursor: automatico ? 'default' : 'pointer' }}
+      className="weather-cards"
     >
       {!editando ? (
-        <div>
-          <h5>{automatico ? 'Tu ubicación detectada es:' : 'Aquí puedes ingresar tu ciudad de interés'}</h5>
-          <p>{automatico && ubicacionProp ? ubicacionProp : (ciudad || 'Sin ciudad asignada')}</p>
-          {clima && <p>{clima}</p>}
+        <div class="weather-card">
+          <span class="icon">🏙️</span>
+          <p>Ciudad</p>
+          <strong>{automatico && ubicacionProp ? ubicacionProp : (ciudad || 'Sin ciudad asignada')}</strong>
           {!automatico && <button className="btn btn-sm btn-info mt-2" onClick={() => setEditando(true)}>Editar Ciudad</button>}
         </div>
       ) : (
-        <div>
+        <div class="weather-card">
           <input
             type="text"
             className="form-control mb-2"
@@ -73,6 +74,37 @@ function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp 
           </button>
         </div>
       )}
+      <div class="weather-card">
+        <span class="icon">🌫️</span>
+        <p>Clima</p>
+        {clima && <strong>{clima}</strong>}
+      </div>
+      <div class="weather-card">
+        <span class="icon">🌡️</span>
+        <p>Temperatura</p>
+        {temp && <strong>{temp}</strong>}
+      </div>
+      
+      <div class="weather-card">
+        <span class="icon">☀️</span>
+        <p>Índice UV</p>
+        <strong>5</strong>
+      </div>
+      <div class="weather-card">
+        <span class="icon">💧</span>
+        <p>Humedad</p>
+        <strong>60%</strong>
+      </div>
+      <div class="weather-card">
+        <span class="icon">🌧️</span>
+        <p>Lluvia prevista</p>
+        <strong>10%</strong>
+      </div>
+      <div class="weather-card">
+        <span class="icon">💨</span>
+        <p>Viento</p>
+        <strong>12 km/h</strong>
+      </div>
     </div>
   );
 }
