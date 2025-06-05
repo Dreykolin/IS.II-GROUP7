@@ -1,9 +1,11 @@
 import React from 'react';
 import { useClima } from '../../context/ClimaContext';
+import '../../assets/Pronostico.css';
 
 function Pronostico() {
   const { pronostico, datosClima } = useClima();
 
+  // Si no hay pronóstico disponible, mostramos un mensaje
   if (!pronostico || pronostico.length === 0) {
     return <p>No hay pronóstico disponible.</p>;
   }
@@ -33,3 +35,4 @@ function Pronostico() {
 }
 
 export default Pronostico;
+
