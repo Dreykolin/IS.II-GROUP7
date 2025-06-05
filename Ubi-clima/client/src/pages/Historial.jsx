@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import '../assets/Historial.css';
 
 const API_BASE = 'http://localhost:3000';
 
@@ -26,6 +27,7 @@ function TarjetaActividad({ actividad }) {
     >
       <div className="flex justify-between items-center">
         <strong className="text-lg text-gray-800">{actividad.nombre}</strong>
+        <br></br>
         <span className="text-sm text-gray-600">{fechaStr} – {horaStr}</span>
       </div>
       {abierto && (
