@@ -12,6 +12,29 @@ async function obtenerHistorial(usuario_id, mes, año) {
   return await res.json();
 }
 
+function TarjetaActividad({ actividad }) {
+  const [abierto, setAbierto] = useState(false);
+  const fecha = new Date(actividad.fecha);
+  const fechaStr = fecha.toLocaleDateString();
+  const horaStr = fecha.toLocaleTimeString();
+
+  return (
+    <div
+      className="rounded-xl shadow p-4 mb-4 cursor-pointer transition hover:shadow-lg"
+      style={{ backgroundColor: '#f6ebd9' }}
+      onClick={() => setAbierto(!abierto)}
+    >
+      <div className="flex justify-between items-center">
+        <strong className="text-lg text-gray-800">{actividad.nombre}</strong>
+        <span className="text-sm text-gray-600">{fechaStr} – {horaStr}</span>
+      </div>
+      {abierto && (
+        <p className="mt-2 text-sm text-gray-700">{actividad.descripcion}</p>
+      )}
+    </div>
+  );
+}
+
 function Historial({ usuarioId }) {
   const fechaActual = new Date();
   const [mes, setMes] = useState(String(fechaActual.getMonth() + 1).padStart(2, '0')); // "01" a "12"
@@ -61,13 +84,11 @@ function Historial({ usuarioId }) {
         <p>No hay actividades registradas.</p>
       ) : (
         historial.map((item, index) => (
-          <div key={index} className="border-b py-2">
-            <strong>{item.nombre}</strong> – {new Date(item.fecha).toLocaleString()}
-            <p className="text-sm text-gray-600">{item.descripcion}</p>
-          </div>
+          <TarjetaActividad key={index} actividad={item} />
         ))
       )}
     </div>
   );
 }
+
 export default Historial;
