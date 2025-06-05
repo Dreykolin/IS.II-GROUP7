@@ -14,7 +14,7 @@ function Pronostico() {
 
   return (
     <section className="pronostico-container">
-      <h1>Pronóstico para {ciudad}</h1>
+      <h1>Pronóstico</h1>
       <div className="dias-pronostico">
         {pronostico.map((dia) => (
           <div key={dia.fecha} className="dia-card">
