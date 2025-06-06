@@ -150,6 +150,7 @@ app.post('/clima', async (req, res) => {
     const { data } = await axios.get(url);
     res.json({
       temperatura: data.main.temp,
+      humedad: data.main.humidity,
       viento: data.wind.speed,
       tiempo_id: data.weather[0].id,
       descripcion: data.weather[0].description,
@@ -172,6 +173,7 @@ app.post('/clima_por_ciudad', async (req, res) => {
     const { data } = await axios.get(url);
     res.json({
       temperatura: data.main.temp,
+      humedad: data.main.humidity,
       viento: data.wind.speed,
       tiempo_id: data.weather[0].id,
       descripcion: data.weather[0].description,

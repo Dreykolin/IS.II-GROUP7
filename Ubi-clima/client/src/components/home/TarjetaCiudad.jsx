@@ -17,12 +17,40 @@ function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp 
   const [ciudad, setCiudad] = useState('');
   const [inputCiudad, setInputCiudad] = useState('');
   const [clima, setClima] = useState(climaProp || '');
-  const [temp, setTemp] = useState(climaProp || '');
+  const [temp, setTemp] = useState('');
+  const [humedad, setHumedad] = useState('');
+  const [viento, setViento] = useState('');
 
   useEffect(() => {
-    if (automatico && climaProp) {
-      setClima(climaProp);
-    }
+    
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const res = await fetch("http://localhost:3000/clima", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              lat: position.coords.latitude,
+              lon: position.coords.longitude,
+            }),
+          });
+
+          if (!res.ok) throw new Error("Error al obtener clima");
+
+          const datos = await res.json();
+          setCiudad(datos.ciudad);
+          setHumedad(`${datos.humedad}%`);
+          setViento(`${datos.viento} km/h`);
+          setClima(`${datos.descripcion}`);
+          setTemp(`${Math.round(datos.temperatura)}°C`)
+          
+          setEditando(false);
+        
+        } catch (error) {
+          console.error(error);
+        }
+      });
+
   }, [automatico, climaProp]);
 
   const manejarGuardar = async () => {
@@ -37,8 +65,11 @@ function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp 
 
       const datos = await res.json();
       setCiudad(datos.ciudad);
+      setHumedad(`${datos.humedad}%`);
+      setViento(`${datos.viento} km/h`);
       setClima(`${datos.descripcion}`);
-      setTemp(`${datos.temperatura}°C`)
+      setTemp(`${Math.round(datos.temperatura)}°C`)
+      
       setEditando(false);
     } catch (err) {
       console.error(err);
@@ -50,6 +81,18 @@ function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp 
     <div
       className="weather-cards"
     >
+      <div class="weather-card">
+        <span class="icon">🌫️</span>
+        <p>Clima</p>
+        {clima && <strong>{clima}</strong>}
+      </div>
+      <div class="weather-card">
+        <span class="icon">🌡️</span>
+        <p>Temperatura</p>
+        {temp && <strong>{temp}</strong>}
+      </div>
+
+      
       {!editando ? (
         <div class="weather-card">
           <span class="icon">🏙️</span>
@@ -74,36 +117,16 @@ function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp 
           </button>
         </div>
       )}
-      <div class="weather-card">
-        <span class="icon">🌫️</span>
-        <p>Clima</p>
-        {clima && <strong>{clima}</strong>}
-      </div>
-      <div class="weather-card">
-        <span class="icon">🌡️</span>
-        <p>Temperatura</p>
-        {temp && <strong>{temp}</strong>}
-      </div>
-      
-      <div class="weather-card">
-        <span class="icon">☀️</span>
-        <p>Índice UV</p>
-        <strong>5</strong>
-      </div>
+
       <div class="weather-card">
         <span class="icon">💧</span>
         <p>Humedad</p>
-        <strong>60%</strong>
-      </div>
-      <div class="weather-card">
-        <span class="icon">🌧️</span>
-        <p>Lluvia prevista</p>
-        <strong>10%</strong>
+        {humedad && <strong>{humedad}</strong>}
       </div>
       <div class="weather-card">
         <span class="icon">💨</span>
         <p>Viento</p>
-        <strong>12 km/h</strong>
+        {viento && <strong>{viento}</strong>}
       </div>
     </div>
   );

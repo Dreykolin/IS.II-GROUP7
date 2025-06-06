@@ -43,7 +43,7 @@ function Home({ handleLoginRedirect }) {
             {/* Alternamos entre TarjetaCiudad y Pronostico */}
             {!mostrarPronostico ? (
               <>
-                <TarjetaCiudad />
+                <TarjetaCiudad/>
                 <button
                   onClick={() => setMostrarPronostico(true)} // Cambiar a pronóstico
                   className="btn"
