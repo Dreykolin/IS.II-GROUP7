@@ -2,6 +2,7 @@ import { useState } from 'react';
 import AdminAjustes from './AdminAjustes';
 import PreferenceSelector from './PreferenceSelector';
 import RecommendationList from './RecommendationList';
+import AdminUsuarios from './AdminUsuarios';
 // import AdminUsuarios from './AdminUsuarios'; // Para cuando lo uses
 import '../assets/Administrador.css';
 

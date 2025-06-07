@@ -1,11 +1,11 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../assets/AdminAjustes.css';
 
 export default function AdminAjustes() {
   const navigate = useNavigate();
 
   const salirDelModoAdmin = () => {
-    navigate('/usuario'); // O la ruta que tengas para el usuario normal
+    navigate('/'); // o '/home' si tu ruta home se llama así
   };
 
   return (

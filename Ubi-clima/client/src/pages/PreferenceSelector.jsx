@@ -35,22 +35,55 @@ export default function PreferenceSelector() {
     }));
   };
 
-  const agregarGusto = (e) => {
-    e.preventDefault();
-    const { nombre, descripcion } = nuevaPreferencia;
+const agregarGusto = async (e) => {
+  e.preventDefault();
+  const { nombre, descripcion, temperatura, viento, lluvia, uv } = nuevaPreferencia;
 
-    if (!nombre.trim() || !descripcion.trim()) return;
+  if (!nombre.trim() || !descripcion.trim()) return;
 
-    setGustos((prev) => [...prev, nuevaPreferencia]);
-    setNuevaPreferencia({
-      nombre: '',
-      descripcion: '',
-      temperatura: '',
-      viento: '',
-      lluvia: '',
-      uv: '',
-    });
+  const usuario_id = localStorage.getItem('usuario_id');
+
+  const nuevaActividad = {
+    nombre,
+    descripcion,
+    temperatura: parseFloat(temperatura),
+    viento: parseFloat(viento),
+    lluvia: parseFloat(lluvia),
+    uv: parseFloat(uv),
+    outdoor: preferencias.outdoor,
+    indoor: preferencias.indoor,
+    sports: preferencias.sports,
+    intellectual: preferencias.intellectual,
+    usuario_id: usuario_id ? parseInt(usuario_id) : null,
   };
+
+  try {
+    const res = await fetch('http://localhost:3000/actividades', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(nuevaActividad)
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setGustos((prev) => [...prev, nuevaPreferencia]);
+      setNuevaPreferencia({
+        nombre: '',
+        descripcion: '',
+        temperatura: '',
+        viento: '',
+        lluvia: '',
+        uv: '',
+      });
+    } else {
+      console.error("Error desde el servidor:", data.error);
+    }
+  } catch (err) {
+    console.error("Error en la petición:", err);
+  }
+};
+
 
   return (
     <section className="preference-sliders">

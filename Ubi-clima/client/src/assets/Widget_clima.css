@@ -1,30 +1,33 @@
-
 .widget-clima {
   background-color: #ffffff;
   font-family: 'Segoe UI', sans-serif;
   display: flex;
+  flex-direction: column; /* Cambié a columna para que el contenido se apile */
   justify-content: center;
   align-items: center;
-  padding: 1rem 1.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  padding: 1rem 2rem;
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 250px;
+  width: 280px;
   z-index: 9999;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  border: 2px solid #ccc; /* Cambié el color del borde a gris claro */
 }
 
 .widget-clima h3 {
   color: #333;
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin-bottom: 0.5rem;
+  font-weight: bold;
 }
 
 .widget-clima .clima-info {
   color: #4b5563;
+  font-size: 0.9rem;
 }
 
 .widget-clima .loading-text {
@@ -39,19 +42,26 @@
 }
 
 .widget-clima .btn-refresh {
-  background-color: #174abc;
-  color: white;
+  background-color: #f3f4f6; /* Fondo gris claro */
+  color: #333; /* Texto oscuro para contraste */
   border: none;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  margin-top: 0.5rem;
+  border-radius: 1rem;
+  padding: 0.75rem 1.25rem;
+  margin-top: 0.5rem; /* Reduje el margen superior para acercar el botón */
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
   width: 100%;
+  font-size: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Añadí un pequeño sombreado para resaltar */
 }
 
 .widget-clima .btn-refresh:hover {
-  background-color: #1a54d4;
+  background-color: #e1e3e8; /* Fondo ligeramente más oscuro al hacer hover */
 }
 
+.widget-clima .clima-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}

@@ -9,7 +9,7 @@ function WidgetClima() {
 
   useEffect(() => {
     if (datosClima) {
-      setClimaTexto(`${datosClima.descripcion}, ${datosClima.temperatura}°C en ${datosClima.ciudad}`);
+      setClimaTexto(`${Math.round(datosClima.temperatura)}°C y con ${datosClima.descripcion} en ${datosClima.ciudad}` );
       setCargando(false);
     } else {
       setClimaTexto('Cargando clima...');
