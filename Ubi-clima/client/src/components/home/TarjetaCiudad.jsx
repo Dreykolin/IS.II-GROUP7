@@ -1,59 +1,31 @@
-/** 
-MUy probablemente este componente será reworkeado, porque el problmea no es que haga dos llamadas al clima
-sino que lo hace a travez de 2 endpoints diferentes.
-
-Por otro lado, el uso de "tarjetas" para que posean el mismo tamaño, es correcto.
-
-
-
-*/
-
-
-
 import { useState, useEffect } from 'react';
+import { useClima } from '../../context/ClimaContext'; // Usamos el contexto para obtener los datos del clima
 
-function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp }) {
+function TarjetaCiudad() {
+  const { datosClima, actualizarClima } = useClima(); // Usamos el contexto para obtener los datos del clima
   const [editando, setEditando] = useState(false);
   const [ciudad, setCiudad] = useState('');
   const [inputCiudad, setInputCiudad] = useState('');
-  const [clima, setClima] = useState(climaProp || '');
+  const [clima, setClima] = useState('');
   const [temp, setTemp] = useState('');
   const [humedad, setHumedad] = useState('');
   const [viento, setViento] = useState('');
 
+  // Este useEffect se asegura de que los datos del clima se tomen del contexto al inicio
   useEffect(() => {
-    
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const res = await fetch("http://localhost:3000/clima", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              lat: position.coords.latitude,
-              lon: position.coords.longitude,
-            }),
-          });
+    if (datosClima) {
+      setCiudad(datosClima.ciudad);
+      setClima(datosClima.descripcion);
+      setTemp(`${Math.round(datosClima.temperatura)}°C`);
+      setHumedad(`${datosClima.humedad}%`);
+      setViento(`${datosClima.viento} km/h`);
+    }
+  }, [datosClima]); // Solo se ejecuta si 'datosClima' cambian
 
-          if (!res.ok) throw new Error("Error al obtener clima");
-
-          const datos = await res.json();
-          setCiudad(datos.ciudad);
-          setHumedad(`${datos.humedad}%`);
-          setViento(`${datos.viento} km/h`);
-          setClima(`${datos.descripcion}`);
-          setTemp(`${Math.round(datos.temperatura)}°C`)
-          
-          setEditando(false);
-        
-        } catch (error) {
-          console.error(error);
-        }
-      });
-
-  }, [automatico, climaProp]);
-
+  // Función para manejar la modificación de la ciudad
   const manejarGuardar = async () => {
+    if (!inputCiudad) return; // Si el campo de ciudad está vacío, no hacemos nada
+
     try {
       const res = await fetch('http://localhost:3000/clima_por_ciudad', {
         method: 'POST',
@@ -61,15 +33,18 @@ function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp 
         body: JSON.stringify({ ciudad: inputCiudad }),
       });
 
-      if (!res.ok) throw new Error('Error en la API');
+      if (!res.ok) throw new Error('Error al obtener clima de la ciudad');
 
       const datos = await res.json();
       setCiudad(datos.ciudad);
+      setClima(datos.descripcion);
+      setTemp(`${Math.round(datos.temperatura)}°C`);
       setHumedad(`${datos.humedad}%`);
       setViento(`${datos.viento} km/h`);
-      setClima(`${datos.descripcion}`);
-      setTemp(`${Math.round(datos.temperatura)}°C`)
-      
+
+      // Actualizamos el contexto con los nuevos datos de clima
+      actualizarClima({ clima: datos });
+
       setEditando(false);
     } catch (err) {
       console.error(err);
@@ -78,30 +53,32 @@ function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp 
   };
 
   return (
-    <div
-      className="weather-cards"
-    >
-      <div class="weather-card">
-        <span class="icon">🌫️</span>
+    <div className="weather-cards">
+      <div className="weather-card">
+        <span className="icon">🌫️</span>
         <p>Clima</p>
         {clima && <strong>{clima}</strong>}
       </div>
-      <div class="weather-card">
-        <span class="icon">🌡️</span>
+      <div className="weather-card">
+        <span className="icon">🌡️</span>
         <p>Temperatura</p>
         {temp && <strong>{temp}</strong>}
       </div>
 
-      
       {!editando ? (
-        <div class="weather-card">
-          <span class="icon">🏙️</span>
+        <div className="weather-card">
+          <span className="icon">🏙️</span>
           <p>Ciudad</p>
-          <strong>{automatico && ubicacionProp ? ubicacionProp : (ciudad || 'Sin ciudad asignada')}</strong>
-          {!automatico && <button className="btn btn-sm btn-info mt-2" onClick={() => setEditando(true)}>Editar Ciudad</button>}
+          <strong>{ciudad || 'Sin ciudad asignada'}</strong>
+          <button
+            className="btn btn-sm btn-info mt-2"
+            onClick={() => setEditando(true)}
+          >
+            Editar Ciudad
+          </button>
         </div>
       ) : (
-        <div class="weather-card">
+        <div className="weather-card">
           <input
             type="text"
             className="form-control mb-2"
@@ -112,19 +89,22 @@ function TarjetaCiudad({ automatico, clima: climaProp, ubicacion: ubicacionProp 
           <button className="btn btn-sm btn-success me-2" onClick={manejarGuardar}>
             Guardar
           </button>
-          <button className="btn btn-sm btn-secondary" onClick={() => setEditando(false)}>
+          <button
+            className="btn btn-sm btn-secondary"
+            onClick={() => setEditando(false)}
+          >
             Cancelar
           </button>
         </div>
       )}
 
-      <div class="weather-card">
-        <span class="icon">💧</span>
+      <div className="weather-card">
+        <span className="icon">💧</span>
         <p>Humedad</p>
         {humedad && <strong>{humedad}</strong>}
       </div>
-      <div class="weather-card">
-        <span class="icon">💨</span>
+      <div className="weather-card">
+        <span className="icon">💨</span>
         <p>Viento</p>
         {viento && <strong>{viento}</strong>}
       </div>

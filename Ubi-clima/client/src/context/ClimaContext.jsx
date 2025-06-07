@@ -107,6 +107,7 @@ export const ClimaProvider = ({ children }) => {
             ciudad: data.ciudad,
             viento: data.viento,
             tiempo_id: data.tiempo_id,
+            humedad: data.humedad, // Añadimos humedad
           };
 
           actualizarClima({ clima: nuevoClima });
