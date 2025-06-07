@@ -126,6 +126,37 @@ app.post('/guardar_actividad', (req, res) => {
     res.send(`Recomendación guardada: ${nombre}`);
   });
 });
+app.post('/actividades', (req, res) => {
+  const {
+    nombre, descripcion, temperatura, viento, lluvia, uv,
+    outdoor, indoor, sports, intellectual, usuario_id
+  } = req.body;
+
+  db.run(
+    `INSERT INTO actividades (nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, sports, intellectual, usuario_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, sports, intellectual, usuario_id],
+    function (err) {
+      if (err) {
+        console.error("Error al insertar actividad:", err.message);
+        return res.status(500).json({ error: 'Error al guardar actividad' });
+      }
+      res.status(200).json({ mensaje: 'Actividad guardada correctamente', id: this.lastID });
+    }
+  );
+});
+
+app.get('/usuarios', (req, res) => {
+  const sql = 'SELECT id, email FROM usuarios';
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.error('Error al obtener usuarios:', err);
+      return res.status(500).json({ error: 'Error al obtener los usuarios' });
+    }
+    res.json(rows);
+  });
+});
+
 
 
 

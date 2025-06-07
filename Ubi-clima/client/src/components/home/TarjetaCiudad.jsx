@@ -22,7 +22,6 @@ function TarjetaCiudad() {
     }
   }, [datosClima]); // Solo se ejecuta si 'datosClima' cambian
 
-  // Función para manejar la modificación de la ciudad
   const manejarGuardar = async () => {
     if (!inputCiudad) return; // Si el campo de ciudad está vacío, no hacemos nada
 
