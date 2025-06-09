@@ -31,17 +31,6 @@ function Activities() {
   loadAdminActivities();
 }, []);
 
-useEffect(() => {
-  if (datosClima) {
-    setClima({
-      temperatura: datosClima.temperatura ?? null,
-      viento: datosClima.viento ?? null,
-      tiempo_id: datosClima.tiempo_id ?? null
-    });
-  }
-}, [datosClima]);
-
-
   // Actualizar recomendaciones cuando cambia el clima o preferencias
   useEffect(() => {
     if (clima.temperatura !== null) {
@@ -408,20 +397,7 @@ useEffect(() => {
           {isLoading ? "Guardando..." : "Crear actividad"}
         </button>
       </div>
-      <div style={{ background: '#f4f4f4', padding: '1rem', marginBottom: '1rem', border: '1px solid #ccc' }}>
-  <h2>🧪 Datos del Clima (debug)</h2>
-  {datosClima ? (
-    <>
-      <p><strong>🌡 Temperatura:</strong> {datosClima.temperatura}°C</p>
-      <p><strong>💨 Viento:</strong> {datosClima.viento} m/s</p>
-      <p><strong>🌤 ID de Clima:</strong> {datosClima.tiempo_id}</p>
-      <p><strong>📍 Ciudad:</strong> {datosClima.ciudad}</p>
-      <p><strong>📘 Descripción:</strong> {datosClima.descripcion}</p>
-    </>
-  ) : (
-    <p style={{ color: 'red' }}>❌ No hay datos del clima disponibles</p>
-  )}
-</div>
+     
     </div>
   );
 

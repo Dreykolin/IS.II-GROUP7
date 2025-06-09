@@ -10,7 +10,7 @@ const Tables = require('./models/tables');
 const apiKey_Weather = '8c602967b810f8b7f537a67aaeaef81d';
 
 Tables(db);
-
+//XD
 
 // Middleware
 app.use(cors());
