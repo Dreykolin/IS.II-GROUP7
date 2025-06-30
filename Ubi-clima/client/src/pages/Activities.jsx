@@ -1,29 +1,69 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext'; // ⬅️ Conectado al AuthContext
-import ActivityForm from '../components/activities/ActivityForm'; // ⬅️ Importa el nuevo componente de formulario
-import ActivityList from '../components/activities/ActivityList'; // ⬅️ Importa el nuevo componente de lista
+import Joyride, { STATUS } from 'react-joyride'; // ⬅️ 1. Imports para el tour
+import { useAuth } from '../context/AuthContext';
+import ActivityForm from '../components/activities/ActivityForm';
+import ActivityList from '../components/activities/ActivityList';
 import '../assets/activities2.css';
 
 function Activities() {
-    const { user, isAuthenticated } = useAuth(); // ⬅️ Obtiene el usuario y el estado de auth del contexto
+    // ⬅️ 2. Obtenemos todo lo necesario, incluyendo markTourAsSeen
+    const { user, isAuthenticated, markTourAsSeen } = useAuth();
     const [activities, setActivities] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Carga las actividades del usuario cuando el componente se monta o cuando el usuario cambia
+    // --- Lógica del Tour para la página de Actividades ---
+    const [runTour, setRunTour] = useState(false);
+
+    // 3. Definimos los pasos específicos para esta página
+    const [tourSteps] = useState([
+        {
+            target: '#activity-list-section',
+            content: 'Aquí verás la lista de todas tus actividades personales. Puedes editarlas o eliminarlas en cualquier momento.',
+            placement: 'right',
+        },
+        {
+            target: '#activity-form-section',
+            content: 'Usa este formulario para crear nuevas actividades personalizadas con tus propias condiciones de clima.',
+            placement: 'left',
+        }
+    ]);
+
+    // 4. El useEffect ahora comprueba el tour específico de 'actividades'
+    useEffect(() => {
+        if (isAuthenticated && user?.tours_vistos?.actividades === false) {
+            setRunTour(true);
+        }
+    }, [isAuthenticated, user]);
+
+    // 5. El callback marca el tour 'actividades' como visto
+    const handleJoyrideCallback = async (data) => {
+        const { status } = data;
+        if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+            setRunTour(false);
+            await fetch('http://localhost:3000/tour-completado', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usuario_id: user.id, tour_name: 'actividades' }),
+            });
+            markTourAsSeen('actividades');
+        }
+    };
+    // --- Fin de la Lógica del Tour ---
+
+    // Carga las actividades del usuario
     useEffect(() => {
         if (user) {
             loadUserActivities();
         }
     }, [user]);
 
-    // Función para obtener las actividades del usuario desde el backend
     const loadUserActivities = async () => {
+        // ... (el resto de tu lógica se mantiene igual)
         if (!user) return;
         setIsLoading(true);
         try {
             const res = await fetch(`http://localhost:3000/actividades/${user.id}`);
             const data = await res.json();
-            // Añade la propiedad 'editing_mode' a cada actividad para controlar la UI
             setActivities(data.map(act => ({ ...act, editing_mode: false })));
         } catch (error) {
             console.error("Error al obtener actividades:", error);
@@ -32,8 +72,8 @@ function Activities() {
         }
     };
 
-    // Función para crear una nueva actividad (se pasa a ActivityForm)
     const createActivity = async (formData) => {
+        // ...
         const body = { ...formData, usuario_id: user.id };
         setIsLoading(true);
         try {
@@ -44,7 +84,7 @@ function Activities() {
             });
             if (res.ok) {
                 alert("✅ Actividad guardada correctamente");
-                loadUserActivities(); // Recarga la lista para obtener la nueva actividad con su ID de la BD
+                loadUserActivities();
             } else {
                 const error = await res.json();
                 alert("❌ Error: " + error.error);
@@ -57,33 +97,30 @@ function Activities() {
         }
     };
 
-    // Función para guardar cambios de una actividad (se pasa a ActivityList)
     const modifyActivity = (index, editData) => {
-        // Aquí iría la lógica para guardar los cambios en el backend (fetch con método PUT/PATCH)
+        // ...
         console.log("Guardando cambios para:", activities[index].id, editData);
         const updatedActivities = [...activities];
         updatedActivities[index] = { ...updatedActivities[index], ...editData, editing_mode: false };
         setActivities(updatedActivities);
     };
 
-    // Función para eliminar una actividad (se pasa a ActivityList)
     const deleteActivity = async (index) => {
+        // ...
         if (window.confirm("¿Estás seguro de eliminar esta actividad?")) {
-            // Aquí iría la lógica para eliminar en el backend (fetch con método DELETE)
             console.log("Eliminando actividad:", activities[index].id);
             setActivities(activities.filter((_, i) => i !== index));
             alert("Actividad eliminada (simulado). Implementar backend.");
         }
     };
 
-    // Función para activar/desactivar el modo edición (se pasa a ActivityList)
     const toggleEditMode = (index) => {
+        // ...
         const updated = [...activities];
         updated[index].editing_mode = !updated[index].editing_mode;
         setActivities(updated);
     };
 
-    // Si el usuario no está autenticado, muestra un mensaje
     if (!isAuthenticated) {
         return (
             <div className="container mt-4">
@@ -94,9 +131,24 @@ function Activities() {
         );
     }
 
-    // Renderizado principal: pasa el estado y las funciones a los componentes hijos
     return (
         <div className="activities-page">
+            {/* 6. Añadimos el componente Joyride a la página */}
+            <Joyride
+                steps={tourSteps}
+                run={runTour}
+                callback={handleJoyrideCallback}
+                continuous
+                showProgress
+                showSkipButton
+                locale={{ last: 'Finalizar' }}
+                styles={{
+                    options: {
+                        primaryColor: '#ff5a5f',
+                    },
+                }}
+            />
+
             <ActivityList
                 activities={activities}
                 isLoading={isLoading}
