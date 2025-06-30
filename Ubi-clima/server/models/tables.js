@@ -24,11 +24,11 @@ db.run(`CREATE TABLE IF NOT EXISTS actividades (
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );`);
 
- db.run(`CREATE TABLE IF NOT EXISTS usuarios (
+db.run(`CREATE TABLE IF NOT EXISTS usuarios (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT UNIQUE,
   contraseña TEXT,
-  tour_completado INTEGER DEFAULT 0 NOT NULL 
+  tours_vistos TEXT NOT NULL DEFAULT '{"home": false, "historial": false, "actividades": false, "ajustes": false, "administrador": false}'
 );
 `);
 

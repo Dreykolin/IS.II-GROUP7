@@ -1,19 +1,18 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+Ôªøimport { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-// 1. Crear el contexto, igual que en ClimaContext
+// 1. Crear el contexto (sin cambios)
 const AuthContext = createContext();
+
+// Hook personalizado para usar el contexto (sin cambios)
 
 // 2. Crear el Proveedor del contexto
 export const AuthProvider = ({ children }) => {
-    // Estado para guardar el objeto completo del usuario: { id, email, tour_completado }
+    // El estado 'user' ahora guardar√° el objeto tours_vistos
     const [user, setUser] = useState(null);
-    // Estado para el token, que determina si el usuario est· logueado
     const [token, setToken] = useState(null);
-    // Estado para saber si estamos verificando la sesiÛn inicial
     const [isLoading, setIsLoading] = useState(true);
 
-    // 3. Cargar datos de la sesiÛn desde localStorage al iniciar la app
-    // Similar a como ClimaContext carga los datos del clima.
+    // Cargar datos de la sesi√≥n desde localStorage al iniciar (sin cambios)
     useEffect(() => {
         try {
             const storedToken = localStorage.getItem('token');
@@ -24,31 +23,27 @@ export const AuthProvider = ({ children }) => {
                 setUser(JSON.parse(storedUser));
             }
         } catch (error) {
-            // Si hay un error en localStorage, limpiamos la sesiÛn
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            console.error("Error al cargar la sesiÛn desde localStorage", error);
+            console.error("Error al cargar la sesi√≥n desde localStorage", error);
         } finally {
-            setIsLoading(false); // Terminamos de cargar, haya o no sesiÛn
+            setIsLoading(false);
         }
     }, []);
 
-    // 4. FunciÛn para iniciar sesiÛn, similar a 'actualizarClima'
+    // ‚¨ÖÔ∏è CAMBIO 1: La funci√≥n 'login' ahora maneja 'tours_vistos'
     const login = useCallback((loginData) => {
         try {
-            // Extraemos los datos que nos envÌa el backend
             const userData = {
                 id: loginData.usuario_id,
                 email: loginData.email,
-                tour_completado: loginData.tour_completado
+                tours_vistos: loginData.tours_vistos // En lugar de tour_completado
             };
             const userToken = loginData.token;
 
-            // Guardamos en estado
             setUser(userData);
             setToken(userToken);
 
-            // Guardamos en localStorage, como en ClimaContext
             localStorage.setItem('user', JSON.stringify(userData));
             localStorage.setItem('token', JSON.stringify(userToken));
 
@@ -57,48 +52,54 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // 5. FunciÛn para cerrar sesiÛn
+    // La funci√≥n 'logout' se mantiene igual
     const logout = useCallback(() => {
-        // Limpiamos el estado
         setUser(null);
         setToken(null);
-
-        // Limpiamos localStorage
         localStorage.removeItem('user');
         localStorage.removeItem('token');
-        localStorage.removeItem('usuario_id'); // Por si queda algo del sistema antiguo
-
-        // Recargamos la p·gina como en tu lÛgica original de App.jsx
+        localStorage.removeItem('usuario_id');
         window.location.reload();
     }, []);
 
-    // 6. FunciÛn para actualizar el usuario localmente (para el tour)
-    const updateUser = useCallback((updatedData) => {
+    // ‚¨ÖÔ∏è CAMBIO 2: Reemplazamos 'updateUser' por una funci√≥n m√°s espec√≠fica
+    const markTourAsSeen = useCallback((tourName) => {
+        // Nos aseguramos de que haya un usuario antes de intentar actualizar
+        if (!user) return;
+
         setUser(prevUser => {
-            const newUser = { ...prevUser, ...updatedData };
-            // TambiÈn actualizamos el localStorage para que persista
+            // Creamos un nuevo objeto de tours para no mutar el estado directamente
+            const newToursVistos = {
+                ...prevUser.tours_vistos,
+                [tourName]: true // Actualizamos el tour espec√≠fico a 'true'
+            };
+
+            // Creamos el objeto de usuario actualizado
+            const newUser = { ...prevUser, tours_vistos: newToursVistos };
+
+            // Actualizamos localStorage para que el cambio persista
             localStorage.setItem('user', JSON.stringify(newUser));
+
+            // Devolvemos el nuevo estado del usuario
             return newUser;
         });
-    }, []);
+    }, [user]); // Depende del estado del 'user'
 
-    // Si a˙n est· cargando la sesiÛn inicial, podemos mostrar un loader
-    // para evitar parpadeos en la UI.
     if (isLoading) {
-        return <div>Cargando sesiÛn...</div>;
+        return <div>Cargando sesi√≥n...</div>;
     }
 
-    // 7. Proveemos el 'value' a los componentes hijos
+    // ‚¨ÖÔ∏è CAMBIO 3: A√±adimos 'markTourAsSeen' al valor del proveedor
     return (
         <AuthContext.Provider
             value={{
                 user,
                 token,
-                isAuthenticated: !!token, // Booleano para saber si hay sesiÛn
+                isAuthenticated: !!token,
                 isLoading,
                 login,
                 logout,
-                updateUser,
+                markTourAsSeen, // La nueva funci√≥n para marcar tours
             }}
         >
             {children}

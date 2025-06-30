@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import Joyride, { STATUS } from 'react-joyride'; // ⬅️ Importa Joyride
-import { useAuth } from '../context/AuthContext'; // ⬅️ Importa el hook de autenticación
+import Joyride, { STATUS } from 'react-joyride';
+import { useAuth } from '../context/AuthContext'; // ⬅️ 1. Importamos el hook que nos da acceso a todo
 import { useClima } from '../context/ClimaContext';
 import TarjetaCiudad from "../components/home/TarjetaCiudad";
 import RecommendationsList from "../components/home/RecommendationsList";
@@ -8,17 +8,17 @@ import ShortHistory from "../components/home/ShortHistory";
 import Pronostico from "../components/home/Pronostico";
 import '../assets/home.css';
 
-// ⬅️ El componente ya no recibe 'handleLoginRedirect'
 function Home() {
     const { datosClima } = useClima();
-    const { isAuthenticated, user, updateUser } = useAuth(); // ⬅️ Usa el estado del contexto
+    // ⬅️ 2. Obtenemos 'markTourAsSeen' en lugar de 'updateUser'
+    const { isAuthenticated, user, markTourAsSeen } = useAuth();
     const [mostrarPronostico, setMostrarPronostico] = useState(false);
 
-    // --- Lógica del Tour de Bienvenida ---
+    // --- Lógica del Tour de Bienvenida (ACTUALIZADA) ---
     const [runTour, setRunTour] = useState(false);
     const [tourSteps] = useState([
         {
-            target: '.recommendations-list', // Usamos clases si no hay IDs
+            target: '.recommendations-list',
             content: '¡Bienvenido! Aquí encontrarás nuestras recomendaciones de actividades.',
             placement: 'bottom',
         },
@@ -34,14 +34,15 @@ function Home() {
         },
     ]);
 
-    // Decide si el tour debe iniciarse
+    // ⬅️ 3. useEffect ahora comprueba el tour específico de 'home'
     useEffect(() => {
-        if (isAuthenticated && user && user.tour_completado === 0) {
+        // Si el usuario está logueado y el tour 'home' no ha sido visto...
+        if (isAuthenticated && user && user.tours_vistos && user.tours_vistos.home === false) {
             setRunTour(true);
         }
     }, [isAuthenticated, user]);
 
-    // Se ejecuta cuando el tour termina o se salta
+    // ⬅️ 4. handleJoyrideCallback ahora actualiza el tour específico de 'home'
     const handleJoyrideCallback = async (data) => {
         const { status } = data;
         const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
@@ -49,14 +50,16 @@ function Home() {
         if (finishedStatuses.includes(status)) {
             setRunTour(false);
             try {
+                // Le decimos al backend qué tour específico completar
                 await fetch('http://localhost:3000/tour-completado', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ usuario_id: user.id }),
+                    body: JSON.stringify({ usuario_id: user.id, tour_name: 'home' }),
                 });
-                updateUser({ tour_completado: 1 });
+                // Actualizamos el estado local usando la nueva función del contexto
+                markTourAsSeen('home');
             } catch (error) {
-                console.error("Error al marcar el tour como completado:", error);
+                console.error("Error al marcar el tour 'home' como completado:", error);
             }
         }
     };
@@ -64,7 +67,6 @@ function Home() {
 
     return (
         <div className="clima-page">
-            {/* Componente Joyride que controla el tour */}
             <Joyride
                 steps={tourSteps}
                 run={runTour}
@@ -81,7 +83,6 @@ function Home() {
                 }}
             />
 
-            {/* ⬅️ Lógica de autenticación ahora usa 'isAuthenticated' del contexto */}
             {!isAuthenticated ? (
                 <div className="flex-container">
                     <div className="alert alert-warning alerta-usuario">
@@ -89,7 +90,6 @@ function Home() {
                     </div>
                 </div>
             ) : (
-                // Tu estructura original para usuarios logueados
                 <>
                     <div className="flex-container recommendations-list">
                         <RecommendationsList />
@@ -126,17 +126,12 @@ function Home() {
                 </>
             )}
 
-            {/* Tu estructura original para la sección 'hero' y 'activities' */}
             <header id="home" className="hero">
                 <div className="hero-content">
                     <h1>¡Descubre qué hacer hoy con el clima a tu favor!</h1>
                     <p>Recomendaciones personalizadas para cada día, cada clima y cada persona.</p>
                     <div className="hero-buttons">
                         <a href="#activities" className="btn primary">Ver recomendaciones</a>
-                        {/* ⬅️ Este botón ya no es necesario aquí, la Navbar lo maneja */}
-                        {/* {!isAuthenticated ? (
-              <a href="#settings" className="btn secondary" onClick={() => navigate('/login')}>Iniciar Sesión</a>
-            ) : null} */}
                     </div>
                 </div>
             </header>

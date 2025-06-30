@@ -260,11 +260,12 @@ app.post('/pronostico', async (req, res) => {
 
 
 //Este endopint captura el email y la comtraseña que introduzcamos y lo busca en la base de datos, si todo sale bien, se loguea
+// Este endpoint captura el email y la contraseña y ahora devuelve el objeto de tours.
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
-    // Actualizamos la consulta para pedir explícitamente el nuevo campo
-    const query = 'SELECT id, email, contraseña, tour_completado FROM usuarios WHERE email = ? AND contraseña = ?';
+    // 1. Actualizamos la consulta para pedir la nueva columna 'tours_vistos'
+    const query = 'SELECT id, email, contraseña, tours_vistos FROM usuarios WHERE email = ? AND contraseña = ?';
 
     db.get(query, [email, password], (err, row) => {
         if (err) {
@@ -273,44 +274,62 @@ app.post('/login', (req, res) => {
         }
 
         if (row) {
-            // Si el usuario existe, ahora incluimos el campo 'tour_completado' en la respuesta.
-            // También añadimos un 'token' para que el AuthContext funcione correctamente.
+            // 2. Si el usuario existe, convertimos el string de la BD en un objeto JSON real.
+            // Esto es crucial para que el frontend pueda usarlo fácilmente.
+            const toursVistosObject = JSON.parse(row.tours_vistos);
+
             res.json({
                 success: true,
                 message: 'Inicio de sesión exitoso',
-                token: 'este-es-un-token-de-ejemplo', // Importante para que AuthContext guarde la sesión
+                token: 'este-es-un-token-de-ejemplo',
                 usuario_id: row.id,
                 email: row.email,
-                tour_completado: row.tour_completado // ¡Aquí está el dato que necesitamos! (Será 0 o 1)
+                tours_vistos: toursVistosObject // ¡Enviamos el objeto!
             });
         } else {
             res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
         }
     });
 });
-
+// Este endpoint ahora es más inteligente: actualiza un tour específico por su nombre.
 app.post('/tour-completado', (req, res) => {
-    const { usuario_id } = req.body;
+    // 1. Ahora esperamos recibir el nombre del tour que se completó (ej: "home", "historial")
+    const { usuario_id, tour_name } = req.body;
 
-    if (!usuario_id) {
-        return res.status(400).json({ error: 'Falta el ID del usuario.' });
+    if (!usuario_id || !tour_name) {
+        return res.status(400).json({ error: 'Faltan datos: usuario_id y tour_name son obligatorios.' });
     }
 
-    const sql = `UPDATE usuarios SET tour_completado = 1 WHERE id = ?`;
+    // 2. Primero, obtenemos el estado actual de los tours del usuario.
+    const getSql = `SELECT tours_vistos FROM usuarios WHERE id = ?`;
 
-    db.run(sql, [usuario_id], function (err) {
+    db.get(getSql, [usuario_id], (err, row) => {
         if (err) {
-            console.error('Error al actualizar el tour:', err.message);
-            return res.status(500).json({ error: 'Error al marcar el tour como completado.' });
+            console.error('Error al obtener los tours:', err.message);
+            return res.status(500).json({ error: 'Error en la base de datos.' });
         }
-        if (this.changes === 0) {
+        if (!row) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
-        res.json({ success: true, message: 'Tour marcado como completado.' });
+
+        // 3. Convertimos el string de la BD a un objeto, actualizamos el tour específico a 'true'.
+        const toursVistosObject = JSON.parse(row.tours_vistos);
+        toursVistosObject[tour_name] = true;
+
+        // 4. Convertimos el objeto modificado de nuevo a un string para guardarlo en la BD.
+        const updatedToursVistosString = JSON.stringify(toursVistosObject);
+
+        // 5. Guardamos el string actualizado en la base de datos.
+        const updateSql = `UPDATE usuarios SET tours_vistos = ? WHERE id = ?`;
+        db.run(updateSql, [updatedToursVistosString, usuario_id], function (updateErr) {
+            if (updateErr) {
+                console.error('Error al actualizar el tour:', updateErr.message);
+                return res.status(500).json({ error: 'Error al marcar el tour como completado.' });
+            }
+            res.json({ success: true, message: `Tour '${tour_name}' marcado como completado.` });
+        });
     });
 });
-
-
 
 
 

@@ -3,16 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\server\\index.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:server\\index.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\client\\src\\pages\\Administrador.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:client\\src\\pages\\Administrador.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\client\\src\\components\\WidgetClima.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:client\\src\\components\\WidgetClima.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\client\\src\\pages\\Home.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:client\\src\\pages\\Home.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\server\\models\\tables.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:server\\models\\tables.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,40 +22,29 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Home.jsx",
-              "DocumentMoniker": "C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\client\\src\\pages\\Home.jsx",
-              "RelativeDocumentMoniker": "client\\src\\pages\\Home.jsx",
-              "ToolTip": "C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\client\\src\\pages\\Home.jsx",
-              "RelativeToolTip": "client\\src\\pages\\Home.jsx",
-              "ViewState": "AgIAAHEBAAAAAAAAAAAAAO8AAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2025-05-31T09:06:16.807Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "index.js",
-              "DocumentMoniker": "C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\server\\index.js",
-              "RelativeDocumentMoniker": "server\\index.js",
-              "ToolTip": "C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\server\\index.js",
-              "RelativeToolTip": "server\\index.js",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "tables.js",
+              "DocumentMoniker": "C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\server\\models\\tables.js",
+              "RelativeDocumentMoniker": "server\\models\\tables.js",
+              "ToolTip": "C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\server\\models\\tables.js",
+              "RelativeToolTip": "server\\models\\tables.js",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABgAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-05-31T08:48:45.501Z",
+              "WhenOpened": "2025-06-30T05:12:13.817Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "WidgetClima.jsx",
-              "DocumentMoniker": "C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\client\\src\\components\\WidgetClima.jsx",
-              "RelativeDocumentMoniker": "client\\src\\components\\WidgetClima.jsx",
-              "ToolTip": "C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\client\\src\\components\\WidgetClima.jsx",
-              "RelativeToolTip": "client\\src\\components\\WidgetClima.jsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFcAAAAJAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "Administrador.jsx",
+              "DocumentMoniker": "C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\client\\src\\pages\\Administrador.jsx",
+              "RelativeDocumentMoniker": "client\\src\\pages\\Administrador.jsx",
+              "ToolTip": "C:\\Users\\Dreyk\\OneDrive\\Escritorio\\IS.II-GROUP7\\Ubi-clima\\client\\src\\pages\\Administrador.jsx",
+              "RelativeToolTip": "client\\src\\pages\\Administrador.jsx",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAiwGUAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2025-05-31T08:41:24.377Z"
+              "WhenOpened": "2025-06-30T05:08:42.535Z",
+              "EditorCaption": ""
             }
           ]
         }
