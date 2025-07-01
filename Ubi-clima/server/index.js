@@ -8,7 +8,7 @@ const app = express();
 const db = new sqlite3.Database('./base_de_datos.db');  // Acá creamos nuestra base de datos
 const Tables = require('./models/tables');
 const apiKey_Weather = '8c602967b810f8b7f537a67aaeaef81d';
-
+const argon2 = require('argon2'); // ⬅️ Importamos argon2
 Tables(db);
 //XD
 
@@ -41,24 +41,30 @@ let subscriptions = []; //Curioso digamos
 
 
 
-//usado para registrar un usuario en la base de datos
-app.post('/guardar_usuario', (req, res) => {
-  const { email, contraseña } = req.body;
+app.post('/guardar_usuario', async (req, res) => {
+    const { email, contraseña } = req.body;
 
-  if (!email || !contraseña) {
-    return res.status(400).send('Email y contraseña son obligatorios');
-  }
-
-  const sql = 'INSERT INTO usuarios (email, contraseña) VALUES (?, ?)';
-  db.run(sql, [email, contraseña], function(err) {
-    if (err) {
-      console.error(err);
-      return res.status(500).send('Error al guardar el usuario');
+    if (!email || !contraseña) {
+        return res.status(400).send('Email y contraseña son obligatorios');
     }
-    res.send('Usuario guardado correctamente');
-  });
-});
 
+    try {
+        // ⬅️ Hasheamos la contraseña antes de guardarla
+        const hashedPassword = await argon2.hash(contraseña);
+
+        const sql = 'INSERT INTO usuarios (email, contraseña) VALUES (?, ?)';
+        db.run(sql, [email, hashedPassword], function (err) {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Error al guardar el usuario');
+            }
+            res.send('Usuario guardado correctamente');
+        });
+    } catch (err) {
+        console.error('Error al hashear la contraseña:', err);
+        res.status(500).send('Error al procesar la contraseña');
+    }
+});
 
 //Actualmente tenemos una tabla de ubicaciones eb la bdd, tocará ver si realmente es útil, pero el tema es que se guardan co esto.
 app.post('/guardar_ubicacion', (req, res) => {
@@ -258,24 +264,38 @@ app.post('/pronostico', async (req, res) => {
 
 
 
-// Esta versión pide los gustos directamente desde la tabla 'usuarios'.
+
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
+    // 1. Obtenemos el usuario por email (sin comparar la contraseña aún)
     const query = `
-        SELECT id, email, tours_vistos, outdoor, indoor, sports, intellectual 
+        SELECT id, email, contraseña, tours_vistos, outdoor, indoor, sports, intellectual 
         FROM usuarios 
-        WHERE email = ? AND contraseña = ?
+        WHERE email = ?
     `;
 
-    db.get(query, [email, password], (err, row) => {
+    db.get(query, [email], async (err, row) => {
         if (err) {
             console.error('Error en la consulta de login:', err.message);
             return res.status(500).json({ success: false, message: 'Error en la base de datos' });
         }
 
-        if (row) {
+        if (!row) {
+            return res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
+        }
+
+        try {
+            // 2. Verificamos la contraseña con argon2
+            const isValid = await argon2.verify(row.contraseña, password);
+
+            if (!isValid) {
+                return res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
+            }
+
+            // 3. Parseamos tours_vistos y devolvemos datos del usuario
             const toursVistosObject = JSON.parse(row.tours_vistos);
+
             res.json({
                 success: true,
                 message: 'Inicio de sesión exitoso',
@@ -290,11 +310,14 @@ app.post('/login', (req, res) => {
                     intellectual: row.intellectual
                 }
             });
-        } else {
-            res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
+
+        } catch (err) {
+            console.error('Error al verificar contraseña con argon2:', err.message);
+            return res.status(500).json({ success: false, message: 'Error al verificar contraseña' });
         }
     });
 });
+
 
 // Este endpoint ahora es más inteligente: actualiza un tour específico por su nombre.
 app.post('/tour-completado', (req, res) => {
