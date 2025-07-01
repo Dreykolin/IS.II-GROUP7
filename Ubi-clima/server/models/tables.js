@@ -25,12 +25,16 @@ db.run(`CREATE TABLE IF NOT EXISTS actividades (
 );`);
 
 db.run(`CREATE TABLE IF NOT EXISTS usuarios (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT UNIQUE,
-  contraseña TEXT,
-  tours_vistos TEXT NOT NULL DEFAULT '{"home": false, "historial": false, "actividades": false, "ajustes": false, "administrador": false}'
-);
-`);
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE,
+      contraseña TEXT,
+      tours_vistos TEXT NOT NULL DEFAULT '{"home": false, "historial": false, "actividades": false, "ajustes": false, "administrador": false, "preferencias_configuradas": false}',
+      outdoor INTEGER DEFAULT 3,
+      indoor INTEGER DEFAULT 3,
+      sports INTEGER DEFAULT 3,
+      intellectual INTEGER DEFAULT 3
+    );
+    `);
 
 db.run(`
   CREATE TABLE IF NOT EXISTS historial_actividades (

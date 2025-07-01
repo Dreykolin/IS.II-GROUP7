@@ -92,7 +92,9 @@ app.post('/guardar_actividad', (req, res) => {
     }
     res.send(`Actividad guardada: ${nombre}`);
   });
-});app.post('/guardar_recomendacion', (req, res) => {
+
+});
+app.post('/guardar_recomendacion', (req, res) => {
   const { nombre, descripcion, temperatura, viento, lluvia, uv } = req.body;
 
   if (!nombre || !descripcion) {
@@ -256,41 +258,44 @@ app.post('/pronostico', async (req, res) => {
 
 
 
-
-
-
-//Este endopint captura el email y la comtraseña que introduzcamos y lo busca en la base de datos, si todo sale bien, se loguea
-// Este endpoint captura el email y la contraseña y ahora devuelve el objeto de tours.
+// Esta versión pide los gustos directamente desde la tabla 'usuarios'.
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
-    // 1. Actualizamos la consulta para pedir la nueva columna 'tours_vistos'
-    const query = 'SELECT id, email, contraseña, tours_vistos FROM usuarios WHERE email = ? AND contraseña = ?';
+    const query = `
+        SELECT id, email, tours_vistos, outdoor, indoor, sports, intellectual 
+        FROM usuarios 
+        WHERE email = ? AND contraseña = ?
+    `;
 
     db.get(query, [email, password], (err, row) => {
         if (err) {
-            console.error('Error al ejecutar la consulta:', err.message);
+            console.error('Error en la consulta de login:', err.message);
             return res.status(500).json({ success: false, message: 'Error en la base de datos' });
         }
 
         if (row) {
-            // 2. Si el usuario existe, convertimos el string de la BD en un objeto JSON real.
-            // Esto es crucial para que el frontend pueda usarlo fácilmente.
             const toursVistosObject = JSON.parse(row.tours_vistos);
-
             res.json({
                 success: true,
                 message: 'Inicio de sesión exitoso',
                 token: 'este-es-un-token-de-ejemplo',
                 usuario_id: row.id,
                 email: row.email,
-                tours_vistos: toursVistosObject // ¡Enviamos el objeto!
+                tours_vistos: toursVistosObject,
+                preferencias: {
+                    outdoor: row.outdoor,
+                    indoor: row.indoor,
+                    sports: row.sports,
+                    intellectual: row.intellectual
+                }
             });
         } else {
             res.status(401).json({ success: false, message: 'Correo o contraseña incorrectos' });
         }
     });
 });
+
 // Este endpoint ahora es más inteligente: actualiza un tour específico por su nombre.
 app.post('/tour-completado', (req, res) => {
     // 1. Ahora esperamos recibir el nombre del tour que se completó (ej: "home", "historial")
@@ -498,59 +503,90 @@ app.get('/historial/:usuario_id', (req, res) => {
   });
 });
 
-//Este es para guardar los gustos del usuario
 app.post('/api/guardar-preferencia', (req, res) => {
-  const { usuario_id, categoria, valor } = req.body;
+    const { usuario_id, categoria, valor } = req.body;
 
-  if (!usuario_id || !categoria || typeof valor !== 'number') {
-    return res.status(400).json({ error: 'Datos incompletos' });
-  }
-
-  // Validar que la categoría sea válida (evita inyecciones SQL)
-  const categoriasValidas = ['outdoor', 'indoor', 'intellectual', 'sports'];
-  if (!categoriasValidas.includes(categoria)) {
-    return res.status(400).json({ error: 'Categoría inválida' });
-  }
-
-  // Verificar si ya existen preferencias
-  db.get('SELECT * FROM gustos WHERE usuario_id = ?', [usuario_id], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-
-    if (row) {
-      // Actualiza solo esa columna
-      const query = `UPDATE gustos SET ${categoria} = ? WHERE usuario_id = ?`;
-      db.run(query, [valor, usuario_id], function (err) {
-        if (err) return res.status(500).json({ error: err.message });
-        return res.json({ message: 'Preferencia actualizada' });
-      });
-    } else {
-      // Crea una fila con valores nulos excepto la categoría actual
-      const nuevoRegistro = {
-        usuario_id,
-        outdoor: null,
-        indoor: null,
-        intellectual: null,
-        sports: null,
-        [categoria]: valor,
-      };
-      db.run(
-        `INSERT INTO gustos (usuario_id, outdoor, indoor, intellectual, sports)
-         VALUES (?, ?, ?, ?, ?)`,
-        [
-          nuevoRegistro.usuario_id,
-          nuevoRegistro.outdoor,
-          nuevoRegistro.indoor,
-          nuevoRegistro.intellectual,
-          nuevoRegistro.sports,
-        ],
-        function (err) {
-          if (err) return res.status(500).json({ error: err.message });
-          return res.json({ message: 'Preferencia creada' });
-        }
-      );
+    // Validaciones básicas
+    if (!usuario_id || !categoria || typeof valor !== 'number') {
+        return res.status(400).json({ error: 'Datos incompletos o inválidos' });
     }
-  });
+    const categoriasValidas = ['outdoor', 'indoor', 'intellectual', 'sports'];
+    if (!categoriasValidas.includes(categoria)) {
+        return res.status(400).json({ error: 'Categoría inválida' });
+    }
+
+    // La consulta ahora es un simple UPDATE en la tabla de usuarios.
+    // No necesitamos verificar si existe primero, porque la fila del usuario
+    // se crea al registrarse, y los gustos tienen valores por defecto.
+    const query = `UPDATE usuarios SET ${categoria} = ? WHERE id = ?`;
+
+    db.run(query, [valor, usuario_id], function (err) {
+        if (err) {
+            console.error("Error actualizando gustos en tabla usuarios:", err.message);
+            return res.status(500).json({ error: 'Error al actualizar la base de datos.' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Usuario no encontrado.' });
+        }
+        res.json({ message: 'Preferencia actualizada correctamente.' });
+    });
 });
+// 2. Endpoint para OBTENER las preferencias (también más simple)
+app.get('/api/obtener-preferencias/:usuario_id', (req, res) => {
+    const { usuario_id } = req.params;
+
+    // La consulta ahora busca directamente en la tabla de usuarios.
+    const sql = `SELECT outdoor, indoor, sports, intellectual FROM usuarios WHERE id = ?`;
+
+    db.get(sql, [usuario_id], (err, row) => {
+        if (err) {
+            console.error('Error al obtener preferencias de la tabla usuarios:', err.message);
+            return res.status(500).json({ error: 'Error en la base de datos.' });
+        }
+        res.json(row || { outdoor: 3, indoor: 3, sports: 3, intellectual: 3 });
+    });
+});
+
+// Este endpoint marca el tour de preferencias como completado.
+app.post('/preferencias-completadas', (req, res) => {
+    const { usuario_id } = req.body;
+
+    if (!usuario_id) {
+        return res.status(400).json({ error: 'Falta el ID del usuario.' });
+    }
+
+    // 1. Obtenemos el estado actual de los tours del usuario.
+    const getSql = `SELECT tours_vistos FROM usuarios WHERE id = ?`;
+
+    db.get(getSql, [usuario_id], (err, row) => {
+        if (err) {
+            console.error("Error obteniendo tours para actualizar preferencias:", err.message);
+            return res.status(500).json({ error: 'Error en la base de datos.' });
+        }
+        if (!row) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
+        // 2. Actualizamos el flag específico a 'true'.
+        const toursVistos = JSON.parse(row.tours_vistos);
+        toursVistos.preferencias_configuradas = true;
+        const updatedTours = JSON.stringify(toursVistos);
+
+        // 3. Guardamos el nuevo estado en la base de datos.
+        const updateSql = `UPDATE usuarios SET tours_vistos = ? WHERE id = ?`;
+        db.run(updateSql, [updatedTours, usuario_id], (updateErr) => {
+            if (updateErr) {
+                console.error("Error actualizando flag de preferencias:", updateErr.message);
+                return res.status(500).json({ error: 'Error al actualizar la base de datos.' });
+            }
+            res.json({ success: true, message: 'Preferencias marcadas como completadas.' });
+        });
+    });
+});
+
+
+
+
 
 
 

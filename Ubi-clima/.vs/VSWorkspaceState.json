@@ -3,6 +3,7 @@
     "",
     "\\client",
     "\\client\\src",
+    "\\client\\src\\assets",
     "\\client\\src\\components",
     "\\client\\src\\components\\activities",
     "\\client\\src\\context",
@@ -10,6 +11,6 @@
     "\\server",
     "\\server\\models"
   ],
-  "SelectedNode": "\\server\\index.js",
+  "SelectedNode": "\\client\\src\\pages\\PreferenceSelector.jsx",
   "PreviewInSolutionExplorer": false
 }
