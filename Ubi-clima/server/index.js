@@ -180,25 +180,25 @@ app.get('/usuarios', (req, res) => {
 
 
 //Esto no guarda en una base de datos, esto solo captura el clima en base a la latencia y longitud, usada para 
-//tener el clima de tu ciudad actual
 app.post('/clima', async (req, res) => {
-  const { lat, lon } = req.body;
+    const { lat, lon } = req.body;
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey_Weather}&units=metric&lang=es`;
 
-  try {
-    const { data } = await axios.get(url);
-    res.json({
-      temperatura: data.main.temp,
-      humedad: data.main.humidity,
-      viento: data.wind.speed,
-      tiempo_id: data.weather[0].id,
-      descripcion: data.weather[0].description,
-      ciudad: data.name
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al obtener el clima' });
-  }
+    try {
+        const { data } = await axios.get(url);
+        res.json({
+            temperatura: data.main.temp,
+            humedad: data.main.humidity,
+            viento: data.wind.speed,
+            tiempo_id: data.weather[0].id,
+            descripcion: data.weather[0].description,
+            ciudad: data.name,
+            icon: data.weather[0].icon // ⬅️ ¡AQUÍ ESTÁ LA LÍNEA CLAVE!
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al obtener el clima' });
+    }
 });
 
 

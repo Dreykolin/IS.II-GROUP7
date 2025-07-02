@@ -1,67 +1,75 @@
+/* Copia y pega estas reglas en tu archivo src/assets/Widget_clima.css 
+  para aplicar los nuevos estilos.
+*/
+
 .widget-clima {
-  background-color: #ffffff;
-  font-family: 'Segoe UI', sans-serif;
-  display: flex;
-  flex-direction: column; /* Cambié a columna para que el contenido se apile */
-  justify-content: center;
-  align-items: center;
-  padding: 1rem 2rem;
-  border-radius: 1.2rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 280px;
-  z-index: 9999;
-  text-align: center;
-  font-size: 1rem;
-  border: 2px solid #ccc; /* Cambié el color del borde a gris claro */
+    background-color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    z-index: 9999;
+    text-align: center;
+    font-size: 1rem;
+    border: 1px solid #e5e7eb;
 }
 
-.widget-clima h3 {
-  color: #333;
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
+    .widget-clima .clima-info {
+        display: flex;
+        align-items: flex-start; /* ⬅️ ¡ESTE ES EL CAMBIO CLAVE! */
+        justify-content: flex-start;
+    
+        width: 100%;
+    }
 
-.widget-clima .clima-info {
-  color: #4b5563;
-  font-size: 0.9rem;
-}
+    .widget-clima .clima-icon {
+        width: 50px;
+        height: 50px;
+        flex-shrink: 0;
+    }
 
-.widget-clima .loading-text {
-  font-size: 1rem;
-  color: #6366f1;
-}
+    .widget-clima .loading-text {
+        font-size: 1rem;
+        color: #6366f1;
+    }
 
-.widget-clima .error-text {
-  font-size: 1rem;
-  color: #ef4444;
-  font-weight: bold;
-}
+    .widget-clima .clima-text {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #333;
+        text-align: left;
+        /* Añadimos un pequeño margen superior para un ajuste fino si es necesario */
+        padding-top: 4px;
+    }
 
-.widget-clima .btn-refresh {
-  background-color: #f3f4f6; /* Fondo gris claro */
-  color: #333; /* Texto oscuro para contraste */
-  border: none;
-  border-radius: 1rem;
-  padding: 0.75rem 1.25rem;
-  margin-top: 0.5rem; /* Reduje el margen superior para acercar el botón */
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-  width: 100%;
-  font-size: 1rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Añadí un pequeño sombreado para resaltar */
-}
+    .widget-clima .btn-refresh {
+        background-color: #f3f4f6;
+        color: #333;
+        border: none;
+        border-radius: 1rem;
+        padding: 0.75rem 1.25rem;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        width: 100%;
+        font-size: 1rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-.widget-clima .btn-refresh:hover {
-  background-color: #e1e3e8; /* Fondo ligeramente más oscuro al hacer hover */
-}
+        .widget-clima .btn-refresh:hover:not(:disabled) {
+            background-color: #e5e7eb;
+        }
 
-.widget-clima .clima-text {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
-}
+        /* Estilos para el botón cuando está deshabilitado */
+        .widget-clima .btn-refresh:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
