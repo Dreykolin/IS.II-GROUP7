@@ -23,8 +23,8 @@ const PreferenceSelector = ({ user, updateUserPreferences }) => {
         setPreferences(prev => ({ ...prev, [name]: Number(value) }));
     };
 
-    const handleSave = async (e) => {
-        e.preventDefault();
+    const handleSave = async () => {
+
         if (!user) return;
 
         try {
@@ -48,28 +48,263 @@ const PreferenceSelector = ({ user, updateUserPreferences }) => {
         }
     };
 
+    var primer_gusto = document.getElementById("PrimerGusto");
+    var segundo_gusto = document.getElementById("SegundoGusto");
+    var tercer_gusto = document.getElementById("TercerGusto");
+    var cuarto_gusto = document.getElementById("CuartoGusto");
+
+    var span = document.getElementsByClassName("close")[0];
+    
+    const AbrirPrimeraPregunta = (e) => {
+        primer_gusto.style.display = "block";
+    }
+    const AbrirSegundaPregunta = (e) => {
+        primer_gusto.style.display = "none";
+        segundo_gusto.style.display = "block";
+    }
+    const AbrirTerceraPregunta = (e) => {
+        segundo_gusto.style.display = "none";
+        tercer_gusto.style.display = "block";
+    }
+    const AbrirCuartaPregunta = (e) => {
+        tercer_gusto.style.display = "none";
+        cuarto_gusto.style.display = "block"
+    }
+    const FinGustos = (e) => {
+        cuarto_gusto.style.display = "none";
+        handleSave();
+    }
+
     return (
-        <div id="ajustes-gustos" className="gustos-div">
-            <form onSubmit={handleSave}>
-                <h1>Define tus gustos</h1>
-                <p>Del 1 al 5, califica las siguientes categorías según cuánto te gustan.</p>
-                {Object.entries(preferences).map(([key, value]) => (
-                    <div key={key}>
-                        <p style={{ textTransform: 'capitalize' }}>{key}</p>
-                        <input
-                            className='slider-ajuste'
-                            type="range"
-                            min="1"
-                            max="5"
-                            name={key}
-                            value={value}
-                            onChange={handleChange}
-                        />
-                        <p>Valor: {value}</p>
-                    </div>
-                ))}
-                <button type="submit" className="btn btn-primary mt-3">Guardar Gustos</button>
-            </form>
+        <div id="ajustes-gustos" className='gustos-div'>
+            <h3>¿No te gustan las actividades que te recomendamos?</h3>
+
+            <br></br>
+            <input 
+                className='boton-gustos'
+                type="button" 
+                value="¡Ajusta tus gustos!" 
+                onClick={AbrirPrimeraPregunta}
+            />
+
+            <br></br>
+
+            {/*Modal para mostrar/cambiar los gustos*/}
+            <div id="PrimerGusto" className="modal">
+                <div className="modal-content">
+                    {/*
+                    <span onClick={AbrirSegundaPregunta} class="close">&times;</span>
+                    */}
+                    {/* Aún no se si borrar esto, cuando termine lo decido
+                    {Object.entries(preferences).map(([key, value]) => (
+                        <div key={key}>
+                            <p style={{ textTransform: 'capitalize' }}>{key}</p>
+                            <input
+                                className='slider-ajuste'
+                                type="range"
+                                min="1"
+                                max="5"
+                                name={key}
+                                value={value}
+                                onChange={handleChange}
+                            />
+                            <p>Valor: {value}</p>
+                        </div>
+                        ))
+                    }*/}
+
+                    <p>¿Qué tanto te gusta salir al aire libre?</p>
+                    <input
+                        className='slider-ajuste'
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={preferences.outdoor}
+                        name="outdoor"
+                        onChange={handleChange}
+                        list="values"
+                    />
+                    <datalist id="values">
+                        <option value="1" label="Lo odio"></option>
+                        <option value="2" label="No me gusta"></option>
+                        <option value="3" label="Me da igual"></option>
+                        <option value="4" label="Me gusta"></option>
+                        <option value="5" label="Me encanta"></option>
+                    </datalist>
+
+                    <br></br>
+
+                    <input 
+                        className='boton-gustos'
+                        type="button" 
+                        value="Siguiente pregunta" 
+                        onClick={AbrirSegundaPregunta}
+                    />
+                </div>
+
+            </div>
+
+            {/* SEGUNDA PREGUNTA */}
+            <div id="SegundoGusto" className="modal">
+                <div className="modal-content">
+                    {/*
+                    <span onClick={AbrirSegundaPregunta} class="close">&times;</span>
+                    */}
+                    {/* Aún no se si borrar esto, cuando termine lo decido
+                    {Object.entries(preferences).map(([key, value]) => (
+                        <div key={key}>
+                            <p style={{ textTransform: 'capitalize' }}>{key}</p>
+                            <input
+                                className='slider-ajuste'
+                                type="range"
+                                min="1"
+                                max="5"
+                                name={key}
+                                value={value}
+                                onChange={handleChange}
+                            />
+                            <p>Valor: {value}</p>
+                        </div>
+                        ))
+                    }*/}
+
+                    <p>¿Qué tanto te gusta hacer cosas dentro de casa?</p>
+                    <input
+                        className='slider-ajuste'
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={preferences.indoor}
+                        name="indoor"
+                        onChange={handleChange}
+                        list="values"
+                    />
+                    <datalist id="values">
+                        <option value="1" label="Lo odio"></option>
+                        <option value="2" label="No me gusta"></option>
+                        <option value="3" label="Me da igual"></option>
+                        <option value="4" label="Me gusta"></option>
+                        <option value="5" label="Me encanta"></option>
+                    </datalist>
+
+                    <br></br>
+
+                    <input 
+                        className='boton-gustos'
+                        type="button" 
+                        value="Siguiente pregunta" 
+                        onClick={AbrirTerceraPregunta}
+                    />
+                </div>
+            </div>
+
+            <div id="TercerGusto" className="modal">
+                <div className="modal-content">
+                    {/*
+                    <span onClick={AbrirSegundaPregunta} class="close">&times;</span>
+                    */}
+                    {/* Aún no se si borrar esto, cuando termine lo decido
+                    {Object.entries(preferences).map(([key, value]) => (
+                        <div key={key}>
+                            <p style={{ textTransform: 'capitalize' }}>{key}</p>
+                            <input
+                                className='slider-ajuste'
+                                type="range"
+                                min="1"
+                                max="5"
+                                name={key}
+                                value={value}
+                                onChange={handleChange}
+                            />
+                            <p>Valor: {value}</p>
+                        </div>
+                        ))
+                    }*/}
+
+                    <p>¿Qué tanto te gustan las actividades intelectuales?</p>
+                    <input
+                        className='slider-ajuste'
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={preferences.intellectual}
+                        name="intellectual"
+                        onChange={handleChange}
+                        list="values"
+                    />
+                    <datalist id="values">
+                        <option value="1" label="Lo odio"></option>
+                        <option value="2" label="No me gusta"></option>
+                        <option value="3" label="Me da igual"></option>
+                        <option value="4" label="Me gusta"></option>
+                        <option value="5" label="Me encanta"></option>
+                    </datalist>
+
+                    <br></br>
+                    
+                    <input 
+                        className='boton-gustos'
+                        type="button" 
+                        value="Siguiente pregunta" 
+                        onClick={AbrirCuartaPregunta}
+                    />
+                </div>
+            </div>
+
+            <div id="CuartoGusto" className="modal">
+                <div className="modal-content">
+                    {/*
+                    <span onClick={AbrirSegundaPregunta} class="close">&times;</span>
+                    */}
+                    {/* Aún no se si borrar esto, cuando termine lo decido
+                    {Object.entries(preferences).map(([key, value]) => (
+                        <div key={key}>
+                            <p style={{ textTransform: 'capitalize' }}>{key}</p>
+                            <input
+                                className='slider-ajuste'
+                                type="range"
+                                min="1"
+                                max="5"
+                                name={key}
+                                value={value}
+                                onChange={handleChange}
+                            />
+                            <p>Valor: {value}</p>
+                        </div>
+                        ))
+                    }*/}
+
+                    <p>¿Qué tanto te gusta hacer deporte?</p>
+                    <input
+                        className='slider-ajuste'
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={preferences.sports}
+                        name="sports"
+                        onChange={handleChange}
+                        list="values"
+                    />
+                    <datalist id="values">
+                        <option value="1" label="Lo odio"></option>
+                        <option value="2" label="No me gusta"></option>
+                        <option value="3" label="Me da igual"></option>
+                        <option value="4" label="Me gusta"></option>
+                        <option value="5" label="Me encanta"></option>
+                    </datalist>
+
+                    <br></br>
+                    
+                    <input 
+                        className='boton-gustos'
+                        type="button" 
+                        value="Siguiente pregunta" 
+                        onClick={FinGustos}
+                    />
+                </div>
+
+            </div>
+
         </div>
     );
 };
