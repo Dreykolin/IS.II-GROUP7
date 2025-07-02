@@ -107,3 +107,14 @@ input:hover {
   text-decoration: none;
   cursor: pointer;
 }
+
+datalist {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  writing-mode: vertical-lr;
+}
+
+option {
+  padding: 0;
+}
