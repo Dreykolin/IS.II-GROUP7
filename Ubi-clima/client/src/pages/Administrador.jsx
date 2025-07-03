@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Joyride, { STATUS } from 'react-joyride'; // ⬅️ 1. Imports necesarios
+import Joyride, { STATUS } from 'react-joyride';
 import { useAuth } from '../context/AuthContext';
 import AdminAjustes from './AdminAjustes';
 import PreferenceSelector from './PreferenceSelector';
@@ -9,13 +9,11 @@ import '../assets/Administrador.css';
 
 export default function Administrador() {
     const [seccion, setSeccion] = useState('home');
-    // ⬅️ 2. Obtenemos la lógica de autenticación y tours del contexto
     const { isAuthenticated, user, markTourAsSeen } = useAuth();
 
-    // --- Lógica del Tour para la página de Administrador ---
+    // Lógica del Tour
     const [runTour, setRunTour] = useState(false);
 
-    // 3. Definimos los pasos específicos para esta página
     const [tourSteps] = useState([
         {
             target: '.sidebar h2',
@@ -43,14 +41,12 @@ export default function Administrador() {
         },
     ]);
 
-    // 4. El useEffect comprueba el tour específico de 'administrador'
     useEffect(() => {
         if (isAuthenticated && user?.tours_vistos?.administrador === false) {
             setRunTour(true);
         }
     }, [isAuthenticated, user]);
 
-    // 5. El callback marca el tour 'administrador' como visto
     const handleJoyrideCallback = async (data) => {
         const { status } = data;
         const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
@@ -65,11 +61,9 @@ export default function Administrador() {
             markTourAsSeen('administrador');
         }
     };
-    // --- Fin de la Lógica del Tour ---
 
     return (
         <div className="admin-dashboard">
-            {/* 6. Añadimos el componente Joyride */}
             <Joyride
                 steps={tourSteps}
                 run={runTour}
@@ -80,37 +74,51 @@ export default function Administrador() {
                 locale={{ last: 'Finalizar' }}
             />
 
-            <aside className="sidebar">
-                <h2>AdminPanel</h2>
-                {/* 7. Añadimos IDs a los elementos que el tour necesita encontrar */}
-                <ul>
-                    <li id="admin-nav-usuarios" onClick={() => setSeccion('usuarios')} style={{ cursor: 'pointer' }}>
-                        Usuarios
-                    </li>
-                    <li id="admin-nav-gustos" onClick={() => setSeccion('gustos')} style={{ cursor: 'pointer' }}>
-                        Gustos
-                    </li>
-                    <li id="admin-nav-recomendaciones" onClick={() => setSeccion('recomendaciones')} style={{ cursor: 'pointer' }}>
-                        Recomendaciones
-                    </li>
-                    <li id="admin-nav-ajustes" onClick={() => setSeccion('ajustes')} style={{ cursor: 'pointer' }}>
-                        Ajustes
-                    </li>
-                </ul>
-            </aside>
+            <div className="admin-main-content">
+                <aside className="sidebar">
+                    <h2>AdminPanel</h2>
+                    <ul>
+                        <li id="admin-nav-usuarios" onClick={() => setSeccion('usuarios')}>
+                            Usuarios
+                        </li>
+                        <li id="admin-nav-gustos" onClick={() => setSeccion('gustos')}>
+                            Gustos
+                        </li>
+                        <li id="admin-nav-recomendaciones" onClick={() => setSeccion('recomendaciones')}>
+                            Recomendaciones
+                        </li>
+                        <li id="admin-nav-ajustes" onClick={() => setSeccion('ajustes')}>
+                            Ajustes
+                        </li>
+                    </ul>
+                </aside>
 
-            <main className="admin-content">
-                {seccion === 'home' && (
-                    <>
-                        <h1>Bienvenido, administrador</h1>
-                        <p>Aquí puedes gestionar todo el sistema.</p>
-                    </>
-                )}
-                {seccion === 'ajustes' && <AdminAjustes volverHome={() => setSeccion('home')} />}
-                {seccion === 'gustos' && <PreferenceSelector />}
-                {seccion === 'recomendaciones' && <RecommendationList />}
-                {seccion === 'usuarios' && <AdminUsuarios />}
-            </main>
+                <main className="admin-content">
+                    {seccion === 'home' && (
+                        <>
+                            <h1>Bienvenido, administrador</h1>
+                            <p>Aquí puedes gestionar todo el sistema.</p>
+                        </>
+                    )}
+                    {seccion === 'ajustes' && <AdminAjustes volverHome={() => setSeccion('home')} />}
+                    {seccion === 'gustos' && <PreferenceSelector />}
+                    {seccion === 'recomendaciones' && <RecommendationList />}
+                    {seccion === 'usuarios' && <AdminUsuarios />}
+                </main>
+            </div>
+
+            {/* Footer solo para admin - versión minimalista */}
+            {!window.location.pathname.includes('home') && (
+                <footer className="admin-footer">
+                    <div className="footer-content">
+                        <div>© 2025 WeatherAct - Panel Administrativo</div>
+                        <div className="footer-links">
+                            <a href="/admin/politica-privacidad">Política de privacidad</a>
+                            <a href="/admin/contacto">Contacto técnico</a>
+                        </div>
+                    </div>
+                </footer>
+            )}
         </div>
     );
 }

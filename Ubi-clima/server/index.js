@@ -80,6 +80,20 @@ app.post('/guardar_ubicacion', (req, res) => {
 });
 
 
+// Obtener todas las recomendaciones genéricas (usuario_id es NULL)
+app.get('/recomendaciones', (req, res) => {
+  const sql = `SELECT * FROM actividades WHERE usuario_id IS NULL`;
+
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.error('Error al obtener recomendaciones:', err);
+      return res.status(500).json({ error: 'Error al obtener recomendaciones' });
+    }
+    res.json(rows);
+  });
+});
+
+
 //El más importante. Permite que el usuario guarde sus actividades.
 //también está programado para que si se añade una actividad sin user id, este esté disponible para todos (como modo predeterminado)
 app.post('/guardar_actividad', (req, res) => {
@@ -98,9 +112,7 @@ app.post('/guardar_actividad', (req, res) => {
     }
     res.send(`Actividad guardada: ${nombre}`);
   });
-
-});
-app.post('/guardar_recomendacion', (req, res) => {
+});app.post('/guardar_recomendacion', (req, res) => {
   const { nombre, descripcion, temperatura, viento, lluvia, uv } = req.body;
 
   if (!nombre || !descripcion) {
@@ -131,7 +143,7 @@ app.post('/guardar_recomendacion', (req, res) => {
       console.error('Error al guardar la recomendación:', err);  // muestra el error completo
       return res.status(500).json({ error: 'Error al guardar la recomendación' });
     }
-    res.send(`Recomendación guardada: ${nombre}`);
+    res.status(200).json({ mensaje: `Recomendación guardada: ${nombre}` });
   });
 });
 app.post('/actividades', (req, res) => {
@@ -165,8 +177,197 @@ app.get('/usuarios', (req, res) => {
   });
 });
 
+// PUT para editar recomendación
+app.put('/editar_recomendacion/:id', (req, res) => {
+  const { id } = req.params;
+  const { nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports } = req.body;
+
+  if (!nombre || !descripcion) {
+    return res.status(400).json({ 
+      success: false,
+      error: 'Nombre y descripción son obligatorios' 
+    });
+  }
+
+  const sql = `
+    UPDATE actividades SET 
+      nombre = ?, 
+      descripcion = ?, 
+      temperatura = ?, 
+      viento = ?, 
+      lluvia = ?, 
+      uv = ?,
+      outdoor = ?,
+      indoor = ?,
+      intellectual = ?,
+      sports = ?
+    WHERE id = ? AND usuario_id IS NULL
+  `;
+
+  const params = [
+    nombre,
+    descripcion,
+    temperatura || null,
+    viento || null,
+    lluvia || null,
+    uv || null,
+    outdoor || 0,
+    indoor || 0,
+    intellectual || 0,
+    sports || 0,
+    id
+  ];
+
+  db.run(sql, params, function(err) {
+    if (err) {
+      console.error("Error al editar:", err);
+      return res.status(500).json({ 
+        success: false,
+        error: 'Error en la base de datos' 
+      });
+    }
+    
+    if (this.changes === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No se encontró la recomendación o no es editable'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Recomendación actualizada exitosamente',
+      id: id,
+      changes: this.changes
+    });
+  });
+});
+
+// DELETE para eliminar recomendación
+app.delete('/eliminar_recomendacion/:id', (req, res) => {
+  const { id } = req.params;
+
+  const sql = 'DELETE FROM actividades WHERE id = ? AND usuario_id IS NULL';
+
+  db.run(sql, [id], function(err) {
+    if (err) {
+      console.error("Error al eliminar:", err);
+      return res.status(500).json({ 
+        success: false,
+        error: 'Error en la base de datos' 
+      });
+    }
+    
+    if (this.changes === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No se encontró la recomendación o no es eliminable'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Recomendación eliminada exitosamente',
+      id: id
+    });
+  });
+});
+
+//endopoints gustos
+
+// Obtener actividades de un usuario específico
+app.get('/actividades/usuario/:usuario_id', (req, res) => {
+  const { usuario_id } = req.params;
+  
+  const sql = `SELECT * FROM actividades WHERE usuario_id = ?`;
+  
+  db.all(sql, [usuario_id], (err, rows) => {
+    if (err) {
+      console.error('Error al obtener actividades:', err);
+      return res.status(500).json({ 
+        success: false,
+        error: 'Error al obtener actividades' 
+      });
+    }
+    res.json({
+      success: true,
+      data: rows
+    });
+  });
+});
 
 
+// Actualizar preferencias de usuario
+app.put('/usuarios/preferencias/:usuario_id', (req, res) => {
+  const { usuario_id } = req.params;
+  const { outdoor, indoor, sports, intellectual } = req.body;
+
+  const sql = `
+    UPDATE usuarios SET
+      outdoor = ?,
+      indoor = ?,
+      sports = ?,
+      intellectual = ?
+    WHERE id = ?
+  `;
+
+  const params = [
+    outdoor || 3,
+    indoor || 3,
+    sports || 3,
+    intellectual || 3,
+    usuario_id
+  ];
+
+  db.run(sql, params, function(err) {
+    if (err) {
+      console.error('Error al actualizar preferencias:', err);
+      return res.status(500).json({
+        success: false,
+        error: 'Error al actualizar preferencias'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Preferencias actualizadas correctamente',
+      changes: this.changes
+    });
+  });
+});
+
+// Obtener preferencias de usuario
+app.get('/usuarios/preferencias/:usuario_id', (req, res) => {
+  const { usuario_id } = req.params;
+
+  const sql = `
+    SELECT outdoor, indoor, sports, intellectual 
+    FROM usuarios 
+    WHERE id = ?
+  `;
+
+  db.get(sql, [usuario_id], (err, row) => {
+    if (err) {
+      console.error('Error al obtener preferencias:', err);
+      return res.status(500).json({
+        success: false,
+        error: 'Error al obtener preferencias'
+      });
+    }
+    
+    if (!row) {
+      return res.status(404).json({
+        success: false,
+        error: 'Usuario no encontrado'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: row
+    });
+  });
+});
 
 
 

@@ -1,25 +1,116 @@
-.manual-add-form input {
-  margin: 5px;
-  padding: 8px;
-  width: 100%;
-  max-width: 300px;
-  display: block;
+/* RecommendationsList.css - Parte adicional */
+
+.recommendation-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.recommendation-cards {
+.form-row, .filter-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-group, .filter-group {
+  flex: 1;
+}
+
+.form-group label, .filter-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input, .filter-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-actions, .filter-actions {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.form-actions button, .filter-actions button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-actions button:first-child, .filter-actions button:first-child {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.form-actions button:last-child, .filter-actions button:last-child {
+  background-color: #f44336;
+  color: white;
+}
+
+.error-message {
+  color: #f44336;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #f44336;
+  border-radius: 4px;
+  background-color: #ffebee;
+}
+
+.loading, .no-results {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+.recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .recommendation-card {
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 1rem;
-  width: 300px;
-  background-color: #f9f9f9;
+  padding: 15px;
+  background-color: white;
 }
 
-.recommendation-card h3 {
-  margin-bottom: 0.5rem;
+.recommendation-card h4 {
+  margin-top: 0;
+  color: #333;
+}
+
+.weather-conditions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.card-actions button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.card-actions button:first-child {
+  background-color: #2196F3;
+  color: white;
+}
+
+.card-actions button:last-child {
+  background-color: #f44336;
+  color: white;
 }
