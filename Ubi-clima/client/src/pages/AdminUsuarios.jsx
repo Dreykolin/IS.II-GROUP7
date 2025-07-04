@@ -1,5 +1,7 @@
 import '../assets/AdminUsuarios.css';
 import { useEffect, useState } from 'react';
+import GraficoUsuarios from '../components/GraficoUsuarios';
+import AdminDashboard from '../components/AdminDashboard';
 
 export default function AdminUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
@@ -7,16 +9,13 @@ export default function AdminUsuarios() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:3000/usuarios') // Ajusta la URL según tu backend
-      .then((res) => {
-        if (!res.ok) throw new Error('Error al obtener los usuarios');
-        return res.json();
-      })
-      .then((data) => {
+    fetch('http://localhost:3000/usuarios')
+      .then(res => res.json())
+      .then(data => {
         setUsuarios(data);
         setCargando(false);
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         setError('No se pudo cargar la lista de usuarios');
         setCargando(false);
@@ -37,7 +36,7 @@ export default function AdminUsuarios() {
           </tr>
         </thead>
         <tbody>
-          {usuarios.map((usuario) => (
+          {usuarios.map(usuario => (
             <tr key={usuario.id}>
               <td>{usuario.id}</td>
               <td>{usuario.email}</td>
@@ -45,6 +44,12 @@ export default function AdminUsuarios() {
           ))}
         </tbody>
       </table>
+
+      {/* 📊 Gráfico de usuarios mensuales */}
+      <GraficoUsuarios />
+
+      {/* 📈 Panel de estadísticas generales */}
+      <AdminDashboard />
     </section>
   );
 }

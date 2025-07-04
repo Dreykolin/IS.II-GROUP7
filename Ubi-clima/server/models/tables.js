@@ -28,6 +28,7 @@ db.run(`CREATE TABLE IF NOT EXISTS usuarios (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT UNIQUE,
       contraseña TEXT,
+      fecha_registro TEXT DEFAULT CURRENT_TIMESTAMP,
       tours_vistos TEXT NOT NULL DEFAULT '{"home": false, "historial": false, "actividades": false, "ajustes": false, "administrador": false, "preferencias_configuradas": false}',
       outdoor INTEGER DEFAULT 3,
       indoor INTEGER DEFAULT 3,

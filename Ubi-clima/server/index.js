@@ -111,6 +111,80 @@ app.post('/guardar_actividad', (req, res) => {
   });
 });
 
+// Endpoint para obtener usuarios por mes de creación
+app.get('/usuarios_por_mes', (req, res) => {
+  const añoActual = new Date().getFullYear();
+
+  const sql = `
+    SELECT 
+      strftime('%m', fecha_registro) AS mes,
+      COUNT(*) AS cantidad
+    FROM usuarios
+    WHERE strftime('%Y', fecha_registro) = ?
+    GROUP BY mes
+    ORDER BY mes
+  `;
+
+  db.all(sql, [añoActual.toString()], (err, rows) => {
+    if (err) {
+      console.error('Error al obtener usuarios por mes:', err);
+      return res.status(500).json({ error: 'Error al obtener datos' });
+    }
+
+    const meses = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+
+    const data = Array.from({ length: 12 }, (_, i) => {
+      const mesStr = String(i + 1).padStart(2, '0');
+      const fila = rows.find(r => r.mes === mesStr);
+      return {
+        mes: meses[i],
+        cantidad: fila ? fila.cantidad : 0
+      };
+    });
+
+    res.json(data);
+  });
+});
+
+//Dashboard
+app.get('/admin/dashboard', (req, res) => {
+  const dashboard = {
+    total_usuarios: 0,
+    total_actividades: 0,
+    actividades_recomendadas: 0,
+    ubicaciones: 0,
+    historial: 0
+  };
+
+  const queries = {
+    total_usuarios: 'SELECT COUNT(*) AS count FROM usuarios',
+    total_actividades: 'SELECT COUNT(*) AS count FROM actividades',
+    actividades_recomendadas: 'SELECT COUNT(*) AS count FROM actividades WHERE usuario_id IS NULL',
+    historial: 'SELECT COUNT(*) AS count FROM historial_actividades'
+  };
+
+  let completadas = 0;
+
+  for (const key in queries) {
+    db.get(queries[key], [], (err, row) => {
+      if (err) {
+        console.error(`Error al obtener ${key}:`, err.message);
+        return res.status(500).json({ error: `Error al obtener ${key}` });
+      }
+
+      dashboard[key] = row.count;
+      completadas++;
+
+      if (completadas === Object.keys(queries).length) {
+        res.json(dashboard);
+      }
+    });
+  }
+});
+
 
 
 app.post('/guardar_usuario', async (req, res) => {
@@ -879,7 +953,6 @@ app.post('/preferencias-completadas', (req, res) => {
         });
     });
 });
-
 
 
 

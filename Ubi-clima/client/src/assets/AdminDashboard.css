@@ -1,0 +1,30 @@
+.admin-dashboard {
+  margin-top: 2rem;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.card {
+  background: #f1f3f5;
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #4c6ef5;
+}
+
+.card p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0.5rem 0 0;
+}
