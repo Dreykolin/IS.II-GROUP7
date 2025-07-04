@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Joyride, { STATUS } from 'react-joyride';
 import { useAuth } from '../context/AuthContext';
 import AdminAjustes from './AdminAjustes';
-import PreferenceSelector from './PreferenceSelector';
+import Selectoradmin from './Selectoradmin';
 import RecommendationList from './RecommendationList';
 import AdminUsuarios from './AdminUsuarios';
 import '../assets/Administrador.css';
@@ -101,7 +101,7 @@ export default function Administrador() {
                         </>
                     )}
                     {seccion === 'ajustes' && <AdminAjustes volverHome={() => setSeccion('home')} />}
-                    {seccion === 'gustos' && <PreferenceSelector />}
+                    {seccion === 'gustos' && <Selectoradmin/>}
                     {seccion === 'recomendaciones' && <RecommendationList />}
                     {seccion === 'usuarios' && <AdminUsuarios />}
                 </main>

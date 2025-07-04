@@ -38,6 +38,78 @@ let subscriptions = []; //Curioso digamos
 
 
 
+app.post('/guardar_actividad', (req, res) => {
+  const { 
+    nombre, 
+    descripcion, 
+    temperatura, 
+    viento, 
+    lluvia, 
+    uv, 
+    outdoor, 
+    indoor, 
+    intellectual, 
+    sports, 
+    usuario_id 
+  } = req.body;
+
+  // Validación básica
+  if (!nombre || !descripcion) {
+    return res.status(400).json({
+      success: false,
+      error: 'Nombre y descripción son obligatorios'
+    });
+  }
+
+  const sql = `
+    INSERT INTO actividades 
+    (nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports, usuario_id) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const params = [
+    nombre,
+    descripcion,
+    temperatura || null,
+    viento || null,
+    lluvia || null,
+    uv || null,
+    outdoor || 0,
+    indoor || 0,
+    intellectual || 0,
+    sports || 0,
+    usuario_id || null
+  ];
+
+  db.run(sql, params, function(err) {
+    if (err) {
+      console.error('Error al guardar actividad:', err);
+      return res.status(500).json({ 
+        success: false,
+        error: 'Error en la base de datos' 
+      });
+    }
+    
+    res.status(201).json({
+      success: true,
+      message: 'Actividad guardada correctamente',
+      id: this.lastID,
+      data: {
+        nombre,
+        descripcion,
+        temperatura,
+        viento,
+        lluvia,
+        uv,
+        outdoor,
+        indoor,
+        intellectual,
+        sports,
+        usuario_id
+      }
+    });
+  });
+});
 
 
 
