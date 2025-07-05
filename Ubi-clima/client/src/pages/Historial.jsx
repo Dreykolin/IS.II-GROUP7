@@ -1,21 +1,22 @@
 import { useState, useEffect } from 'react';
-import Joyride, { STATUS } from 'react-joyride'; // ⬅️ 1. Imports para el tour
+import Joyride, { STATUS } from 'react-joyride';
 import { useAuth } from '../context/AuthContext';
 import '../assets/Historial.css';
 
 const API_BASE = 'http://localhost:3000';
-const { isAuthenticated, user, markTourAsSeen } = useAuth();
 
+// ⬅️ 1. CORRECCIÓN: Esta función ahora usa el 'usuario_id' que recibe como parámetro.
+// Antes intentaba usar una variable 'user' que no existía aquí.
 async function obtenerHistorial(usuario_id, mes, año) {
-    
     const params = new URLSearchParams();
     if (mes) params.append('mes', mes);
     if (año) params.append('año', año);
-    const res = await fetch(`${API_BASE}/historial/${user.id}?${params.toString()}`);
+    const res = await fetch(`${API_BASE}/historial/${usuario_id}?${params.toString()}`);
     if (!res.ok) throw new Error('Error al obtener historial');
     return await res.json();
 }
 
+// El componente TarjetaActividad se mantiene igual, está perfecto.
 function TarjetaActividad({ actividad }) {
     const [abierto, setAbierto] = useState(false);
     const fecha = new Date(actividad.fecha);
@@ -41,17 +42,15 @@ function TarjetaActividad({ actividad }) {
 }
 
 function Historial() {
-    // ⬅️ 2. Obtenemos todo lo necesario del AuthContext
+    // ⬅️ 2. CORRECCIÓN: El hook 'useAuth' se llama AQUÍ, dentro del componente, que es el lugar correcto.
     const { user, isAuthenticated, markTourAsSeen } = useAuth();
     const fechaActual = new Date();
     const [mes, setMes] = useState(String(fechaActual.getMonth() + 1).padStart(2, '0'));
     const [año, setAño] = useState(String(fechaActual.getFullYear()));
     const [historial, setHistorial] = useState([]);
 
-    // --- Lógica del Tour para la página de Historial ---
+    // --- Lógica del Tour (sin cambios) ---
     const [runTour, setRunTour] = useState(false);
-
-    // 3. Definimos los pasos específicos para esta página
     const [tourSteps] = useState([
         {
             target: '#filtro-fecha-historial',
@@ -63,18 +62,15 @@ function Historial() {
         }
     ]);
 
-    // 4. El useEffect ahora comprueba el tour 'historial'
     useEffect(() => {
         if (isAuthenticated && user?.tours_vistos?.historial === false) {
             setRunTour(true);
         }
     }, [isAuthenticated, user]);
 
-    // 5. El callback marca el tour 'historial' como visto
     const handleJoyrideCallback = async (data) => {
         const { status } = data;
         const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
-
         if (finishedStatuses.includes(status)) {
             setRunTour(false);
             await fetch('http://localhost:3000/tour-completado', {
@@ -87,6 +83,7 @@ function Historial() {
     };
     // --- Fin de la Lógica del Tour ---
 
+    // Este useEffect para cargar el historial está correcto y no necesita cambios.
     useEffect(() => {
         async function cargar() {
             try {
@@ -103,7 +100,7 @@ function Historial() {
 
     const añosDisponibles = Array.from({ length: 5 }, (_, i) => String(fechaActual.getFullYear() - i));
 
-    if (!isAuthenticated) { // Usamos isAuthenticated para ser más claros
+    if (!isAuthenticated) {
         return (
             <div className="text-center p-5 my-5 bg-light rounded-3 shadow-sm">
                 <h2 className="display-6 fw-bold">Historial de Actividades</h2>
@@ -114,7 +111,6 @@ function Historial() {
 
     return (
         <div className="container mt-4">
-            {/* 6. Añadimos el componente Joyride a la página */}
             <Joyride
                 steps={tourSteps}
                 run={runTour}
@@ -123,16 +119,9 @@ function Historial() {
                 showProgress
                 showSkipButton
                 locale={{ last: 'Finalizar' }}
-                styles={{
-                    options: {
-                        primaryColor: '#ff5a5f',
-                    },
-                }}
+                styles={{ options: { primaryColor: '#ff5a5f' } }}
             />
-
             <h2 className="text-xl font-bold mb-4 border-bottom pb-2">Historial de Actividades</h2>
-
-            {/* 7. Añadimos IDs a los elementos que el tour necesita encontrar */}
             <div id="filtro-fecha-historial" className="flex items-center gap-2 mb-4 p-3 bg-light rounded-3">
                 <span className='font-medium'>Filtrar por fecha:</span>
                 <select value={mes} onChange={(e) => setMes(e.target.value)} className="border p-2 rounded-md shadow-sm">
@@ -148,7 +137,6 @@ function Historial() {
                     ))}
                 </select>
             </div>
-
             <div id="lista-historial">
                 {historial.length === 0 ? (
                     <p className='text-center text-gray-500 mt-4'>No hay actividades registradas para este período.</p>
