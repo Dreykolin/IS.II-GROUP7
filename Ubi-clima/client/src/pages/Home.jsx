@@ -116,7 +116,7 @@ function Home() {
             ) : (
                 <>
                     <div className="flex-container recommendations-list">
-                        <RecommendationsList />
+                        <HomeRecommendations />
                     </div>
                      <n2>Historial de actividades</n2>
                     <div className="flex-container short-history">
