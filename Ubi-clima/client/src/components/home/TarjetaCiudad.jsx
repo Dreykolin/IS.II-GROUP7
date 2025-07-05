@@ -15,12 +15,16 @@ function TarjetaCiudad() {
   useEffect(() => {
     if (datosClima) {
       setCiudad(datosClima.ciudad);
-      setClima(datosClima.descripcion);
+      setClima(capitalizeFirstLetter(datosClima.descripcion));
       setTemp(`${Math.round(datosClima.temperatura)}°C`);
       setHumedad(`${datosClima.humedad}%`);
       setViento(`${datosClima.viento} km/h`);
     }
   }, [datosClima]); // Solo se ejecuta si 'datosClima' cambian
+
+  function capitalizeFirstLetter(val) {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+  }
 
   const manejarGuardar = async () => {
     if (!inputCiudad) return; // Si el campo de ciudad está vacío, no hacemos nada
@@ -36,7 +40,7 @@ function TarjetaCiudad() {
 
       const datos = await res.json();
       setCiudad(datos.ciudad);
-      setClima(datos.descripcion);
+      setClima(capitalizeFirstLetter(datos.descripcion));
       setTemp(`${Math.round(datos.temperatura)}°C`);
       setHumedad(`${datos.humedad}%`);
       setViento(`${datos.viento} km/h`);
@@ -52,34 +56,19 @@ function TarjetaCiudad() {
   };
 
   return (
-    
-    <div className="weather-cards" >
-      
-      <div className="weather-card">
-        <span className="icon">🌫️</span>
-        <p>Clima</p>
-        {clima && <strong>{clima}</strong>}
-      </div>
-      <div className="weather-card">
-        <span className="icon">🌡️</span>
-        <p>Temperatura</p>
-        {temp && <strong>{temp}</strong>}
-      </div>
-
-      {!editando ? (
-        <div className="weather-card">
-          <span className="icon">🏙️</span>
-          <p>Ciudad</p>
-          <strong>{ciudad || 'Sin ciudad asignada'}</strong>
+  <div className='fullsize'>
+    {!editando ? (
+        <div>
+          <h2>🏙️ {ciudad || 'Sin ciudad asignada'}</h2>
           <button
-            className="btn btn-sm btn-info mt-2"
+            className="btn-cambiarciudad"
             onClick={() => setEditando(true)}
           >
-            Editar Ciudad
+            Cambiar Ciudad
           </button>
         </div>
       ) : (
-        <div className="weather-card">
+        <div>
           <input
             type="text"
             className="form-control mb-2"
@@ -99,17 +88,38 @@ function TarjetaCiudad() {
         </div>
       )}
 
+    <div className="weather-cards" >
+      
+      <div className="weather-card">
+        <span className="icon">🌫️</span>
+        <div>
+        <strong>Clima</strong>
+        {clima && <p>{clima}</p>}
+        </div>
+      </div>
+      <div className="weather-card">
+        <span className="icon">🌡️</span>
+        <div>
+        <strong>Temperatura</strong>
+        {temp && <p>{temp}</p>}
+        </div>
+      </div>
       <div className="weather-card">
         <span className="icon">💧</span>
-        <p>Humedad</p>
-        {humedad && <strong>{humedad}</strong>}
+        <div>
+          <strong>Humedad</strong>
+          {humedad && <p>{humedad}</p>}
+        </div>
       </div>
       <div className="weather-card">
         <span className="icon">💨</span>
-        <p>Viento</p>
-        {viento && <strong>{viento}</strong>}
+        <div>
+        <strong>Viento</strong>
+          {viento && <p>{viento}</p>}
+        </div>
       </div>
     </div>
+  </div>
   );
 }
 

@@ -123,18 +123,9 @@ function Home() {
                         <ShortHistory />
                     </div>
                     <n2>clima de hoy en tu ciudad</n2>
-                    <div className="flex-container-2 weather-card-container">
-                        {!mostrarPronostico ? (
-                            <>
-                                <TarjetaCiudad />
-                                <button onClick={() => setMostrarPronostico(true)} className="btn">Ver pronóstico</button>
-                            </>
-                        ) : (
-                            <>
-                                <Pronostico />
-                                <button onClick={() => setMostrarPronostico(false)} className="btn">Ver clima de hoy</button>
-                            </>
-                        )}
+                    <div className='weather-card-container'>
+                        <TarjetaCiudad />
+                        <Pronostico />
                     </div>
                 </>
             )}

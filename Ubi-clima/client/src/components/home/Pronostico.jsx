@@ -2,6 +2,10 @@ import React from 'react';
 import { useClima } from '../../context/ClimaContext';
 import '../../assets/Pronostico.css';
 
+function capitalizeFirstLetter(val) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
 function Pronostico() {
   const { pronostico, datosClima } = useClima();
 
@@ -14,17 +18,17 @@ function Pronostico() {
 
   return (
     <section className="pronostico-container">
-      <h1>Pronóstico</h1>
+      <h2>Pronóstico</h2>
       <div className="dias-pronostico">
         {pronostico.map((dia) => (
           <div key={dia.fecha} className="dia-card">
-            <h3>{dia.fecha}</h3>
+            <p>{dia.fecha}</p>
             <img
               src={`https://openweathermap.org/img/wn/${dia.icono}@2x.png`}
               alt={dia.descripcion}
               className="icono-clima"
             />
-            <p>{dia.descripcion}</p>
+            <p>{capitalizeFirstLetter(dia.descripcion)}</p>
             <p><strong>Max:</strong> {dia.temp_max}°C</p>
             <p><strong>Min:</strong> {dia.temp_min}°C</p>
           </div>

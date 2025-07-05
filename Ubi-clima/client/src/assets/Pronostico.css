@@ -1,24 +1,33 @@
 .pronostico-container {
-  padding: 2rem;
-  background-color: #f4f4f4; /* Fondo claro para diferenciar */
-  border-radius: 8px;
-  margin-top: 20px;
+  margin: 30px 0px;
+  border-top: 1px solid rgba(69, 105, 129, 0.881);
+}
+
+.pronostico-container h2{
+  margin-bottom: 30px;
 }
 
 .dias-pronostico {
   display: flex;
   flex-wrap: wrap; /* Asegura que se acomode si no cabe en una sola línea */
-  gap: 1rem; /* Espacio entre las tarjetas */
+  gap:1.5rem;
   justify-content: center; /* Centra las tarjetas */
 }
 
 .dia-card {
-  background-color: #ffffff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 225px; /* Ajusta el tamaño de cada tarjeta */
+  background:rgb(51 65 85 / 0.5);
+  padding:1.5rem;
+  border-radius:0.25rem;
+  align-items: center;
+  box-shadow:0 4px 8px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
   text-align: center;
+}
+
+.dia-card:hover{
+  transform: scale(1.08);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .dia-card h3 {
