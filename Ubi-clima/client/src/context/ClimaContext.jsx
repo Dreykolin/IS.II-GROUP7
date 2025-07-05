@@ -74,6 +74,7 @@ export const ClimaProvider = ({ children }) => {
             temperatura: Math.round(data.temperatura),
             ciudad: data.ciudad,
             viento: data.viento,
+            humedad: data.humedad,
             tiempo_id: data.tiempo_id,
           };
 

@@ -322,6 +322,12 @@ button.btn-secondary:hover {
   gap: 30px;
 }
 
+.fullsize .center{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .weather-card-container{
   color:white;
   display: flex;

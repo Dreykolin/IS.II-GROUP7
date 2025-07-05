@@ -58,7 +58,7 @@ function TarjetaCiudad() {
   return (
   <div className='fullsize'>
     {!editando ? (
-        <div>
+        <div className='center'>
           <h2>🏙️ {ciudad || 'Sin ciudad asignada'}</h2>
           <button
             className="btn-cambiarciudad"
