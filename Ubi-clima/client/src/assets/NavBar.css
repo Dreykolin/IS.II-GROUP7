@@ -1,16 +1,35 @@
 /* Estilo general de la navbar */
 .navbar {
   display: flex;
+  /* efecto cambio de color en navbar */
+  background: linear-gradient(135deg,#0b2238 0%, #004a9a 80%);
+  background-color: #2c3e509c; /* "capa" oscura encima del gif */
   
-  background-color: rgba(147, 37, 37, 0.242); /* "capa" oscura encima del gif */
-  background-image: url("public/otoño.gif");
-  background-position: 20% 30%;
+  /*background-position: 20% 30%;*/
   background-blend-mode: overlay;
-  margin: 8px;
-  border: 15px solid #e8926073;
-  border-radius: 8px;
+  /*margin: 8px; */
+  /*border: 15px solid #e8926073;
+  /*border-radius: 8px; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
   padding: 3px 7px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px var(--color-sombra);
+  
 }
+
+.navbar-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+
+
+
+
 
 /* Título de la app */
 .navbar-titulo {
@@ -21,61 +40,58 @@
     object-fit: contain;
     font-size: 1.5rem;
     text-align: center;
-    transition: transform 0.05s ease-in-out;
+    transition: color 0.3s ease;
     
 }
 
+
 .navbar-titulo:hover {
   transform: scale(1.05);
+  transition: all 0.3s ease
 }
 
 /* Links de navegación */
 .nav-pills .nav-link {
   color: #ffffff;
-  font-family: 'Times New Roman', Times, serif;
-  transition: background-color 0.3s, color 0.3s;
-  font-weight: 500;
+  
+  margin-left: 1.5rem;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;/* click cada pagina se trasnforme en color nuevo lentamente lo que indica */
+  transition: all 0.3s ease; /* click cada pagina se muve lentamente lo que indica */
 }
 
+
+
+/* efecto Links de navegación */
 .nav-pills .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  
   color: #f0f0f0;
   border-radius: 10px;
+  transform: translateY(-4px);
+
 }
+
 
 .nav-pills .nav-link:focus {
-  background-color: rgba(202, 121, 0, 0.656);
-  color: #f0f0f0;
+  background-color: rgba(11, 163, 3, 0.656);
+  color: #583b97;
   border-radius: 10px;
 }
 
-/* Botón login/logout */
-.btn-primary, .btn-danger {
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  transition: background-color 0.3s ease;
-}
 
-.btn-primary:hover {
-  background-color: #0056b3;
-}
 
-.btn-danger:hover {
-  background-color: #c82333;
-}
 
-.navbar-logo {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-}
 
-/* NUEVO: Estilo para el botón de notificaciones */
+
+
+
+/* NUEVO: Estilo para los botónes */
 .btn-notifications {
   border: none;
+  
   border-radius: 8px;/*que tan redonto lo quieres que sea la esquina*/
-  background-color: rgba(248, 163, 43, 0.55);/*color de fondo de botones*/;
+  background-color: rgba(28, 164, 162, 0.453);/*color de fondo de botones*/;
 
   color: #f0f0f0;
   border: none;
@@ -85,7 +101,60 @@
   transition: all 0.3s ease;
 }
 
+
+/* Estilo click dps para el botón de notificaciones */
 .btn-notifications:hover {
-  background-color: rgba(255, 149, 0, 0.76);
-  transform: translateY(-1px);
+  background-color: rgba(57, 193, 220, 0.76);
+  transform: translateY(-4px);
 }
+
+
+
+
+
+
+
+
+ /* 
+    * Estilo para los títulos principales (h2)
+    * Con efecto decorativo de subrayado
+    */
+    n2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      font-size: 2.4rem;
+      font-family: 'Playfair Display', serif; /* Fuente decorativa para títulos */
+      color: #ffffff;
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    
+    /* 
+    * Línea decorativa bajo los títulos principales
+    */
+    n2:after {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 3px;
+      bottom: -10px;
+      left: 20%;
+      background: linear-gradient(90deg, #0d3054 0%, transparent 100%);
+      border-radius: 3px;
+    }
+    /* 
+    * Contenedor principal del contenido
+    */
+
+
+
+
+
+    main {
+      max-width: 1200px; /* Ancho máximo para pantallas grandes */
+      margin: 3rem auto; /* Centrado vertical y horizontal */
+      padding: 0 2rem; /* Espaciado interno */
+    }

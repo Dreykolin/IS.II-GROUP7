@@ -37,7 +37,6 @@ function Home() {
 
     useEffect(() => {
         if (!isAuthenticated || !user?.tours_vistos) return;
-
         if (user.tours_vistos.preferencias_configuradas === false) {
             setShowPreferencesPopup(true);
         }
@@ -88,6 +87,7 @@ function Home() {
 
     return (
         <div className="clima-page">
+            <n2>Actividades Recomendadas</n2>
             <Joyride
                 steps={tourSteps}
                 run={runTour}
@@ -106,7 +106,7 @@ function Home() {
                     </div>
                 </div>
             )}
-
+            
             {!isAuthenticated ? (
                 <div className="flex-container">
                     <div className="alert alert-warning alerta-usuario">
@@ -118,9 +118,11 @@ function Home() {
                     <div className="flex-container recommendations-list">
                         <RecommendationsList />
                     </div>
+                     <n2>Historial de actividades</n2>
                     <div className="flex-container short-history">
                         <ShortHistory />
                     </div>
+                    <n2>clima de hoy en tu ciudad</n2>
                     <div className="flex-container-2 weather-card-container">
                         {!mostrarPronostico ? (
                             <>
@@ -147,9 +149,12 @@ function Home() {
                 </div>
             </header>
 
+
+
+            <n2>Actividades Recomendadas</n2>
             <div className="flex-container">
                 <section id="activities" className="activities">
-                    <h2>Actividades recomendadas</h2>
+                    
                     <div className="cards">
                         <div className="card">
                             <img src="/yoga.avif" alt="Yoga" />

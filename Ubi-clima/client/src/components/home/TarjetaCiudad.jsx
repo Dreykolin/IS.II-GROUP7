@@ -52,7 +52,9 @@ function TarjetaCiudad() {
   };
 
   return (
-    <div className="weather-cards">
+    
+    <div className="weather-cards" >
+      
       <div className="weather-card">
         <span className="icon">🌫️</span>
         <p>Clima</p>
