@@ -4,12 +4,14 @@ import { useAuth } from '../context/AuthContext';
 import '../assets/Historial.css';
 
 const API_BASE = 'http://localhost:3000';
+const { isAuthenticated, user, markTourAsSeen } = useAuth();
 
 async function obtenerHistorial(usuario_id, mes, año) {
+    
     const params = new URLSearchParams();
     if (mes) params.append('mes', mes);
     if (año) params.append('año', año);
-    const res = await fetch(`${API_BASE}/historial/${usuario_id}?${params.toString()}`);
+    const res = await fetch(`${API_BASE}/historial/${user.id}?${params.toString()}`);
     if (!res.ok) throw new Error('Error al obtener historial');
     return await res.json();
 }

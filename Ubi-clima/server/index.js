@@ -817,7 +817,6 @@ app.get('/actividades/:usuario_id', (req, res) => {
       console.error('Error al obtener actividades:', err.message);
       return res.status(500).json({ error: 'Error en la base de datos' });
     }
-
     res.json(rows);
   });
 });

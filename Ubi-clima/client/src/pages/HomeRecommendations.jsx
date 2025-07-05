@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import '../assets/RecommendationsList.css';
 
 const HomeRecommendations = () => {
@@ -9,6 +10,7 @@ const HomeRecommendations = () => {
   const [ubicacionAutomatica, setUbicacionAutomatica] = useState('');
   const [climaAutomatico, setClimaAutomatico] = useState('');
   const [usuarioAutenticado, setUsuarioAutenticado] = useState(false); // Estado para verificar si está autenticado
+  const { isAuthenticated, user, markTourAsSeen } = useAuth();
 
   //Esto es un sucio copypaste para tener el clima y hacer el flitro de actividades
   useEffect(() => {
@@ -98,9 +100,9 @@ const HomeRecommendations = () => {
 
       setIsLoading(true);
       try {
-        const res = await fetch(`http://localhost:3000/actividades/${usuario_id}`);
+        const res = await fetch(`http://localhost:3000/actividades/${user.id}`);
         const data = await res.json();
-        setActivities(data);;
+        setActivities(data);
       } catch (error) {
         console.error("Error al obtener actividades:", error);
       } finally {

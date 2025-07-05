@@ -8,6 +8,7 @@ import ShortHistory from "../components/home/ShortHistory";
 import Pronostico from "../components/home/Pronostico";
 // ⬅️ RUTA DE IMPORTACIÓN CORREGIDA
 import PreferenceSelector from '../pages/PreferenceSelector';
+import HomeRecommendations from '../pages/HomeRecommendations';
 import '../assets/home.css';
 
 function Home() {
