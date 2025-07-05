@@ -267,14 +267,11 @@ button.btn-secondary:hover {
   display:flex;
   flex-direction:column;
   justify-content:space-between;
+  transition:all 0.3s ease;
 }
-.card{
-  border-radius:12px;
-  box-shadow:0 4px 8px rgba(0,0,0,0.1);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
+.card:hover{
+    transform: scale(1.08);
+    border: 1px solid rgb(219, 219, 219);
 }
 
 .card img{
