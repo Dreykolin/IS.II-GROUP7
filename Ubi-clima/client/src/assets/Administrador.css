@@ -221,10 +221,7 @@
 .admin-dashboard ~ footer {
   display: none !important;
 }
-/* Asegurar que no aparezca footer global */
-body footer:not(.admin-footer) {
-  display: none !important;
-}
+
 
 /* Footer específico para admin */
 .admin-footer {
