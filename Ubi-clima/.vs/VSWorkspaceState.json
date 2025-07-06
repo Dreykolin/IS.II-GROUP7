@@ -3,14 +3,14 @@
     "",
     "\\client",
     "\\client\\src",
-    "\\client\\src\\assets",
     "\\client\\src\\components",
     "\\client\\src\\components\\activities",
+    "\\client\\src\\components\\home",
     "\\client\\src\\context",
     "\\client\\src\\pages",
     "\\server",
     "\\server\\models"
   ],
-  "SelectedNode": "\\package.json",
+  "SelectedNode": "\\client\\src\\components\\home\\ShortHistory.jsx",
   "PreviewInSolutionExplorer": false
 }

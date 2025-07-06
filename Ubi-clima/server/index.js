@@ -38,6 +38,38 @@ let subscriptions = []; //Curioso digamos
 
 
 
+// Este endpoint devuelve las últimas 3 actividades de un usuario.
+app.get('/api/historial-reciente/:usuario_id', (req, res) => {
+    const { usuario_id } = req.params;
+
+    if (!usuario_id) {
+        return res.status(400).json({ error: 'Falta el ID del usuario.' });
+    }
+
+    // Pide el historial, lo ordena por fecha descendente y se queda solo con los 3 primeros.
+    const sql = `
+        SELECT ha.fecha, a.nombre
+        FROM historial_actividades ha
+        JOIN actividades a ON ha.actividad_id = a.id
+        WHERE ha.usuario_id = ?
+        ORDER BY ha.fecha DESC
+        LIMIT 3
+    `;
+
+    db.all(sql, [usuario_id], (err, rows) => {
+        if (err) {
+            console.error('Error al obtener historial reciente:', err.message);
+            return res.status(500).json({ error: 'Error en la base de datos.' });
+        }
+        res.json(rows);
+    });
+});
+
+
+
+
+
+
 app.post('/guardar_actividad', (req, res) => {
   const { 
     nombre, 
