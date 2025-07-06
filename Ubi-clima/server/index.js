@@ -274,74 +274,71 @@ app.get('/recomendaciones', (req, res) => {
 
 //El más importante. Permite que el usuario guarde sus actividades.
 //también está programado para que si se añade una actividad sin user id, este esté disponible para todos (como modo predeterminado)
-app.post('/guardar_actividad', (req, res) => {
-  const { nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports, usuario_id } = req.body;
+app.post('/guardar_recomendacion', async (req, res) => {
+  try {
+    const { nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, sports, intellectual } = req.body;
 
-  const sql = `
-    INSERT INTO actividades 
-    (nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports, usuario_id) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-
-  db.run(sql, [nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports, usuario_id], function(err) {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Error al guardar la actividad' });
+    // Validación básica
+    if (!nombre || !descripcion) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Nombre y descripción son obligatorios' 
+      });
     }
-    res.send(`Actividad guardada: ${nombre}`);
-  });
-});app.post('/guardar_recomendacion', (req, res) => {
-  const { nombre, descripcion, temperatura, viento, lluvia, uv } = req.body;
 
-  if (!nombre || !descripcion) {
-    return res.status(400).json({ error: 'Faltan campos obligatorios' });
-  }
-
-  const valores = [
-    nombre,
-    descripcion,
-    temperatura ?? null,
-    viento ?? null,
-    lluvia ?? null,
-    uv ?? null,
-    0, 0, 0, 0,
-    null
-  ];
-
-  console.log('Valores a insertar:', valores);
-
-  const sql = `
-    INSERT INTO actividades 
-    (nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, intellectual, sports, usuario_id) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-
-  db.run(sql, valores, function(err) {
-    if (err) {
-      console.error('Error al guardar la recomendación:', err);  // muestra el error completo
-      return res.status(500).json({ error: 'Error al guardar la recomendación' });
-    }
-    res.status(200).json({ mensaje: `Recomendación guardada: ${nombre}` });
-  });
-});
-app.post('/actividades', (req, res) => {
-  const {
-    nombre, descripcion, temperatura, viento, lluvia, uv,
-    outdoor, indoor, sports, intellectual, usuario_id
-  } = req.body;
-
-  db.run(
-    `INSERT INTO actividades (nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, sports, intellectual, usuario_id)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, sports, intellectual, usuario_id],
-    function (err) {
+    // Insertar en SQLite
+    const sql = `
+      INSERT INTO actividades 
+      (nombre, descripcion, temperatura, viento, lluvia, uv, outdoor, indoor, sports, intellectual, usuario_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    
+    db.run(sql, [
+      nombre, descripcion, 
+      temperatura || null, 
+      viento || null, 
+      lluvia || null, 
+      uv || null,
+      outdoor || 3,
+      indoor || 3,
+      sports || 3,
+      intellectual || 3,
+      null // usuario_id null para recomendaciones globales
+    ], function(err) {
       if (err) {
-        console.error("Error al insertar actividad:", err.message);
-        return res.status(500).json({ error: 'Error al guardar actividad' });
+        console.error('Error en la base de datos:', err);
+        return res.status(500).json({ 
+          success: false,
+          error: 'Error al guardar en la base de datos' 
+        });
       }
-      res.status(200).json({ mensaje: 'Actividad guardada correctamente', id: this.lastID });
-    }
-  );
+
+      // Éxito - devolver los datos guardados
+      res.status(201).json({
+        success: true,
+        actividad: {
+          id: this.lastID,
+          nombre,
+          descripcion,
+          temperatura,
+          viento,
+          lluvia,
+          uv,
+          outdoor,
+          indoor,
+          sports,
+          intellectual
+        }
+      });
+    });
+
+  } catch (err) {
+    console.error('Error inesperado:', err);
+    res.status(500).json({ 
+      success: false,
+      error: 'Error interno del servidor' 
+    });
+  }
 });
 
 app.get('/usuarios', (req, res) => {

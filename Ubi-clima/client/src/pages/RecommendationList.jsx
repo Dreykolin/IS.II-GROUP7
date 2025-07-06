@@ -15,12 +15,6 @@ function RecommendationList() {
     intellectual: 0,
     sports: 0
   });
-  const [filters, setFilters] = useState({
-    temperatura: '',
-    viento: '',
-    lluvia: '',
-    uv: ''
-  });
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,12 +30,7 @@ function RecommendationList() {
     setIsLoading(true);
     setError(null);
     try {
-      const queryParams = new URLSearchParams();
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== '') queryParams.append(key, value);
-      });
-
-      const response = await fetch(`http://localhost:3000/recomendaciones?${queryParams}`);
+      const response = await fetch(`http://localhost:3000/recomendaciones`);
       if (!response.ok) throw new Error('Error al cargar recomendaciones');
       const data = await response.json();
       setRecomendaciones(data);
@@ -53,7 +42,6 @@ function RecommendationList() {
     }
   };
 
-  // Manejar cambios en el formulario
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -62,32 +50,6 @@ function RecommendationList() {
     }));
   };
 
-  // Manejar cambios en los filtros
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  // Aplicar filtros
-  const applyFilters = () => {
-    fetchRecommendations();
-  };
-
-  // Resetear filtros
-  const resetFilters = () => {
-    setFilters({
-      temperatura: '',
-      viento: '',
-      lluvia: '',
-      uv: ''
-    });
-    fetchRecommendations();
-  };
-
-  // Enviar formulario (crear o actualizar)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -105,7 +67,6 @@ function RecommendationList() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          // Convertir valores numéricos
           temperatura: formData.temperatura ? Number(formData.temperatura) : null,
           viento: formData.viento ? Number(formData.viento) : null,
           lluvia: formData.lluvia ? Number(formData.lluvia) : null,
@@ -135,7 +96,6 @@ function RecommendationList() {
     }
   };
 
-  // Editar recomendación
   const handleEdit = (recomendacion) => {
     setFormData({
       nombre: recomendacion.nombre,
@@ -153,7 +113,6 @@ function RecommendationList() {
     setIsEditing(true);
   };
 
-  // Eliminar recomendación
   const handleDelete = async (id) => {
     if (!window.confirm('¿Estás seguro de eliminar esta recomendación?')) return;
     
@@ -180,7 +139,6 @@ function RecommendationList() {
     }
   };
 
-  // Resetear formulario
   const resetForm = () => {
     setFormData({
       nombre: '',
@@ -201,8 +159,9 @@ function RecommendationList() {
   return (
     <div className="recommendation-container">
       <h2>{isEditing ? 'Editar Recomendación' : 'Agregar Nueva Recomendación'}</h2>
-      
-      {/* Formulario de recomendación */}
+      <p className="description">
+        Gestiona las recomendaciones genéricas disponibles para todos los usuarios.
+      </p>
       <form onSubmit={handleSubmit} className="recommendation-form">
         <div className="form-row">
           <div className="form-group">
@@ -281,61 +240,8 @@ function RecommendationList() {
         </div>
       </form>
 
-      {/* Filtros de búsqueda */}
-      <div className="filters-section">
-        <h3>Filtrar Recomendaciones</h3>
-        <div className="filter-row">
-          <div className="filter-group">
-            <label>Temperatura (°C)</label>
-            <input
-              type="number"
-              name="temperatura"
-              value={filters.temperatura}
-              onChange={handleFilterChange}
-            />
-          </div>
-          <div className="filter-group">
-            <label>Viento (km/h)</label>
-            <input
-              type="number"
-              name="viento"
-              value={filters.viento}
-              onChange={handleFilterChange}
-            />
-          </div>
-          <div className="filter-group">
-            <label>Lluvia (mm)</label>
-            <input
-              type="number"
-              name="lluvia"
-              value={filters.lluvia}
-              onChange={handleFilterChange}
-            />
-          </div>
-          <div className="filter-group">
-            <label>Índice UV</label>
-            <input
-              type="number"
-              name="uv"
-              value={filters.uv}
-              onChange={handleFilterChange}
-            />
-          </div>
-        </div>
-        <div className="filter-actions">
-          <button onClick={applyFilters} disabled={isLoading}>
-            {isLoading ? 'Cargando...' : 'Aplicar Filtros'}
-          </button>
-          <button onClick={resetFilters} disabled={isLoading}>
-            Limpiar Filtros
-          </button>
-        </div>
-      </div>
-
-      {/* Mensajes de error */}
       {error && <div className="error-message">{error}</div>}
 
-      {/* Lista de recomendaciones */}
       <div className="recommendation-list">
         <h3>Recomendaciones Existentes</h3>
         {isLoading ? (
