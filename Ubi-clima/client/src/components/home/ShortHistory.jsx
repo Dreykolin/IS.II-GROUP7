@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext'; // ⬅️ 1. Importamos el AuthContext
+import '../../assets/actividadReciente.css'
 
 const API_BASE = 'http://localhost:3000';
 
@@ -49,11 +50,11 @@ export default function ShortHistory() {
         }
 
         return (
-            <div className="list-group list-group-flush">
+            <div className='actividad-list'>
                 {historyItems.map((item, index) => (
-                    <div key={item.id || index} className="list-group-item d-flex justify-content-between align-items-center px-0">
-                        <span className="fw-bold">{item.nombre}</span>
-                        <span className="text-muted small">
+                    <div key={item.id || index} className="actividad-card">
+                        <span className="textoFecha">{item.nombre}</span>
+                        <span className="textoFecha">
                             {new Date(item.fecha).toLocaleDateString('es-CL', {
                                 day: 'numeric',
                                 month: 'short'
@@ -66,15 +67,14 @@ export default function ShortHistory() {
     };
 
     return (
-        <div className="card shadow-sm h-100">
-            <div className="card-body d-flex flex-column">
-                <h3 className="card-title h5">Tu Actividad Reciente</h3>
+        <div className="fullsize">
 
-                <div className="flex-grow-1 mt-3">
-                    {renderContent()}
-                </div>
+            <div className="mt-3">
+                {renderContent()}
+            </div>
 
-                <Link to="/historial" className="btn btn-outline-secondary btn-sm mt-3 align-self-center">
+            <div className='center'>
+                <Link to="/historial" className="btn btn-verHistorial">
                     Ver historial completo
                 </Link>
             </div>

@@ -1,0 +1,70 @@
+.cardRecienteHistorial {
+    background:#33415580;
+    
+    width: 300px;
+    height: 500px;
+    padding:1.5rem;
+    border-radius:0.25rem;
+    align-items: center;
+    box-shadow:0 4px 8px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+    text-align: center;
+    transition:all 0.3s ease;
+}
+.cardRecienteHistorial:hover {
+    border: 1px solid rgb(219, 219, 219);
+}
+
+.cardActividades {
+    flex-direction: column !important;
+    text-align: center;
+}
+
+.actividad-list{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.actividad-card{
+    color:rgb(27, 61, 119);
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    background:#faeddc;
+    padding:1.5rem;
+    border-radius:0.25rem;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow:0 4px 8px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+    gap: 10px;
+}
+
+.actividad-card .textoFecha{
+    font-size: 150%;
+}
+
+.actividad-card:hover{
+    transform: scale(1.08);
+    background-color: #faeddc;
+}
+
+.weather-card-container .btn-verHistorial{
+    font-weight: bold;
+    width: 25%;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+    background-color: rgb(51 65 85 / var(--tw-bg-opacity, 1));
+    border: solid 1px rgb(71 85 105 / var(--tw-border-opacity, 1));
+    border-radius: 0.25rem;
+    transition: all .2s;
+}
+
+.weather-card-container .btn-verHistorial:hover{
+    color: rgb(125 211 252 / var(--tw-text-opacity, 1));
+    border-color: rgb(14 165 233 / var(--tw-border-opacity, 1));
+}

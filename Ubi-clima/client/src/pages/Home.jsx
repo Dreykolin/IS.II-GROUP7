@@ -119,11 +119,11 @@ function Home() {
                     <div className="flex-container recommendations-list">
                         <HomeRecommendations />
                     </div>
-                     <n2>Historial de actividades</n2>
-                    <div className="flex-container short-history">
+                     <n2>Actividad Reciente</n2>
+                    <div className="weather-card-container short-history">
                         <ShortHistory />
                     </div>
-                    <n2>clima de hoy en tu ciudad</n2>
+                    <n2>Clima de hoy en tu ciudad</n2>
                     <div className='weather-card-container'>
                         <TarjetaCiudad />
                         <Pronostico />

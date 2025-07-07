@@ -314,6 +314,16 @@ button.btn-secondary:hover {
   gap:1.5rem;
 }
 
+.recommendations-list{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.actividad-recomendada-card{
+  text-align: center;
+}
+
 .fullsize{
   display: flex;
   flex-direction: column;
@@ -413,6 +423,12 @@ button.btn-secondary:hover {
   animation-name: weather-icon-home-anim;
   animation-duration: 200ms;
   animation-fill-mode: forwards;
+}
+
+.short-history{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @media(max-width:768px){
