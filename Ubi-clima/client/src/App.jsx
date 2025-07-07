@@ -69,16 +69,20 @@ function AppContent() {
                 </Routes>
             </div>
 
-            <footer className="footer">
-                <div className="container">
-                    <p>© 2025 WeatherAct</p>
-                    <ul className="footer-links">
-                        <li><a href="#">Política de privacidad</a></li>
-                        <li><a href="#">Contacto</a></li>
-                        <li><a href="#">Redes sociales</a></li>
-                    </ul>
-                </div>
-            </footer>
+            {!isAdminPage && (
+                <>
+                    <footer className="footer">
+                        <div className="container">
+                            <p>© 2025 WeatherAct</p>
+                            <ul className="footer-links">
+                                <li><a href="#">Política de privacidad</a></li>
+                                <li><a href="#">Contacto</a></li>
+                                <li><a href="#">Redes sociales</a></li>
+                            </ul>
+                        </div>
+                    </footer>
+                </>
+            )}
         </>
     );
 }

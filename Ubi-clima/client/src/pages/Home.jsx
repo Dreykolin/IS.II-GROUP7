@@ -88,7 +88,7 @@ function Home() {
 
     return (
         <div className="clima-page">
-            <n2>Actividades Recomendadas</n2>
+            <n2>Actividades en base a tus gustos</n2>
             <Joyride
                 steps={tourSteps}
                 run={runTour}

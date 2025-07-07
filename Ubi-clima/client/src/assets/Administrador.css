@@ -9,6 +9,10 @@
 }
 
 .admin-main-content {
+  background-image: url("/public/invierno2.jpeg");
+  background-position: center; 
+  background-size: cover; 
+  background-attachment: fixed;  
   display: flex;
   flex-grow: 1;
 }
@@ -16,7 +20,8 @@
 /* Sidebar mejorado */
 .sidebar {
   width: 280px;
-  background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%);
+  background-image:  url("public/a1.jpg");
+  background: linear-gradient(135deg, #2f71b3 0%, #021127 100%);
   color: white;
   padding: 2rem 1.5rem;
   display: flex;
@@ -27,6 +32,7 @@
 }
 
 .sidebar h2 {
+  color: white;
   margin: 0 0 2rem 0;
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);

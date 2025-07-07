@@ -83,10 +83,9 @@ export default function HomeRecommendations() {
 
     // ⬅️ Se restaura tu forma original de mostrar los datos.
     return (
-        <div className='fullsize'>
+        <div className='fullsize center recommendations-list'>
             {filtradas.length > 0 ? (
                 <>
-                    <h2>De tus actividades favoritas, podrías hacer estas ahora: </h2>
                     {filtradas.map((actividad, index) => (
                         <div key={actividad.id || index} className='actividad-recomendada-card'>
                             <h3>{actividad.nombre}</h3>
